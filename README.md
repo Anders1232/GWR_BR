@@ -1,2 +1,2 @@
-# MatrixLib
-A matrix libary
+# DoubleMatrixLib
+A MatrixLib specialized for double values
