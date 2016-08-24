@@ -1,21 +1,3 @@
-/*
-MatrixLib, a general matrix libary
-	Copyright (C) 2016  Francisco Anderson Bezerra Rodrigues
-
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 #ifndef DOUBLE_MATRIX_LIB_H
 #define DOUBLE_MATRIX_LIB_H
 
@@ -60,7 +42,7 @@ void DeleteDoubleMatrix(DoubleMatrix*);
 DoubleMatrix* DoubleMatrixCopy(DoubleMatrix*);
 DoubleMatrix* DoubleMatrixIdentity(int oneDimensionSize);
 DoubleMatrix* DoubleMatrixAdd(DoubleMatrix*, DoubleMatrix*, bool resultInTheFirstMatrix);
-DoubleMatrix* DoubleMatrixScalarMultiplication(double scalar, DoubleMatrix *matrix, bool resultInTheSameMatrix);
+DoubleMatrix* DoubleMatrixScalarMultiplication(DoubleMatrix *matrix, double scalar, bool resultInTheSameMatrix);
 DoubleMatrix* DoubleMatrixTranspose(DoubleMatrix*, bool resultInTheSameMatrix);
 DoubleMatrix* DoubleMatrixMultiplication(DoubleMatrix*, DoubleMatrix*, bool resultInTheFirstMatrix);
 DoubleMatrix* DoubleMatrixCompare(DoubleMatrix*, DoubleMatrix*, Comparison);
@@ -68,7 +50,7 @@ DoubleMatrix* DoubleMatrixElementBinaryOperation(DoubleMatrix* , DoubleMatrix*, 
 DoubleMatrix* DoubleMatrixElementUnaryOperation(DoubleMatrix*, bool resultInTheFirstMatrix, double(*ElementUnaFunction)(double element));
 double DoubleMatrixMaxElement(DoubleMatrix*);
 double DoubleMatrixMinElement(DoubleMatrix*);
-double DoubleMatrixGetElement(int line, int column);
+double DoubleMatrixGetElement(DoubleMatrix *,int line, int column);
 void DoubleMatrixSetElement(int line, int column, double Element);
 DoubleMatrix* DoubleMatrixKroneckerProduct(DoubleMatrix*, DoubleMatrix*, bool resultInTheFirstMatrix);
 DoubleMatrix* DoubleMatrixElementDivision(DoubleMatrix*, DoubleMatrix*, bool resultInTheFirstMatrix);
