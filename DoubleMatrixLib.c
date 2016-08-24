@@ -2,19 +2,17 @@
 #include <string.h>
 #include <stdint.h>
 
-Matrix* NewMatrix(int linesNumber, int columnsNumber, size_t elementSize)
+DoubleMatrix* NewDoubleMatrix(int linesNumber, int columnsNumber);
 {
-	Matrix* ret= malloc(sizeof(Matrix));
-	if(ret == NULL)
+	DoubleMatrix* ret= malloc(sizeof(Matrix));
+	if(NULL == ret)
 	{
 		return NULL;
 	}
-	ret->isValid= true;
 	ret->lines= linesNumber;
 	ret->columns= columnsNumber;
-	ret->singleElementSize= elementSize;
-	ret->elements= malloc(linesNumber*columnsNumber*elementSize);
-	if(ret->elements== NULL)
+	ret->elements= malloc(linesNumber*columnsNumber*sizeof(double));
+	if(NULL == ret->elements)
 	{
 		free(ret);
 		return NULL;
@@ -22,46 +20,44 @@ Matrix* NewMatrix(int linesNumber, int columnsNumber, size_t elementSize)
 	return ret;
 }
 
-Matrix* NewMatrixAndInitializeElements(int lines, int columns, size_t elementSize, void * defaultElement)
+DoubleMatrix* NewDoubleMatrixAndInitializeElements(int lines, int columns, double defaultElement);
 {
-	Matrix* ret= NewMatrix(lines, columns, elementSize);
-	if(ret == NULL)
+	DoubleMatrix* ret= NewDoubleMatrix(lines, columns);
+	if(NULL == ret)
 	{
 		return NULL;
 	}
 	int cont, numberOfElements= lines*columns;
-	void* aux= ret->elements;
+	double* aux= ret->elements;
 	for(cont= 0; cont < numberOfElements; cont++)
 	{
-		memcpy(aux, defaultElement, elementSize);
-		aux= ((uint8_t*)aux)+elementSize;
+		aux[cont]=defaultElement;
 	}
 	return ret;
 }
 
-void DeleteMatrix(Matrix* mat)
+void DeleteMatrix(DoubleMatrix* mat)
 {
-	mat->isValid= false;
 	free(mat->elements);
 	free(mat);
-	mat= NULL;
+//	mat= NULL;
 }
 
-Matrix* MatrixCopy(Matrix* origin)
+DoubleMatrix* MatrixCopy(DoubleMatrix* origin)
 {
-	if(origin == NULL)
+	if(NULL == origin)
 	{
 		return NULL;
 	}
-	Matrix* copy= malloc(sizeof(Matrix));
-	if(copy == NULL)
+	DoubleMatrix* copy= malloc(sizeof(Matrix));
+	if(NULL == copy)
 	{
 		return NULL;
 	}
 	memcpy(copy, origin, sizeof(Matrix));
-	int matrixMemorySize= (copy->columns)*(copy->lines)*(copy->singleElementSize);
+	int matrixMemorySize= (copy->columns)*(copy->lines)*sizeof(double);
 	copy->elements= malloc(matrixMemorySize);
-	if(copy->elements== NULL)
+	if(NULL == copy->elements)
 	{
 		free(copy);
 		return NULL;
@@ -69,10 +65,10 @@ Matrix* MatrixCopy(Matrix* origin)
 	memcpy(copy->elements, origin->elements, matrixMemorySize);
 	return copy;
 }
-
-Matrix* MatrixIdentity(int oneDimensionSize, size_t elementSize, void* zero, void *one)
+//continuar daqui
+DoubleMatrix* MatrixIdentity(int oneDimensionSize, size_t elementSize, void* zero, void *one)
 {
-	Matrix* ret= NewMatrixAndInitializeElements(oneDimensionSize, oneDimensionSize, elementSize, zero);
+	DoubleMatrix* ret= NewMatrixAndInitializeElements(oneDimensionSize, oneDimensionSize, elementSize, zero);
 	int cont;
 	int nextPositionOffset= (elementSize*oneDimensionSize)+elementSize;
 	void* aux= ret->elements;
@@ -84,18 +80,18 @@ Matrix* MatrixIdentity(int oneDimensionSize, size_t elementSize, void* zero, voi
 	return ret;
 }
 
-bool MatrixHaveSameDimensionsAndSameElementSize(Matrix* m1, Matrix* m2)
+bool MatrixHaveSameDimensionsAndSameElementSize(DoubleMatrix* m1, DoubleMatrix* m2)
 {
 	return ((m1->lines==m2->lines) && (m1-> columns== m2-> columns) && (m1->singleElementSize== m2->singleElementSize));
 }
 
-Matrix* MatrixAdd(Matrix* m1, Matrix* m2, bool resultInTheFirstMatrix, void (*ElementAddFunction)(void* destiny,void* firstOperator, void* secondOperator))
+DoubleMatrix* MatrixAdd(DoubleMatrix* m1, DoubleMatrix* m2, bool resultInTheFirstMatrix, void (*ElementAddFunction)(void* destiny,void* firstOperator, void* secondOperator))
 {
 	if(!MatrixHaveSameDimensionsAndSameElementSize(m1, m2))
 	{
 		return NULL;
 	}
-	Matrix *ret;
+	DoubleMatrix *ret;
 	if(resultInTheFirstMatrix)
 	{
 		ret= m1;
@@ -124,13 +120,13 @@ Matrix* MatrixAdd(Matrix* m1, Matrix* m2, bool resultInTheFirstMatrix, void (*El
 	return ret;
 }
 
-Matrix* MatrixScalarMultiplication(void* scalar, Matrix *matrix, bool resultInTheSameMatrix, void(*ElementScalarMultFunction)(void *result,void* scalar, void* element))
+DoubleMatrix* MatrixScalarMultiplication(void* scalar, DoubleMatrix *matrix, bool resultInTheSameMatrix, void(*ElementScalarMultFunction)(void *result,void* scalar, void* element))
 {
 	if(matrix == NULL)
 	{
 		return NULL;
 	}
-	Matrix* ret;
+	DoubleMatrix* ret;
 	if(resultInTheSameMatrix)
 	{
 		ret= matrix;
@@ -158,7 +154,7 @@ Matrix* MatrixScalarMultiplication(void* scalar, Matrix *matrix, bool resultInTh
 	return ret;
 }
 
-Matrix* MatrixTranspose(Matrix*, bool resultInTheSameMatrix)
+DoubleMatrix* MatrixTranspose(DoubleMatrix*, bool resultInTheSameMatrix)
 {
 	
 }

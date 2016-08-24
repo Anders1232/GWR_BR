@@ -24,10 +24,8 @@ MatrixLib, a general matrix libary
 
 struct doubleMatrix
 {
-	bool isValid;
 	int lines;
 	int columns;
-	int singleElementSize;
 	void *elements;
 };
 typedef struct doubleMatrix DoubleMatrix;
@@ -70,7 +68,7 @@ DoubleMatrix* DoubleMatrixElementBinaryOperation(DoubleMatrix* , DoubleMatrix*, 
 DoubleMatrix* DoubleMatrixElementUnaryOperation(DoubleMatrix*, bool resultInTheFirstMatrix, double(*ElementUnaFunction)(double element));
 double DoubleMatrixMaxElement(DoubleMatrix*);
 double DoubleMatrixMinElement(DoubleMatrix*);
-void* DoubleMatrixGetElement(int line, int column);
+double DoubleMatrixGetElement(int line, int column);
 void DoubleMatrixSetElement(int line, int column, double Element);
 DoubleMatrix* DoubleMatrixKroneckerProduct(DoubleMatrix*, DoubleMatrix*, bool resultInTheFirstMatrix);
 DoubleMatrix* DoubleMatrixElementDivision(DoubleMatrix*, DoubleMatrix*, bool resultInTheFirstMatrix);
