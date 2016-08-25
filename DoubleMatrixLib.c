@@ -79,14 +79,14 @@ DoubleMatrix* DoubleMatrixIdentity(int oneDimensionSize)
 	return ret;
 }
 
-bool MatrixHaveSameDimensionsAndSameElementSize(DoubleMatrix* m1, DoubleMatrix* m2)
+bool DoubleMatrixHaveSameDimensionsAndSameElementSize(DoubleMatrix* m1, DoubleMatrix* m2)
 {
 	return ((m1->lines==m2->lines) && (m1-> columns== m2-> columns));
 }
 
-DoubleMatrix* MatrixAdd(DoubleMatrix* m1, DoubleMatrix* m2, bool resultInTheFirstMatrix)
+DoubleMatrix* DoubleMatrixAdd(DoubleMatrix* m1, DoubleMatrix* m2, bool resultInTheFirstMatrix)
 {
-	if(!MatrixHaveSameDimensionsAndSameElementSize(m1, m2))
+	if(!DoubleMatrixHaveSameDimensionsAndSameElementSize(m1, m2))
 	{
 		return NULL;
 	}
@@ -115,7 +115,7 @@ DoubleMatrix* MatrixAdd(DoubleMatrix* m1, DoubleMatrix* m2, bool resultInTheFirs
 	return ret;
 }
 
-DoubleMatrix* MatrixScalarMultiplication(DoubleMatrix *matrix, double scalar, bool resultInTheSameMatrix)
+DoubleMatrix* DoubleMatrixScalarMultiplication(DoubleMatrix *matrix, double scalar, bool resultInTheSameMatrix)
 {
 	if(NULL == matrix)
 	{
@@ -169,24 +169,30 @@ DoubleMatrix* DoubleMatrixTranspose(DoubleMatrix *matrix, bool resultInTheSameMa
 	}
 	else
 	{
-		ret= NewDoubleMatrix(matrix->lines, matrix->columns);
+		ret= NewDoubleMatrix(matrix->columns, matrix->lines);
 		if(NULL == ret)
 		{
 			return NULL;
 		}
 	}
+	int lines, columns, counter;
 	lines= matrix->lines;
 	columns= matrix->columns;
 	double *temp= malloc(lines * columns * sizeof(double));
-	double lines, columns, counter;
 	counter= 0;
 	int cont1, cont2;
 	for(cont1=0; cont1 < columns; cont1++)
 	{
 		for(cont2=0; cont2 < lines; cont2++)
 		{
-			temp[counter++]= DoubleMatrixGetElement(cont1, cont2);
+#ifdef DEBUG
+printf("Inserting element [%d][%d] in position %d\n", cont1, cont2, counter);
+#endif
+			temp[counter++]= DoubleMatrixGetElement(matrix, cont1, cont2);
 		}
 	}
+	free(ret->elements);
+	ret->elements= temp;
+	return ret;
 }
 
