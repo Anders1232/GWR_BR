@@ -1,2 +1,2 @@
-# DoubleMatrixLib
-A MatrixLib specialized for double values
+# GWR BR
+Projeto de iniciação científica(PIBIC)
