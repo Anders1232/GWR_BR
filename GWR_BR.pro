@@ -12,9 +12,13 @@ TARGET = GWR_BR
 TEMPLATE = app
 
 
-SOURCES += main.cpp\
-        mainwindow.cpp
+SOURCES += Qt/main.cpp\
+        Qt/mainwindow.cpp \
+    DoubleMatrixLib/DoubleMatrixLib.c \
+    NamedColumnDoubleTable/NamedColumnDoubleTable.c
 
-HEADERS  += mainwindow.h
+HEADERS  += Qt/mainwindow.h \
+    DoubleMatrixLib/DoubleMatrixLib.h \
+    NamedColumnDoubleTable/NamedColumnDoubleTable.h
 
-FORMS    += mainwindow.ui
+FORMS    += Qt/mainwindow.ui
