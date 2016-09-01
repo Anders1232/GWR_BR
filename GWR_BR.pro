@@ -1,6 +1,6 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2016-08-26T14:56:48
+# Project created by QtCreator 2016-09-01T13:35:13
 #
 #-------------------------------------------------
 
@@ -8,7 +8,7 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = TesteQt
+TARGET = GWR_BR
 TEMPLATE = app
 
 

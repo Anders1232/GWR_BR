@@ -37,12 +37,13 @@ enum type
 };
 typedef enum type Type;
 */
+
 DoubleMatrix* NewDoubleMatrix(int lines, int columns);	//implemented
 DoubleMatrix* NewDoubleMatrixAndInitializeElements(int lines, int columns, double defaultElement);	//implemented
 void DeleteDoubleMatrix(DoubleMatrix*);	//implemented
 DoubleMatrix* DoubleMatrixCopy(DoubleMatrix*);	//implemented
 DoubleMatrix* DoubleMatrixIdentity(int oneDimensionSize);	//implemented
-DoubleMatrix* DoubleMatrixAdd(DoubleMatrix*, DoubleMatrix*, bool resultInTheFirstMatrix);	//implemented
+DoubleMatrix* DoubleMatrix_Add(DoubleMatrix*, DoubleMatrix*, bool resultInTheFirstMatrix);	//implemented
 DoubleMatrix* DoubleMatrixScalarMultiplication(DoubleMatrix *matrix, double scalar, bool resultInTheSameMatrix);	//implemented
 DoubleMatrix* DoubleMatrixTranspose(DoubleMatrix*, bool resultInTheSameMatrix);	//implemented, need testing
 DoubleMatrix* DoubleMatrixMultiplication(DoubleMatrix*, DoubleMatrix*, bool resultInTheFirstMatrix);

@@ -86,10 +86,10 @@ printf("Essa if realmente e util! %s:\t\t%d"NEW_LINE , __FILE__, __LINE__);
 	double *numbers=ret->matrix->elements;
 	int cont1, cont2;
 	char format[5];
-	format[0] = separator;
-	format[1] = '%';
-	format[2] = 'l';
-	format[3] = 'f';
+	format[0] = '%';
+	format[1] = 'l';
+	format[2] = 'f';
+	format[3] = separator;
 	format[4] = '\0';
 	for(cont1=0; cont1 < linesCounter; cont1++)
 	{
