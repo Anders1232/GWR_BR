@@ -1,4 +1,4 @@
-git add .
+git add -A
 git commit -am "made changes"
-git push
+git push origin master
 pause
