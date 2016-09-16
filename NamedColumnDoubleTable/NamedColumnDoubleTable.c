@@ -96,16 +96,16 @@ NamedColumnDoubleTable *NewNamedColumnDoubleTableFromFile(char *fileName, char s
 		return NULL;
 	}
 	int numberOfLines=1;
-	char aux;
+	char aux, aux2;
 	while(EOF != fscanf(arq, "%c", &aux))
 	{
 		if('\n'== aux)
 		{
-			numeroDeLinhas++;
+			numberOfLines++;
 			aux2= getc(arq);
 			if(EOF == aux2)
 			{//se sim, o arquivo termina com um \n, que não deve ser contado pro numero de linhas
-				numeroDeLinhas--;
+				numberOfLines--;
 			}
 			else
 			{//senão desfaz essa última leitura e continua
@@ -114,4 +114,5 @@ NamedColumnDoubleTable *NewNamedColumnDoubleTableFromFile(char *fileName, char s
 		}
 	}
 	//the number of lines -1 is the number of lines of the matrix(the first line have the name of columns)
+	return NULL;
 }

@@ -11,3 +11,9 @@ int Gui_Init(int argc, char *argv[])
 
 	return a.exec();
 }
+
+class GuiDriver
+{
+	public:
+		static void File();
+};
