@@ -48,17 +48,7 @@
        <attribute name="title">
         <string>Step 1: Data</string>
        </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <item>
-         <widget class="QFrame" name="frame">
-          <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
-          </property>
-          <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
-          </property>
-         </widget>
-        </item>
+       <layout class="QVBoxLayout" name="verticalLayout">
         <item>
          <widget class="QFrame" name="SessionTile">
           <property name="autoFillBackground">
@@ -76,29 +66,29 @@
          </widget>
         </item>
         <item>
-         <widget class="QWidget" name="widget" native="true">
-          <property name="autoFillBackground">
-           <bool>true</bool>
+         <widget class="QFrame" name="frame">
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
           </property>
-          <widget class="QLabel" name="Label">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>105</width>
-             <height>15</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>SessionName</string>
-           </property>
-          </widget>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QFrame" name="frame_2">
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
          </widget>
         </item>
        </layout>
        <zorder>SessionTile</zorder>
-       <zorder>widget</zorder>
        <zorder>frame</zorder>
+       <zorder>frame_2</zorder>
       </widget>
       <widget class="QWidget" name="tab_2">
        <attribute name="title">
