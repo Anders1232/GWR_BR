@@ -1,4 +1,4 @@
-#include "GuiInterface.h"
+#include "GuiInterface.hpp"
 
 int main(int argc, char *argv[])
 {

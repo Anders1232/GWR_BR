@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include <QApplication>
 
-#include "GuiInterface.h"
+#include "GuiInterface.hpp"
 
 int Gui_Init(int argc, char *argv[])
 {
