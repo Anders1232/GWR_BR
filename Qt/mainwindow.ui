@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>673</width>
-    <height>518</height>
+    <width>666</width>
+    <height>480</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -35,6 +35,9 @@
         <height>0</height>
        </size>
       </property>
+      <property name="locale">
+       <locale language="English" country="UnitedKingdom"/>
+      </property>
       <property name="currentIndex">
        <number>0</number>
       </property>
@@ -45,6 +48,57 @@
        <attribute name="title">
         <string>Step 1: Data</string>
        </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QFrame" name="frame">
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QFrame" name="SessionTile">
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
+          <property name="locale">
+           <locale language="English" country="UnitedKingdom"/>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="widget" native="true">
+          <property name="autoFillBackground">
+           <bool>true</bool>
+          </property>
+          <widget class="QLabel" name="Label">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>105</width>
+             <height>15</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>SessionName</string>
+           </property>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+       <zorder>SessionTile</zorder>
+       <zorder>widget</zorder>
+       <zorder>frame</zorder>
       </widget>
       <widget class="QWidget" name="tab_2">
        <attribute name="title">
@@ -75,7 +129,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>673</width>
+     <width>666</width>
      <height>20</height>
     </rect>
    </property>
