@@ -18,6 +18,8 @@ class MainWindow : public QMainWindow
 	private slots:
 		void on_actionManual_triggered();
 
+		void on_pushButton_clicked();
+
 	private:
 		Ui::MainWindow *ui;
 };

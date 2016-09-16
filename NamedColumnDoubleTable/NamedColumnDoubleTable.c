@@ -88,3 +88,30 @@ void DeleteNamedColumnDoubleTable(NamedColumnDoubleTable *table)
 	DeleteDoubleMatrix(table->matrix);
 }
 
+NamedColumnDoubleTable *NewNamedColumnDoubleTableFromFile(char *fileName, char separator)
+{
+	FILE *arq = fopen(fileName, "r");
+	if(NULL == arq)
+	{
+		return NULL;
+	}
+	int numberOfLines=1;
+	char aux;
+	while(EOF != fscanf(arq, "%c", &aux))
+	{
+		if('\n'== aux)
+		{
+			numeroDeLinhas++;
+			aux2= getc(arq);
+			if(EOF == aux2)
+			{//se sim, o arquivo termina com um \n, que não deve ser contado pro numero de linhas
+				numeroDeLinhas--;
+			}
+			else
+			{//senão desfaz essa última leitura e continua
+				ungetc(aux2, arq);
+			}
+		}
+	}
+	//the number of lines -1 is the number of lines of the matrix(the first line have the name of columns)
+}

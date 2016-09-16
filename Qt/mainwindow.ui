@@ -73,6 +73,32 @@
           <property name="frameShadow">
            <enum>QFrame::Raised</enum>
           </property>
+          <widget class="QLineEdit" name="lineEdit">
+           <property name="geometry">
+            <rect>
+             <x>40</x>
+             <y>50</y>
+             <width>471</width>
+             <height>23</height>
+            </rect>
+           </property>
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="pushButton">
+           <property name="geometry">
+            <rect>
+             <x>520</x>
+             <y>50</y>
+             <width>82</width>
+             <height>23</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Select File</string>
+           </property>
+          </widget>
          </widget>
         </item>
         <item>

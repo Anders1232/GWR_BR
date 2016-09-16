@@ -17,4 +17,6 @@ NamedColumnDoubleTable *NewNamedColumnDoubleTableWithNoMatrix(int numberOfColumn
 void NamedColumnDoubleTable_SetColumnName(NamedColumnDoubleTable *table, int position, char* columnName);
 void NamedColumnDoubleTable_PrintColumnsNames(NamedColumnDoubleTable *table, FILE *output, char *format);
 void DeleteNamedColumnDoubleTable(NamedColumnDoubleTable *table);
+
+NamedColumnDoubleTable *NewNamedColumnDoubleTableFromFile(char *fileName, char separator);
 #endif

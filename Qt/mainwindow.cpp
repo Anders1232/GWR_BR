@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "QFileDialog"
 
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
@@ -16,4 +17,11 @@ MainWindow::~MainWindow()
 void MainWindow::on_actionManual_triggered()
 {
 
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+	QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"),
+													"/home",
+													tr("data (*.csv *.gwr *.dota)"));
 }
