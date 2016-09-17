@@ -24,5 +24,8 @@ void MainWindow::on_pushButton_clicked()
 	QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"),
 													"/home",
 													tr("data (*.csv *.gwr *.dota);; Any File(*.*)"));
-
+	QLineEdit *lineEdit = this->findChild<QLineEdit*>("fileNameLineEdit");
+	Q_ASSERT(lineEdit);
+	lineEdit->setText(fileName);
+	driver.FileSelected(fileName);
 }

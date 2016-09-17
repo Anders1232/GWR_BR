@@ -26,6 +26,7 @@ SOURCES +=\
 HEADERS  += Qt/mainwindow.h \
     DoubleMatrixLib/DoubleMatrixLib.h \
     NamedColumnDoubleTable/NamedColumnDoubleTable.h \
-    Core/GuiInterface.hpp
+    Core/GuiInterface.hpp \
+    Qt/GuiDriver.h
 
 FORMS    += Qt/mainwindow.ui

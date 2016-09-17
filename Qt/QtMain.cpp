@@ -2,6 +2,7 @@
 #include <QApplication>
 
 #include "GuiInterface.hpp"
+#include "GuiDriver.h"
 
 int Gui_Init(int argc, char *argv[])
 {
@@ -12,8 +13,24 @@ int Gui_Init(int argc, char *argv[])
 	return a.exec();
 }
 
-class GuiDriver
+/*static GuiDriver& GetReference(void)
 {
-	public:
-		static void File();
-};
+	static GuiDriver gui;
+	return gui;
+}
+*/
+GuiDriver::GuiDriver(void)
+{
+	separator = '\t';
+	fileName= "";
+}
+
+void GuiDriver::FileSelected(QString fileName)
+{
+	this->fileName= std::string(fileName.toLocal8Bit().data() );
+}
+
+void GuiDriver::SeparatorSelected(char separator)
+{
+	this->separator= separator;
+}

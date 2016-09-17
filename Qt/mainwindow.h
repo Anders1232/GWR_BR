@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "GuiDriver.h"
 
 namespace Ui {
 	class MainWindow;
@@ -22,6 +23,7 @@ class MainWindow : public QMainWindow
 
 	private:
 		Ui::MainWindow *ui;
+		GuiDriver driver;
 };
 
 #endif // MAINWINDOW_H

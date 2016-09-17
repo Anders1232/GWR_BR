@@ -73,7 +73,7 @@
           <property name="frameShadow">
            <enum>QFrame::Raised</enum>
           </property>
-          <widget class="QLineEdit" name="lineEdit">
+          <widget class="QLineEdit" name="fileNameLineEdit">
            <property name="geometry">
             <rect>
              <x>40</x>
@@ -112,9 +112,6 @@
          </widget>
         </item>
        </layout>
-       <zorder>SessionTile</zorder>
-       <zorder>frame</zorder>
-       <zorder>frame_2</zorder>
       </widget>
       <widget class="QWidget" name="tab_2">
        <attribute name="title">
