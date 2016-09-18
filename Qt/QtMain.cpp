@@ -1,10 +1,9 @@
-#include "mainwindow.h"
+#include "mainwindow.hpp"
 #include <QApplication>
 
-#include "GuiInterface.hpp"
-#include "GuiDriver.h"
+#include "GuiDriver.hpp"
 
-int Gui_Init(int argc, char *argv[])
+int InitQtGui(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
 	MainWindow w;
@@ -13,24 +12,3 @@ int Gui_Init(int argc, char *argv[])
 	return a.exec();
 }
 
-/*static GuiDriver& GetReference(void)
-{
-	static GuiDriver gui;
-	return gui;
-}
-*/
-GuiDriver::GuiDriver(void)
-{
-	separator = '\t';
-	fileName= "";
-}
-
-void GuiDriver::FileSelected(QString fileName)
-{
-	this->fileName= std::string(fileName.toLocal8Bit().data() );
-}
-
-void GuiDriver::SeparatorSelected(char separator)
-{
-	this->separator= separator;
-}

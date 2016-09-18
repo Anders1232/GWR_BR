@@ -2,7 +2,11 @@
 #define GUI_DRIVER_HPP
 
 #include<string>
+#include"QString"
+//C side
+int InitQtGui(int argc, char**argv);
 
+//C++ side
 class GuiDriver
 {
 	public:
@@ -10,6 +14,7 @@ class GuiDriver
 		void SeparatorSelected(char separator);
 		static GuiDriver& GetReference(void);
 		GuiDriver(void);
+		void LoadFileButtonCliked(void);
 	private:
 		std::string fileName;
 		char separator;

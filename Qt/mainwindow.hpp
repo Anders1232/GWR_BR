@@ -2,7 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "GuiDriver.h"
+#include "GuiDriver.hpp"
 
 namespace Ui {
 	class MainWindow;
@@ -20,6 +20,8 @@ class MainWindow : public QMainWindow
 		void on_actionManual_triggered();
 
 		void on_pushButton_clicked();
+
+		void on_pushButton_2_clicked();
 
 	private:
 		Ui::MainWindow *ui;

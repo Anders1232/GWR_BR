@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+#include "mainwindow.hpp"
 #include "ui_mainwindow.h"
 #include "QFileDialog"
 
@@ -28,4 +28,9 @@ void MainWindow::on_pushButton_clicked()
 	Q_ASSERT(lineEdit);
 	lineEdit->setText(fileName);
 	driver.FileSelected(fileName);
+}
+
+void MainWindow::on_pushButton_2_clicked()
+{
+	driver.LoadFileButtonCliked();
 }
