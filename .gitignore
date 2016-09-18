@@ -35,3 +35,6 @@
 #Qt PC-variable files
 *.user
 *.user*
+
+#executável
+GWR_BR
