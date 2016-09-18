@@ -3,9 +3,12 @@
 
 #include<string>
 #include"QString"
-//C side
-int InitQtGui(int argc, char**argv);
-
+extern "C"
+{
+	//C side
+	int InitQtGui(int argc, char**argv);
+#include "NamedColumnDoubleTable.h"
+}
 //C++ side
 class GuiDriver
 {
@@ -18,6 +21,7 @@ class GuiDriver
 	private:
 		std::string fileName;
 		char separator;
+		NamedColumnDoubleTable *table;
 };
 
 #endif // GUI_DRIVER_HPP

@@ -18,5 +18,5 @@ void NamedColumnDoubleTable_SetColumnName(NamedColumnDoubleTable *table, int pos
 void NamedColumnDoubleTable_PrintColumnsNames(NamedColumnDoubleTable *table, FILE *output, char *format);
 void DeleteNamedColumnDoubleTable(NamedColumnDoubleTable *table);
 
-NamedColumnDoubleTable *NewNamedColumnDoubleTableFromFile(char *fileName, char separator);
+NamedColumnDoubleTable *NewNamedColumnDoubleTableFromFile(char const *fileName, char separator);
 #endif

@@ -9,7 +9,8 @@ QT       += core gui
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 INCLUDEPATH += $$PWD/DoubleMatrixLib \
-            $$PWD/Core
+            $$PWD/Core \
+            $$PWD/NamedColumnDoubleTable
 
 TARGET = GWR_BR
 TEMPLATE = app

@@ -1,6 +1,12 @@
 #include"NamedColumnDoubleTable.h"
 #include<string.h>
 
+#ifdef _WIN32
+	#define NEW_LINE "\r\n"
+#else
+	#define NEW_LINE "\n"
+#endif
+
 NamedColumnDoubleTable *NewNamedColumnDoubleTableWithNoMatrix(int numberOfColumns)
 {
 	NamedColumnDoubleTable *ret= malloc(sizeof(NamedColumnDoubleTable));
@@ -15,10 +21,10 @@ NamedColumnDoubleTable *NewNamedColumnDoubleTableWithNoMatrix(int numberOfColumn
 		free(ret);
 		return NULL;
 	}
-	int cont;
-	for(cont=0; cont < numberOfColumns; cont++)
+	int count;
+	for(count=0; count < numberOfColumns; count++)
 	{
-		ret->columnsName[cont]= NULL;
+		ret->columnsName[count]= NULL;
 	}
 	ret->matrix= NULL;
 	return ret;
@@ -50,6 +56,10 @@ void NamedColumnDoubleTable_SetColumnName(NamedColumnDoubleTable *table, int pos
 {
 	if(table->matrix->columns > position)
 	{
+		if(NULL != table->columnsName[position])
+		{
+			free(table->columnsName[position]);
+		}
 		table->columnsName[position] = malloc( strlen(columnName) * sizeof(char) + 1);
 		if(NULL == table->columnsName[position])
 		{
@@ -88,31 +98,92 @@ void DeleteNamedColumnDoubleTable(NamedColumnDoubleTable *table)
 	DeleteDoubleMatrix(table->matrix);
 }
 
-NamedColumnDoubleTable *NewNamedColumnDoubleTableFromFile(char *fileName, char separator)
+NamedColumnDoubleTable *NewNamedColumnDoubleTableFromFile(char const *fileName, char separator)
 {
-	FILE *arq = fopen(fileName, "r");
-	if(NULL == arq)
+	FILE *file = fopen(fileName, "r");
+	if(NULL == file)
 	{
 		return NULL;
 	}
 	int numberOfLines=1;
 	char aux, aux2;
-	while(EOF != fscanf(arq, "%c", &aux))
+	while(EOF != fscanf(file, "%c", &aux))
 	{
 		if('\n'== aux)
 		{
 			numberOfLines++;
-			aux2= getc(arq);
+			aux2= getc(file);
 			if(EOF == aux2)
 			{//se sim, o arquivo termina com um \n, que não deve ser contado pro numero de linhas
 				numberOfLines--;
 			}
 			else
 			{//senão desfaz essa última leitura e continua
-				ungetc(aux2, arq);
+				ungetc(aux2, file);
 			}
 		}
 	}
 	//the number of lines -1 is the number of lines of the matrix(the first line have the name of columns)
-	return NULL;
+	rewind(file);
+	int numberOfColumns=1;
+	do
+	{
+		fscanf(file, "%c", &aux);
+		if(aux == separator)
+		{
+			numberOfColumns++;
+		}
+	}
+	while('\n' != aux);
+	rewind(file);
+	NamedColumnDoubleTable *returnValue= NewNamedColumnDoubleTable(numberOfLines-1, numberOfColumns);
+	if(NULL == returnValue)
+	{
+		return NULL;
+	}
+	//reading the columns names
+	char columnName[MAX_NAME_SIZE+1];
+	columnName[MAX_NAME_SIZE]= '\0';
+	int count, count2;
+	for(count =0; count < numberOfColumns; count++)
+	{
+		for(count2 =0; count2 < MAX_NAME_SIZE; count2++)
+		{
+			fscanf(file, "%c", &aux);
+			if(aux != separator)
+			{
+				columnName[count2]= aux;
+			}
+			else
+			{
+				columnName[count2]= '\0';
+				break;
+			}
+		}
+		while(aux != separator)
+		{
+			fscanf(file, "%c", &aux);
+		}
+		NamedColumnDoubleTable_SetColumnName(returnValue, count, columnName);
+	}
+	//reading the matrix
+	double *elements= returnValue->matrix->elements;
+	double temp;
+	for(count =0; count < numberOfLines-1; count++)
+	{
+		for(count2=0; count2 < numberOfColumns; count2++)
+		{
+			fscanf(file, "%lf", &temp);
+			*elements= temp;
+			elements++;
+			aux = getc(file);
+			if(aux != separator)
+			{
+				fprintf(stderr, "%s: %d\t\tWhat??"NEW_LINE, __FILE__, __LINE__);
+				ungetc(aux, file);
+			}
+		}
+		fscanf(file, "%*[\n]");
+	}
+	return returnValue;
 }

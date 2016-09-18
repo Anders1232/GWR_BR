@@ -1,6 +1,8 @@
 #include "GuiDriver.hpp"
-#include "GuiInterface.h"
-
+extern "C"
+{
+	#include "GuiInterface.h"
+}
 //C side functions implementations:
 
 int Gui_Init(int argc, char *argv[])
@@ -20,6 +22,7 @@ GuiDriver::GuiDriver(void)
 {
 	separator = '\t';
 	fileName= "";
+	table= NULL;
 }
 
 void GuiDriver::FileSelected(QString fileName)
@@ -34,7 +37,7 @@ void GuiDriver::SeparatorSelected(char separator)
 
 void GuiDriver::LoadFileButtonCliked(void)
 {
-
+	table= LoadFile(fileName.c_str(), separator);
 }
 
 

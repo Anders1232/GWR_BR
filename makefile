@@ -17,5 +17,6 @@ all:
 	cp GWR_BR ../GWR_BR/GWR_BR
 	cd ../; \
 	rm -R GWRrelease
-clear:
-	rm -d -f -R ../GWRrelease
+gtk:
+	make -f gtk.makefile
+
