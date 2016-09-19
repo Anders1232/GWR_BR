@@ -183,7 +183,11 @@ NamedColumnDoubleTable *NewNamedColumnDoubleTableFromFile(char const *fileName, 
 				ungetc(aux, file);
 			}
 		}
-		fscanf(file, "%*[\n]");
+		fscanf(file, "%[\n]");
 	}
+	//modificação temporária só para mostrar que leu o arquivo
+	NamedColumnDoubleTable_PrintColumnsNames(returnValue, stdout, "%s\t\t");
+	DoubleMatrixPrint(returnValue->matrix, stdout, "%d\t\t", NEW_LINE);
+	//fim da modificação temporária
 	return returnValue;
 }
