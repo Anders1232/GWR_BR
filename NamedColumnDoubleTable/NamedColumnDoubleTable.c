@@ -7,6 +7,8 @@
 	#define NEW_LINE "\n"
 #endif
 
+//#define DEBUG_NAMED_COLUMN
+
 NamedColumnDoubleTable *NewNamedColumnDoubleTableWithNoMatrix(int numberOfColumns)
 {
 	NamedColumnDoubleTable *ret= malloc(sizeof(NamedColumnDoubleTable));
@@ -150,7 +152,7 @@ NamedColumnDoubleTable *NewNamedColumnDoubleTableFromFile(char const *fileName, 
 		for(count2 =0; count2 < MAX_NAME_SIZE; count2++)
 		{
 			fscanf(file, "%c", &aux);
-			if(aux != separator)
+			if(aux != separator && '\n' != aux)
 			{
 				columnName[count2]= aux;
 			}
@@ -160,7 +162,7 @@ NamedColumnDoubleTable *NewNamedColumnDoubleTableFromFile(char const *fileName, 
 				break;
 			}
 		}
-		while(aux != separator)
+		while(aux != separator && '\n' != aux)
 		{
 			fscanf(file, "%c", &aux);
 		}
@@ -173,21 +175,32 @@ NamedColumnDoubleTable *NewNamedColumnDoubleTableFromFile(char const *fileName, 
 	{
 		for(count2=0; count2 < numberOfColumns; count2++)
 		{
-			fscanf(file, "%lf", &temp);
+			if(0 == fscanf(file, "%lf", &temp) )
+			{
+				fprintf(stderr, "File format invalid!\n");
+				exit(-1);
+			}
+#ifdef DEBUG_NAMED_COLUMN
+			printf("Number read: %lf\n", temp);
+#endif
 			*elements= temp;
+#ifdef DEBUG_NAMED_COLUMN
+			printf("Number read verification: %p contains %lf\n", elements, *(elements));
+#endif
 			elements++;
 			aux = getc(file);
-			if(aux != separator)
+			if(aux != separator && '\n' != aux && EOF != aux)
 			{
-				fprintf(stderr, "%s: %d\t\tWhat??"NEW_LINE, __FILE__, __LINE__);
+				fprintf(stderr, "%s: %d\t\tWhat?? Expected: %x, Found: %x"NEW_LINE, __FILE__, __LINE__, separator, aux);
 				ungetc(aux, file);
 			}
 		}
-		fscanf(file, "%[\n]");
+		fscanf(file, "%*[\n]");
 	}
 	//modificação temporária só para mostrar que leu o arquivo
 	NamedColumnDoubleTable_PrintColumnsNames(returnValue, stdout, "%s\t\t");
-	DoubleMatrixPrint(returnValue->matrix, stdout, "%d\t\t", NEW_LINE);
+	printf("\n");
+	DoubleMatrixPrint(returnValue->matrix, stdout, "%lf\t\t", NEW_LINE);
 	//fim da modificação temporária
 	return returnValue;
 }

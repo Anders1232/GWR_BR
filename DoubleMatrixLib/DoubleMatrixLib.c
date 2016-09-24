@@ -2,6 +2,8 @@
 #include <string.h>
 #include <stdint.h>
 
+//#define DEBUG_DOUBLE_MATRIX
+
 DoubleMatrix* NewDoubleMatrix(int linesNumber, int columnsNumber)
 {
 	DoubleMatrix* ret= malloc(sizeof(DoubleMatrix));
@@ -207,6 +209,9 @@ void DoubleMatrixPrint(DoubleMatrix* matrix, FILE *output, char *doubleFormat, c
 		for(cont2=0; cont2 < columns; cont2++)
 		{
 			fprintf(output, doubleFormat, aux[counter++]);
+#ifdef DEBUG_DOUBLE_MATRIX
+			printf("verification: %p contains %lf\n", &(aux[counter-1]), aux[counter-1]);
+#endif
 		}
 		fprintf(output, betweenLinesFormat);
 	}
