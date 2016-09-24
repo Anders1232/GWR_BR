@@ -57,100 +57,90 @@
           <property name="frameShadow">
            <enum>QFrame::Raised</enum>
           </property>
-          <widget class="QLineEdit" name="fileNameLineEdit">
-           <property name="geometry">
-            <rect>
-             <x>40</x>
-             <y>50</y>
-             <width>471</width>
-             <height>23</height>
-            </rect>
-           </property>
-           <property name="readOnly">
-            <bool>true</bool>
-           </property>
-          </widget>
-          <widget class="QPushButton" name="pushButton">
-           <property name="geometry">
-            <rect>
-             <x>520</x>
-             <y>50</y>
-             <width>82</width>
-             <height>23</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>Select File</string>
-           </property>
-          </widget>
-          <widget class="QWidget" name="horizontalLayoutWidget">
-           <property name="geometry">
-            <rect>
-             <x>40</x>
-             <y>80</y>
-             <width>471</width>
-             <height>31</height>
-            </rect>
-           </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
-            <item>
-             <widget class="QLabel" name="label">
-              <property name="text">
-               <string>Select Delimiter:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="radioButton">
-              <property name="text">
-               <string>Tab</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="radioButton_2">
-              <property name="text">
-               <string>Semicolon</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="radioButton_3">
-              <property name="text">
-               <string>Other:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLineEdit" name="lineEdit"/>
-            </item>
-           </layout>
-          </widget>
-          <widget class="QPushButton" name="pushButton_2">
-           <property name="geometry">
-            <rect>
-             <x>520</x>
-             <y>80</y>
-             <width>82</width>
-             <height>23</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>Load</string>
-           </property>
-          </widget>
-          <widget class="QLabel" name="label_2">
+          <widget class="QWidget" name="verticalLayoutWidget">
            <property name="geometry">
             <rect>
              <x>10</x>
-             <y>50</y>
-             <width>31</width>
-             <height>16</height>
+             <y>30</y>
+             <width>601</width>
+             <height>58</height>
             </rect>
            </property>
-           <property name="text">
-            <string>File:</string>
-           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_4">
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout">
+              <item>
+               <widget class="QLabel" name="label_2">
+                <property name="text">
+                 <string>File:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="fileNameLineEdit">
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="SelectFileButton">
+                <property name="text">
+                 <string>Select File</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_2">
+              <item>
+               <widget class="QLabel" name="label">
+                <property name="text">
+                 <string>Select Delimiter:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="TabRadioButton">
+                <property name="text">
+                 <string>Tab</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="SemicolonRadioButton">
+                <property name="text">
+                 <string>Semicolon</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="OtherRadioButton">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="text">
+                 <string>Other:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="DelimiterLineEdit"/>
+              </item>
+              <item>
+               <widget class="QPushButton" name="LoadButton">
+                <property name="text">
+                 <string>Load</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
           </widget>
          </widget>
         </item>

@@ -19,9 +19,15 @@ class MainWindow : public QMainWindow
 	private slots:
 		void on_actionManual_triggered();
 
-		void on_pushButton_clicked();
+		void on_SelectFileButton_clicked();
 
-		void on_pushButton_2_clicked();
+		void on_LoadButton_clicked();
+
+		void on_TabRadioButton_clicked();
+
+		void on_SemicolonRadioButton_clicked();
+
+		void on_DelimiterLineEdit_textEdited(const QString &arg1);
 
 	private:
 		Ui::MainWindow *ui;
