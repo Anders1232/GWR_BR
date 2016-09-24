@@ -56,6 +56,6 @@ void MainWindow::on_DelimiterLineEdit_textEdited(const QString &arg1)
 	Q_ASSERT(lineEdit);
 	lineEdit->setText(lastCharacter);
 	QRadioButton *otherRadioButton = this->findChild<QRadioButton*>("OtherRadioButton");
-	otherRadioButton->setCheckable(true);
 	otherRadioButton->setChecked(true);
+	otherRadioButton->setEnabled(true);
 }
