@@ -14,7 +14,7 @@ class GuiDriver
 {
 	public:
 		void FileSelected(QString fileName);
-		void SeparatorSelected(char separator);
+		void DelimiterSelected(char separator);
 		static GuiDriver& GetReference(void);
 		GuiDriver(void);
 		void LoadFileButtonCliked(void);
@@ -22,6 +22,7 @@ class GuiDriver
 		std::string fileName;
 		char separator;
 		NamedColumnDoubleTable *table;
+		void UpdatePreview();
 };
 
 #endif // GUI_DRIVER_HPP

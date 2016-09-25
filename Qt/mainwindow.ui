@@ -62,13 +62,13 @@
             <rect>
              <x>10</x>
              <y>30</y>
-             <width>601</width>
+             <width>602</width>
              <height>58</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_4">
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout">
+             <layout class="QHBoxLayout" name="FileSelectHorizontalLayout">
               <item>
                <widget class="QLabel" name="label_2">
                 <property name="text">
@@ -93,7 +93,7 @@
              </layout>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <layout class="QHBoxLayout" name="FileDelimiterHorizontalLayout">
               <item>
                <widget class="QLabel" name="label">
                 <property name="text">
@@ -145,7 +145,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QFrame" name="SessionTile">
+         <widget class="QFrame" name="FilePreview">
           <property name="autoFillBackground">
            <bool>false</bool>
           </property>
@@ -158,15 +158,32 @@
           <property name="frameShadow">
            <enum>QFrame::Raised</enum>
           </property>
-          <widget class="QTableView" name="tableView">
+          <widget class="QTableWidget" name="tableWidget">
            <property name="geometry">
             <rect>
-             <x>5</x>
-             <y>31</y>
-             <width>601</width>
-             <height>81</height>
+             <x>10</x>
+             <y>0</y>
+             <width>571</width>
+             <height>111</height>
             </rect>
            </property>
+           <property name="rowCount">
+            <number>3</number>
+           </property>
+           <property name="columnCount">
+            <number>5</number>
+           </property>
+           <attribute name="verticalHeaderVisible">
+            <bool>false</bool>
+           </attribute>
+           <row/>
+           <row/>
+           <row/>
+           <column/>
+           <column/>
+           <column/>
+           <column/>
+           <column/>
           </widget>
          </widget>
         </item>
@@ -203,7 +220,11 @@
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
-         <widget class="QTextEdit" name="textEdit"/>
+         <widget class="QTextEdit" name="textEdit">
+          <property name="textInteractionFlags">
+           <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+          </property>
+         </widget>
         </item>
         <item>
          <widget class="QPushButton" name="pushButton_3">

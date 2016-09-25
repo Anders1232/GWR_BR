@@ -1,4 +1,6 @@
-#include "GuiDriver.hpp"
+#include"GuiDriver.hpp"
+#include"QLineEdit"
+#include"QRadioButton"
 extern "C"
 {
 	#include "GuiInterface.h"
@@ -30,7 +32,7 @@ void GuiDriver::FileSelected(QString fileName)
 	this->fileName= std::string(fileName.toLocal8Bit().data() );
 }
 
-void GuiDriver::SeparatorSelected(char separator)
+void GuiDriver::DelimiterSelected(char separator)
 {
 	this->separator= separator;
 }

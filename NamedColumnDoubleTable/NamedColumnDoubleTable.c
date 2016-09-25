@@ -198,9 +198,14 @@ NamedColumnDoubleTable *NewNamedColumnDoubleTableFromFile(char const *fileName, 
 		fscanf(file, "%*[\n]");
 	}
 	//modificação temporária só para mostrar que leu o arquivo
-	NamedColumnDoubleTable_PrintColumnsNames(returnValue, stdout, "%s\t\t");
-	printf("\n");
-	DoubleMatrixPrint(returnValue->matrix, stdout, "%lf\t\t", NEW_LINE);
+//	NamedColumnDoubleTable_PrintAll(returnValue, stdout, "%s\t\t", "%lf\t\t", NEW_LINE);
 	//fim da modificação temporária
 	return returnValue;
+}
+
+void NamedColumnDoubleTable_PrintAll(NamedColumnDoubleTable *table, FILE *output, char *columnsNameFormat, char *doubleFormat, char *betweenLinesFormat)
+{
+	NamedColumnDoubleTable_PrintColumnsNames(table, output, columnsNameFormat);
+	fprintf(output, betweenLinesFormat);
+	DoubleMatrixPrint(table->matrix, output, doubleFormat, betweenLinesFormat);
 }

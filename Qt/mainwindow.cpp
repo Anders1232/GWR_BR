@@ -37,12 +37,12 @@ void MainWindow::on_LoadButton_clicked()
 
 void MainWindow::on_TabRadioButton_clicked()
 {
-	driver.SeparatorSelected('\t');
+	driver.DelimiterSelected('\t');
 }
 
 void MainWindow::on_SemicolonRadioButton_clicked()
 {
-	driver.SeparatorSelected(';');
+	driver.DelimiterSelected(';');
 }
 
 void MainWindow::on_DelimiterLineEdit_textEdited(const QString &arg1)
@@ -51,11 +51,12 @@ void MainWindow::on_DelimiterLineEdit_textEdited(const QString &arg1)
 	char lastCharacter[2];
 	lastCharacter[0]= str[str.size()-1];
 	lastCharacter[1]= '\0';
-	driver.SeparatorSelected(lastCharacter[0]);
+	driver.DelimiterSelected(lastCharacter[0]);
 	QLineEdit *lineEdit = this->findChild<QLineEdit*>("DelimiterLineEdit");
 	Q_ASSERT(lineEdit);
 	lineEdit->setText(lastCharacter);
 	QRadioButton *otherRadioButton = this->findChild<QRadioButton*>("OtherRadioButton");
+	Q_ASSERT(otherRadioButton);
 	otherRadioButton->setChecked(true);
 	otherRadioButton->setEnabled(true);
 }
