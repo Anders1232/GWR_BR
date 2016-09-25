@@ -1,12 +1,6 @@
 #include"NamedColumnDoubleTable.h"
 #include<string.h>
 
-#ifdef _WIN32
-	#define NEW_LINE "\r\n"
-#else
-	#define NEW_LINE "\n"
-#endif
-
 //#define DEBUG_NAMED_COLUMN
 
 NamedColumnDoubleTable *NewNamedColumnDoubleTableWithNoMatrix(int numberOfColumns)
@@ -54,7 +48,7 @@ NamedColumnDoubleTable *NewNamedColumnDoubleTable(int numberOfLines, int numberO
 	return ret;
 }
 
-void NamedColumnDoubleTable_SetColumnName(NamedColumnDoubleTable *table, int position, char* columnName)
+void NamedColumnDoubleTable_SetColumnName(NamedColumnDoubleTable *table, int position, const char *columnName)
 {
 	if(table->matrix->columns > position)
 	{
@@ -77,7 +71,7 @@ void NamedColumnDoubleTable_SetColumnName(NamedColumnDoubleTable *table, int pos
 	}
 }
 
-void NamedColumnDoubleTable_PrintColumnsNames(NamedColumnDoubleTable *table, FILE *output, char *format)
+void NamedColumnDoubleTable_PrintColumnsNames(NamedColumnDoubleTable *table, FILE *output, char const *format)
 {
 	int cont, numberOfColumns= table->matrix->columns;
 	for(cont=0; cont < numberOfColumns; cont++)
@@ -203,7 +197,7 @@ NamedColumnDoubleTable *NewNamedColumnDoubleTableFromFile(char const *fileName, 
 	return returnValue;
 }
 
-void NamedColumnDoubleTable_PrintAll(NamedColumnDoubleTable *table, FILE *output, char *columnsNameFormat, char *doubleFormat, char *betweenLinesFormat)
+void NamedColumnDoubleTable_PrintAll(NamedColumnDoubleTable *table, FILE *output, char const *columnsNameFormat, char const *doubleFormat, char const *betweenLinesFormat)
 {
 	NamedColumnDoubleTable_PrintColumnsNames(table, output, columnsNameFormat);
 	fprintf(output, betweenLinesFormat);

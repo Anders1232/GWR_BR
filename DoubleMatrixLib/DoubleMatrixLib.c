@@ -198,7 +198,7 @@ printf("Inserting element [%d][%d] in position %d\n", cont1, cont2, counter);
 	return ret;
 }
 
-void DoubleMatrixPrint(DoubleMatrix* matrix, FILE *output, char *doubleFormat, char *betweenLinesFormat)
+void DoubleMatrixPrint(DoubleMatrix* matrix, FILE *output, const char *doubleFormat, const char *betweenLinesFormat)
 {
 	int cont1, cont2, counter=0;
 	int lines= matrix->lines;

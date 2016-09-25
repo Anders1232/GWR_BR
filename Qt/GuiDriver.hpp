@@ -17,7 +17,7 @@ class GuiDriver
 		void DelimiterSelected(char separator);
 		static GuiDriver& GetReference(void);
 		GuiDriver(void);
-		void LoadFileButtonCliked(void);
+		NamedColumnDoubleTable* LoadFileButtonCliked(void);
 	private:
 		std::string fileName;
 		char separator;

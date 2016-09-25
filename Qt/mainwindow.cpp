@@ -32,7 +32,20 @@ void MainWindow::on_SelectFileButton_clicked()
 
 void MainWindow::on_LoadButton_clicked()
 {
-	driver.LoadFileButtonCliked();
+	NamedColumnDoubleTable *loadedTable= driver.LoadFileButtonCliked();
+	FILE *tempFile= tmpfile ();
+	Q_ASSERT(tempFile);
+	NamedColumnDoubleTable_PrintAll(loadedTable, tempFile, "%s\t\t", "%lf\t\t", NEW_LINE);
+	rewind(tempFile);
+	QString str= "";
+	char aux;
+	while( EOF != (aux = getc(tempFile) ) )
+	{
+		str+= aux;
+	}
+	QTextEdit *output= this->findChild<QTextEdit*>("OutputTextEdit");
+	Q_ASSERT(output);
+	output->setText(str);
 }
 
 void MainWindow::on_TabRadioButton_clicked()

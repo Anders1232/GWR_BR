@@ -59,6 +59,6 @@ DoubleMatrix* DoubleMatrixElementDivision(DoubleMatrix*, DoubleMatrix*, bool res
 int DoubleMatrixColumnsNumber(DoubleMatrix*);
 int DoubleMatrixLinesNumber(DoubleMatrix*);
 bool DoubleMatrixHaveSameDimensionsAndSameElementSize(DoubleMatrix*, DoubleMatrix*);	//implemented
-void DoubleMatrixPrint(DoubleMatrix* matrix, FILE *output, char *doubleFormat, char *betweenLinesFormat);//implemented
+void DoubleMatrixPrint(DoubleMatrix* matrix, FILE *output, char const *doubleFormat, char const *betweenLinesFormat);//implemented
 
 #endif

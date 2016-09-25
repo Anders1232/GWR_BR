@@ -37,9 +37,10 @@ void GuiDriver::DelimiterSelected(char separator)
 	this->separator= separator;
 }
 
-void GuiDriver::LoadFileButtonCliked(void)
+NamedColumnDoubleTable* GuiDriver::LoadFileButtonCliked(void)
 {
 	table= LoadFile(fileName.c_str(), separator);
+	return table;
 }
 
 
