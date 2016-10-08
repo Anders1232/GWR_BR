@@ -20,7 +20,7 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QVBoxLayout" name="verticalLayout_2">
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="sizePolicy">
@@ -275,9 +275,9 @@
             <widget class="QWidget" name="widget_2" native="true">
              <layout class="QVBoxLayout" name="verticalLayout_8" stretch="0,1,0,1">
               <item>
-               <widget class="QLabel" name="label_5">
+               <widget class="QLabel" name="DependentVariableName">
                 <property name="text">
-                 <string>TextLabel</string>
+                 <string>Dependent variable</string>
                 </property>
                </widget>
               </item>
@@ -286,8 +286,8 @@
                 <widget class="QToolButton" name="toolButton">
                  <property name="geometry">
                   <rect>
-                   <x>10</x>
-                   <y>10</y>
+                   <x>0</x>
+                   <y>0</y>
                    <width>28</width>
                    <height>21</height>
                   </rect>
@@ -299,8 +299,8 @@
                 <widget class="QToolButton" name="toolButton_2">
                  <property name="geometry">
                   <rect>
-                   <x>40</x>
-                   <y>10</y>
+                   <x>30</x>
+                   <y>0</y>
                    <width>28</width>
                    <height>21</height>
                   </rect>
@@ -312,8 +312,8 @@
                 <widget class="QListWidget" name="listWidget_2">
                  <property name="geometry">
                   <rect>
-                   <x>70</x>
-                   <y>10</y>
+                   <x>60</x>
+                   <y>0</y>
                    <width>101</width>
                    <height>21</height>
                   </rect>
@@ -322,9 +322,9 @@
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="label_4">
+               <widget class="QLabel" name="OffsetVariableName">
                 <property name="text">
-                 <string>TextLabel</string>
+                 <string>Offset variable</string>
                 </property>
                </widget>
               </item>
@@ -334,7 +334,7 @@
                  <property name="geometry">
                   <rect>
                    <x>0</x>
-                   <y>10</y>
+                   <y>0</y>
                    <width>28</width>
                    <height>21</height>
                   </rect>
@@ -347,7 +347,7 @@
                  <property name="geometry">
                   <rect>
                    <x>30</x>
-                   <y>10</y>
+                   <y>0</y>
                    <width>28</width>
                    <height>21</height>
                   </rect>
@@ -360,7 +360,7 @@
                  <property name="geometry">
                   <rect>
                    <x>60</x>
-                   <y>10</y>
+                   <y>0</y>
                    <width>91</width>
                    <height>21</height>
                   </rect>
