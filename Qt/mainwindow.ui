@@ -286,7 +286,7 @@
                   </rect>
                  </property>
                  <property name="text">
-                  <string>...</string>
+                  <string>&lt;</string>
                  </property>
                 </widget>
                 <widget class="QToolButton" name="toolButton_2">
@@ -299,7 +299,7 @@
                   </rect>
                  </property>
                  <property name="text">
-                  <string>...</string>
+                  <string>&gt;</string>
                  </property>
                 </widget>
                 <widget class="QListWidget" name="listWidget_2">
@@ -315,7 +315,44 @@
                </widget>
               </item>
               <item>
-               <widget class="QWidget" name="widget_4" native="true"/>
+               <widget class="QWidget" name="widget_4" native="true">
+                <widget class="QToolButton" name="toolButton_3">
+                 <property name="geometry">
+                  <rect>
+                   <x>0</x>
+                   <y>10</y>
+                   <width>28</width>
+                   <height>21</height>
+                  </rect>
+                 </property>
+                 <property name="text">
+                  <string>...</string>
+                 </property>
+                </widget>
+                <widget class="QToolButton" name="toolButton_4">
+                 <property name="geometry">
+                  <rect>
+                   <x>30</x>
+                   <y>10</y>
+                   <width>28</width>
+                   <height>21</height>
+                  </rect>
+                 </property>
+                 <property name="text">
+                  <string>...</string>
+                 </property>
+                </widget>
+                <widget class="QListWidget" name="listWidget_3">
+                 <property name="geometry">
+                  <rect>
+                   <x>60</x>
+                   <y>10</y>
+                   <width>91</width>
+                   <height>21</height>
+                  </rect>
+                 </property>
+                </widget>
+               </widget>
               </item>
              </layout>
             </widget>
