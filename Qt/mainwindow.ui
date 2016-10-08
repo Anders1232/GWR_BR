@@ -326,7 +326,7 @@
                   </rect>
                  </property>
                  <property name="text">
-                  <string>...</string>
+                  <string>&lt;</string>
                  </property>
                 </widget>
                 <widget class="QToolButton" name="toolButton_4">
@@ -339,7 +339,7 @@
                   </rect>
                  </property>
                  <property name="text">
-                  <string>...</string>
+                  <string>&gt;</string>
                  </property>
                 </widget>
                 <widget class="QListWidget" name="listWidget_3">
