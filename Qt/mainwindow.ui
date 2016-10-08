@@ -272,7 +272,16 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_6" stretch="1,2">
            <item>
-            <widget class="QWidget" name="widget_2" native="true"/>
+            <widget class="QWidget" name="widget_2" native="true">
+             <layout class="QVBoxLayout" name="verticalLayout_8">
+              <item>
+               <widget class="QWidget" name="widget_3" native="true"/>
+              </item>
+              <item>
+               <widget class="QWidget" name="widget_4" native="true"/>
+              </item>
+             </layout>
+            </widget>
            </item>
            <item>
             <widget class="QFrame" name="frame_5">
