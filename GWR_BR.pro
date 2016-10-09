@@ -16,7 +16,7 @@ TARGET = GWR_BR
 TEMPLATE = app
 CONFIG+= static
 
-QMAKE_CXXFLAGS += -finline-functions -Wall -pedantic
+QMAKE_CXXFLAGS += -finline-functions -Wall -pedantic -std=c++11
 
 SOURCES +=\
         Qt/mainwindow.cpp \

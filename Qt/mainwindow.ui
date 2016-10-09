@@ -39,7 +39,7 @@
        <locale language="English" country="UnitedKingdom"/>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="Step1Data">
        <property name="toolTip">
@@ -63,7 +63,7 @@
              <x>10</x>
              <y>30</y>
              <width>602</width>
-             <height>58</height>
+             <height>66</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -257,7 +257,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QListWidget" name="listWidget"/>
+            <widget class="QListWidget" name="listaPrincipalList"/>
            </item>
           </layout>
          </widget>
@@ -275,7 +275,7 @@
             <widget class="QWidget" name="widget_2" native="true">
              <layout class="QVBoxLayout" name="verticalLayout_8" stretch="1,1,1,1">
               <item>
-               <widget class="QLabel" name="DependentVariableName">
+               <widget class="QLabel" name="DependentVariableNameLabel">
                 <property name="text">
                  <string>Dependent variable</string>
                 </property>
@@ -322,7 +322,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="OffsetVariableName">
+               <widget class="QLabel" name="OffsetVariableNameLabel">
                 <property name="text">
                  <string>Offset variable</string>
                 </property>
@@ -372,7 +372,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="label_4">
+            <widget class="QLabel" name="independentVariablesLabel">
              <property name="text">
               <string>Independent variables</string>
              </property>
@@ -434,7 +434,7 @@
      <x>0</x>
      <y>0</y>
      <width>666</width>
-     <height>19</height>
+     <height>27</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

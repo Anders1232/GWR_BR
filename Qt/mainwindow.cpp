@@ -43,9 +43,17 @@ void MainWindow::on_LoadButton_clicked()
 	{
 		str+= aux;
 	}
+	fclose(tempFile);
 	QTextEdit *output= this->findChild<QTextEdit*>("OutputTextEdit");
 	Q_ASSERT(output);
 	output->setText(str);
+	int numberOfColumns= loadedTable->matrix->columns;
+	QListWidget *list= this->findChild<QListWidget*>("listaPrincipalList");
+	Q_ASSERT(list);
+	for(int cont=0; cont < numberOfColumns;cont++)
+	{
+		list->addItem(QString(loadedTable->columnsName[cont] ) );
+	}
 }
 
 void MainWindow::on_TabRadioButton_clicked()
