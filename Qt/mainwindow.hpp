@@ -29,6 +29,10 @@ class MainWindow : public QMainWindow
 
 		void on_DelimiterLineEdit_textEdited(const QString &arg1);
 
+		void on_dependentVariableInButton_clicked();
+
+		void on_dependentVariableOutButton_clicked();
+
 	private:
 		Ui::MainWindow *ui;
 		GuiDriver driver;

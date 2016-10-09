@@ -48,7 +48,7 @@ void MainWindow::on_LoadButton_clicked()
 	Q_ASSERT(output);
 	output->setText(str);
 	int numberOfColumns= loadedTable->matrix->columns;
-	QListWidget *list= this->findChild<QListWidget*>("listaPrincipalList");
+	QListWidget *list= this->findChild<QListWidget*>("variablesList");
 	Q_ASSERT(list);
 	for(int cont=0; cont < numberOfColumns;cont++)
 	{
@@ -80,4 +80,21 @@ void MainWindow::on_DelimiterLineEdit_textEdited(const QString &arg1)
 	Q_ASSERT(otherRadioButton);
 	otherRadioButton->setChecked(true);
 	otherRadioButton->setEnabled(true);
+}
+
+void MainWindow::on_dependentVariableInButton_clicked()
+{
+	QListWidget *variablesList = this->findChild<QListWidget*>("variablesList");
+	Q_ASSERT(variablesList);
+//	QString selectedVariable= variablesList->currentItem()->text();
+	QListWidget *dependentVariable = this->findChild<QListWidget*>("dependentVariable");
+	Q_ASSERT(dependentVariable);
+	dependentVariable->addItem(variablesList->takeItem(variablesList->currentRow()));
+//	if(dependentVariable->items()
+	return;
+}
+
+void MainWindow::on_dependentVariableOutButton_clicked()
+{
+	return;
 }

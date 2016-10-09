@@ -1,0 +1,1 @@
+Aceitar uma string como separador

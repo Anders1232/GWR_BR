@@ -257,7 +257,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QListWidget" name="listaPrincipalList"/>
+            <widget class="QListWidget" name="variablesList"/>
            </item>
           </layout>
          </widget>
@@ -283,7 +283,7 @@
               </item>
               <item>
                <widget class="QWidget" name="widget_3" native="true">
-                <widget class="QToolButton" name="toolButton">
+                <widget class="QToolButton" name="dependentVariableOutButton">
                  <property name="geometry">
                   <rect>
                    <x>0</x>
@@ -296,7 +296,7 @@
                   <string>&lt;</string>
                  </property>
                 </widget>
-                <widget class="QToolButton" name="toolButton_2">
+                <widget class="QToolButton" name="dependentVariableInButton">
                  <property name="geometry">
                   <rect>
                    <x>30</x>
@@ -309,7 +309,7 @@
                   <string>&gt;</string>
                  </property>
                 </widget>
-                <widget class="QListWidget" name="listWidget_2">
+                <widget class="QListWidget" name="dependentVariable">
                  <property name="geometry">
                   <rect>
                    <x>60</x>
@@ -330,7 +330,7 @@
               </item>
               <item>
                <widget class="QWidget" name="widget_4" native="true">
-                <widget class="QToolButton" name="toolButton_3">
+                <widget class="QToolButton" name="offsetVariableOutButton">
                  <property name="geometry">
                   <rect>
                    <x>0</x>
@@ -343,7 +343,7 @@
                   <string>&lt;</string>
                  </property>
                 </widget>
-                <widget class="QToolButton" name="toolButton_4">
+                <widget class="QToolButton" name="offsetVariableInButton">
                  <property name="geometry">
                   <rect>
                    <x>30</x>
@@ -356,7 +356,7 @@
                   <string>&gt;</string>
                  </property>
                 </widget>
-                <widget class="QListWidget" name="listWidget_3">
+                <widget class="QListWidget" name="offsetVariable">
                  <property name="geometry">
                   <rect>
                    <x>60</x>
