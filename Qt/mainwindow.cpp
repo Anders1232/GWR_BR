@@ -86,15 +86,18 @@ void MainWindow::on_dependentVariableInButton_clicked()
 {
 	QListWidget *variablesList = this->findChild<QListWidget*>("variablesList");
 	Q_ASSERT(variablesList);
-//	QString selectedVariable= variablesList->currentItem()->text();
 	QListWidget *dependentVariable = this->findChild<QListWidget*>("dependentVariable");
 	Q_ASSERT(dependentVariable);
+	//verificar casos especiais (por exemplo se já tem algo na dependentVariable)
 	dependentVariable->addItem(variablesList->takeItem(variablesList->currentRow()));
-//	if(dependentVariable->items()
-	return;
 }
 
 void MainWindow::on_dependentVariableOutButton_clicked()
 {
-	return;
+	QListWidget *variablesList = this->findChild<QListWidget*>("variablesList");
+	Q_ASSERT(variablesList);
+	QListWidget *dependentVariable = this->findChild<QListWidget*>("dependentVariable");
+	Q_ASSERT(dependentVariable);
+	//verificar casos especiais (por exemplo se já tem algo na variablesList)
+	variablesList->addItem(dependentVariable->takeItem(dependentVariable->currentRow()));
 }
