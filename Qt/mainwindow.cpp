@@ -7,6 +7,10 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
+	QTableWidget *table= this->findChild<QTableWidget*>("tableWidget");
+	Q_ASSERT(table);
+	table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+	table->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 }
 
 MainWindow::~MainWindow()
@@ -23,7 +27,7 @@ void MainWindow::on_SelectFileButton_clicked()
 {
 	QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"),
 													"/home",
-													tr("data (*.csv *.gwr *.dota);; Any File(*)"));
+													tr("data (*.csv *.gwr);; Any File(*)"));
 	QLineEdit *lineEdit = this->findChild<QLineEdit*>("fileNameLineEdit");
 	Q_ASSERT(lineEdit);
 	lineEdit->setText(fileName);
