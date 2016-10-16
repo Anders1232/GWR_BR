@@ -59,6 +59,9 @@ void MainWindow::on_LoadButton_clicked()
 	{
 		list->addItem(QString(loadedTable->columnsName[cont] ) );
 	}
+	QTabWidget *tabWidget = this->findChild<QTabWidget *>("tabWidget");
+	Q_ASSERT(tabWidget);
+	tabWidget->setCurrentIndex(1);
 }
 
 void MainWindow::on_TabRadioButton_clicked()
