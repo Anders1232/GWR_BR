@@ -45,7 +45,7 @@
        <enum>QTabWidget::Triangular</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="Step1Data">
        <property name="toolTip">
@@ -233,6 +233,203 @@
              <property name="frameShadow">
               <enum>QFrame::Raised</enum>
              </property>
+             <layout class="QVBoxLayout" name="verticalLayout_9">
+              <item>
+               <widget class="QLabel" name="label_4">
+                <property name="text">
+                 <string>ID key(optional)</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="widget_5" native="true">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>20</height>
+                 </size>
+                </property>
+                <widget class="QToolButton" name="toolButton_2">
+                 <property name="geometry">
+                  <rect>
+                   <x>130</x>
+                   <y>0</y>
+                   <width>28</width>
+                   <height>21</height>
+                  </rect>
+                 </property>
+                 <property name="text">
+                  <string>&gt;</string>
+                 </property>
+                </widget>
+                <widget class="QToolButton" name="toolButton_4">
+                 <property name="geometry">
+                  <rect>
+                   <x>100</x>
+                   <y>0</y>
+                   <width>28</width>
+                   <height>21</height>
+                  </rect>
+                 </property>
+                 <property name="text">
+                  <string>&lt;</string>
+                 </property>
+                </widget>
+                <widget class="QListWidget" name="listWidget">
+                 <property name="geometry">
+                  <rect>
+                   <x>0</x>
+                   <y>0</y>
+                   <width>91</width>
+                   <height>21</height>
+                  </rect>
+                 </property>
+                </widget>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_5">
+                <property name="text">
+                 <string>Longitude(X coord)</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="widget_6" native="true">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>20</height>
+                 </size>
+                </property>
+                <widget class="QToolButton" name="toolButton_3">
+                 <property name="geometry">
+                  <rect>
+                   <x>130</x>
+                   <y>0</y>
+                   <width>28</width>
+                   <height>21</height>
+                  </rect>
+                 </property>
+                 <property name="text">
+                  <string>&gt;</string>
+                 </property>
+                </widget>
+                <widget class="QToolButton" name="toolButton_5">
+                 <property name="geometry">
+                  <rect>
+                   <x>100</x>
+                   <y>0</y>
+                   <width>28</width>
+                   <height>21</height>
+                  </rect>
+                 </property>
+                 <property name="text">
+                  <string>&lt;</string>
+                 </property>
+                </widget>
+                <widget class="QListWidget" name="listWidget_2">
+                 <property name="geometry">
+                  <rect>
+                   <x>0</x>
+                   <y>0</y>
+                   <width>91</width>
+                   <height>21</height>
+                  </rect>
+                 </property>
+                </widget>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_6">
+                <property name="text">
+                 <string>Latitude(Y coord)</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="widget_7" native="true">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>20</height>
+                 </size>
+                </property>
+                <widget class="QToolButton" name="toolButton">
+                 <property name="geometry">
+                  <rect>
+                   <x>130</x>
+                   <y>0</y>
+                   <width>28</width>
+                   <height>21</height>
+                  </rect>
+                 </property>
+                 <property name="text">
+                  <string>&gt;</string>
+                 </property>
+                </widget>
+                <widget class="QToolButton" name="toolButton_6">
+                 <property name="geometry">
+                  <rect>
+                   <x>100</x>
+                   <y>0</y>
+                   <width>28</width>
+                   <height>21</height>
+                  </rect>
+                 </property>
+                 <property name="text">
+                  <string>&lt;</string>
+                 </property>
+                </widget>
+                <widget class="QListWidget" name="listWidget_3">
+                 <property name="geometry">
+                  <rect>
+                   <x>0</x>
+                   <y>0</y>
+                   <width>81</width>
+                   <height>21</height>
+                  </rect>
+                 </property>
+                </widget>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="widget_8" native="true">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>20</height>
+                 </size>
+                </property>
+                <widget class="QRadioButton" name="radioButton">
+                 <property name="geometry">
+                  <rect>
+                   <x>10</x>
+                   <y>0</y>
+                   <width>81</width>
+                   <height>20</height>
+                  </rect>
+                 </property>
+                 <property name="text">
+                  <string>Projected</string>
+                 </property>
+                </widget>
+                <widget class="QRadioButton" name="radioButton_2">
+                 <property name="geometry">
+                  <rect>
+                   <x>120</x>
+                   <y>0</y>
+                   <width>102</width>
+                   <height>20</height>
+                  </rect>
+                 </property>
+                 <property name="text">
+                  <string>RadioButton</string>
+                 </property>
+                </widget>
+               </widget>
+              </item>
+             </layout>
             </widget>
            </item>
            <item>
@@ -299,6 +496,12 @@
               </item>
               <item>
                <widget class="QWidget" name="widget_3" native="true">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>19</height>
+                 </size>
+                </property>
                 <widget class="QToolButton" name="dependentVariableOutButton">
                  <property name="geometry">
                   <rect>
@@ -349,6 +552,12 @@
               </item>
               <item>
                <widget class="QWidget" name="widget_4" native="true">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>19</height>
+                 </size>
+                </property>
                 <widget class="QToolButton" name="offsetVariableOutButton">
                  <property name="geometry">
                   <rect>
