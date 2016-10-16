@@ -45,7 +45,7 @@
        <enum>QTabWidget::Triangular</enum>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="Step1Data">
        <property name="toolTip">
@@ -237,7 +237,7 @@
               <item>
                <widget class="QLabel" name="label_4">
                 <property name="text">
-                 <string>ID key(optional)</string>
+                 <string>identifier(optional)</string>
                 </property>
                </widget>
               </item>
@@ -401,32 +401,22 @@
                   <height>20</height>
                  </size>
                 </property>
-                <widget class="QRadioButton" name="radioButton">
-                 <property name="geometry">
-                  <rect>
-                   <x>10</x>
-                   <y>0</y>
-                   <width>81</width>
-                   <height>20</height>
-                  </rect>
-                 </property>
-                 <property name="text">
-                  <string>Projected</string>
-                 </property>
-                </widget>
-                <widget class="QRadioButton" name="radioButton_2">
-                 <property name="geometry">
-                  <rect>
-                   <x>120</x>
-                   <y>0</y>
-                   <width>102</width>
-                   <height>20</height>
-                  </rect>
-                 </property>
-                 <property name="text">
-                  <string>RadioButton</string>
-                 </property>
-                </widget>
+                <layout class="QHBoxLayout" name="horizontalLayout_2">
+                 <item>
+                  <widget class="QRadioButton" name="radioButton">
+                   <property name="text">
+                    <string>Projected</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QRadioButton" name="radioButton_2">
+                   <property name="text">
+                    <string>Spherical</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
                </widget>
               </item>
              </layout>
@@ -440,6 +430,32 @@
              <property name="frameShadow">
               <enum>QFrame::Raised</enum>
              </property>
+             <widget class="QLabel" name="label_7">
+              <property name="geometry">
+               <rect>
+                <x>10</x>
+                <y>0</y>
+                <width>71</width>
+                <height>21</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Model Type</string>
+              </property>
+             </widget>
+             <widget class="QRadioButton" name="radioButton_3">
+              <property name="geometry">
+               <rect>
+                <x>10</x>
+                <y>20</y>
+                <width>102</width>
+                <height>20</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Lat+Lon</string>
+              </property>
+             </widget>
             </widget>
            </item>
            <item>
@@ -457,7 +473,7 @@
         </item>
         <item>
          <widget class="QWidget" name="widget" native="true">
-          <layout class="QVBoxLayout" name="verticalLayout_7" stretch="0,1">
+          <layout class="QVBoxLayout" name="verticalLayout_7" stretch="0,1,0">
            <item>
             <widget class="QLabel" name="label_3">
              <property name="text">
@@ -469,6 +485,13 @@
             <widget class="QListWidget" name="variablesList">
              <property name="sortingEnabled">
               <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="modelReadyButton">
+             <property name="text">
+              <string>Model Ready!</string>
              </property>
             </widget>
            </item>

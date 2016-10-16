@@ -33,9 +33,12 @@ class MainWindow : public QMainWindow
 
 		void on_dependentVariableOutButton_clicked();
 
+		void on_modelReadyButton_clicked();
+
 	private:
 		Ui::MainWindow *ui;
 		GuiDriver driver;
+		void MoveBetweenQListWidgets(QString const &source, QString const &target, bool onlyOneElementOnTarget);
 };
 
 #endif // MAINWINDOW_H

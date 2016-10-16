@@ -90,27 +90,37 @@ void MainWindow::on_DelimiterLineEdit_textEdited(const QString &arg1)
 	otherRadioButton->setEnabled(true);
 }
 
+void MainWindow::MoveBetweenQListWidgets(QString const &source, QString const &target, bool onlyOneElementOnTarget)
+{
+	QListWidget *sourceList = this->findChild<QListWidget*>(source);
+	Q_ASSERT(sourceList);
+	QListWidget *targetList = this->findChild<QListWidget*>(target);
+	Q_ASSERT(targetList);
+	//verificar casos especiais (por exemplo se já tem algo na dependentVariable)
+	if(0 < targetList->count() && onlyOneElementOnTarget)
+	{
+		sourceList->addItem(targetList->takeItem(0));
+		targetList->addItem(sourceList->takeItem(sourceList->currentRow()));
+	}
+	else
+	{
+		targetList->addItem(sourceList->takeItem(0));
+	}
+}
+
 void MainWindow::on_dependentVariableInButton_clicked()
 {
-	QListWidget *variablesList = this->findChild<QListWidget*>("variablesList");
-	Q_ASSERT(variablesList);
-	QListWidget *dependentVariable = this->findChild<QListWidget*>("dependentVariable");
-	Q_ASSERT(dependentVariable);
-	//verificar casos especiais (por exemplo se já tem algo na dependentVariable)
-	if(0 < dependentVariable->count())
-	{
-		on_dependentVariableOutButton_clicked();
-	}
-	dependentVariable->addItem(variablesList->takeItem(variablesList->currentRow()));
+	MoveBetweenQListWidgets("variablesList", "dependentVariable", true);
 }
 
 void MainWindow::on_dependentVariableOutButton_clicked()
 {
-	QListWidget *variablesList = this->findChild<QListWidget*>("variablesList");
-	Q_ASSERT(variablesList);
-	QListWidget *dependentVariable = this->findChild<QListWidget*>("dependentVariable");
-	Q_ASSERT(dependentVariable);
-	//verificar casos especiais (por exemplo se já tem algo na variablesList)
-//	variablesList->addItem(dependentVariable->takeItem(dependentVariable->currentRow()));
-	variablesList->addItem(dependentVariable->takeItem(0));
+	MoveBetweenQListWidgets("dependentVariable", "variablesList", false);
+}
+
+void MainWindow::on_modelReadyButton_clicked()
+{
+	QTabWidget *tabWidget = this->findChild<QTabWidget *>("tabWidget");
+	Q_ASSERT(tabWidget);
+	tabWidget->setCurrentIndex(2);
 }
