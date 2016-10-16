@@ -50,6 +50,7 @@ void MainWindow::on_LoadButton_clicked()
 	int numberOfColumns= loadedTable->matrix->columns;
 	QListWidget *list= this->findChild<QListWidget*>("variablesList");
 	Q_ASSERT(list);
+	list->clear();
 	for(int cont=0; cont < numberOfColumns;cont++)
 	{
 		list->addItem(QString(loadedTable->columnsName[cont] ) );
