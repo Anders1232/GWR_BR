@@ -169,7 +169,7 @@
             <rect>
              <x>10</x>
              <y>0</y>
-             <width>571</width>
+             <width>601</width>
              <height>111</height>
             </rect>
            </property>
@@ -333,6 +333,9 @@
                    <width>101</width>
                    <height>21</height>
                   </rect>
+                 </property>
+                 <property name="selectionMode">
+                  <enum>QAbstractItemView::NoSelection</enum>
                  </property>
                 </widget>
                </widget>
