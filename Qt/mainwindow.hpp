@@ -35,6 +35,22 @@ class MainWindow : public QMainWindow
 
 		void on_modelReadyButton_clicked();
 
+		void on_offsetVariableInButton_clicked();
+
+		void on_offsetVariableOutButton_clicked();
+
+		void on_identifierInButton_clicked();
+
+		void on_identifierOutButton_clicked();
+
+		void on_longitudeInButton_clicked();
+
+		void on_longitudeOutButton_clicked();
+
+		void on_latitudeInButton_clicked();
+
+		void on_latitudeOutButton_clicked();
+
 	private:
 		Ui::MainWindow *ui;
 		GuiDriver driver;

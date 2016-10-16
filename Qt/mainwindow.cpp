@@ -96,15 +96,12 @@ void MainWindow::MoveBetweenQListWidgets(QString const &source, QString const &t
 	Q_ASSERT(sourceList);
 	QListWidget *targetList = this->findChild<QListWidget*>(target);
 	Q_ASSERT(targetList);
-	//verificar casos especiais (por exemplo se já tem algo na dependentVariable)
-	if(0 < targetList->count() && onlyOneElementOnTarget)
+	bool sourceSelectable= !(sourceList->selectionMode() == QAbstractItemView::NoSelection);
+	int itemToTake= sourceSelectable? sourceList->currentRow() : 0;
+	targetList->addItem(sourceList->takeItem(itemToTake));
+	if(1 < targetList->count() && onlyOneElementOnTarget)
 	{
 		sourceList->addItem(targetList->takeItem(0));
-		targetList->addItem(sourceList->takeItem(sourceList->currentRow()));
-	}
-	else
-	{
-		targetList->addItem(sourceList->takeItem(0));
 	}
 }
 
@@ -123,4 +120,44 @@ void MainWindow::on_modelReadyButton_clicked()
 	QTabWidget *tabWidget = this->findChild<QTabWidget *>("tabWidget");
 	Q_ASSERT(tabWidget);
 	tabWidget->setCurrentIndex(2);
+}
+
+void MainWindow::on_offsetVariableInButton_clicked()
+{
+	MoveBetweenQListWidgets("variablesList", "offsetVariable", true);
+}
+
+void MainWindow::on_offsetVariableOutButton_clicked()
+{
+	MoveBetweenQListWidgets("offsetVariable", "variablesList", false);
+}
+
+void MainWindow::on_identifierInButton_clicked()
+{
+	MoveBetweenQListWidgets("variablesList", "identifierVariable", true);
+}
+
+void MainWindow::on_identifierOutButton_clicked()
+{
+	MoveBetweenQListWidgets("identifierVariable", "variablesList", false);
+}
+
+void MainWindow::on_longitudeInButton_clicked()
+{
+	MoveBetweenQListWidgets("variablesList", "longitudeVariable", true);
+}
+
+void MainWindow::on_longitudeOutButton_clicked()
+{
+	MoveBetweenQListWidgets("longitudeVariable", "variablesList", false);
+}
+
+void MainWindow::on_latitudeInButton_clicked()
+{
+	MoveBetweenQListWidgets("variablesList", "latitudeVariable", true);
+}
+
+void MainWindow::on_latitudeOutButton_clicked()
+{
+	MoveBetweenQListWidgets("latitudeVariable", "variablesList", false);
 }

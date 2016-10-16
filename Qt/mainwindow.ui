@@ -45,7 +45,7 @@
        <enum>QTabWidget::Triangular</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="Step1Data">
        <property name="toolTip">
@@ -249,7 +249,7 @@
                   <height>20</height>
                  </size>
                 </property>
-                <widget class="QToolButton" name="toolButton_2">
+                <widget class="QToolButton" name="identifierOutButton">
                  <property name="geometry">
                   <rect>
                    <x>130</x>
@@ -262,7 +262,7 @@
                   <string>&gt;</string>
                  </property>
                 </widget>
-                <widget class="QToolButton" name="toolButton_4">
+                <widget class="QToolButton" name="identifierInButton">
                  <property name="geometry">
                   <rect>
                    <x>100</x>
@@ -275,7 +275,7 @@
                   <string>&lt;</string>
                  </property>
                 </widget>
-                <widget class="QListWidget" name="listWidget">
+                <widget class="QListWidget" name="identifierVariable">
                  <property name="geometry">
                   <rect>
                    <x>0</x>
@@ -283,6 +283,9 @@
                    <width>91</width>
                    <height>21</height>
                   </rect>
+                 </property>
+                 <property name="selectionMode">
+                  <enum>QAbstractItemView::NoSelection</enum>
                  </property>
                 </widget>
                </widget>
@@ -302,7 +305,7 @@
                   <height>20</height>
                  </size>
                 </property>
-                <widget class="QToolButton" name="toolButton_3">
+                <widget class="QToolButton" name="longitudeOutButton">
                  <property name="geometry">
                   <rect>
                    <x>130</x>
@@ -315,7 +318,7 @@
                   <string>&gt;</string>
                  </property>
                 </widget>
-                <widget class="QToolButton" name="toolButton_5">
+                <widget class="QToolButton" name="longitudeInButton">
                  <property name="geometry">
                   <rect>
                    <x>100</x>
@@ -328,7 +331,7 @@
                   <string>&lt;</string>
                  </property>
                 </widget>
-                <widget class="QListWidget" name="listWidget_2">
+                <widget class="QListWidget" name="longitudeVariable">
                  <property name="geometry">
                   <rect>
                    <x>0</x>
@@ -336,6 +339,9 @@
                    <width>91</width>
                    <height>21</height>
                   </rect>
+                 </property>
+                 <property name="selectionMode">
+                  <enum>QAbstractItemView::NoSelection</enum>
                  </property>
                 </widget>
                </widget>
@@ -355,7 +361,7 @@
                   <height>20</height>
                  </size>
                 </property>
-                <widget class="QToolButton" name="toolButton">
+                <widget class="QToolButton" name="latitudeOutButton">
                  <property name="geometry">
                   <rect>
                    <x>130</x>
@@ -368,7 +374,7 @@
                   <string>&gt;</string>
                  </property>
                 </widget>
-                <widget class="QToolButton" name="toolButton_6">
+                <widget class="QToolButton" name="latitudeInButton">
                  <property name="geometry">
                   <rect>
                    <x>100</x>
@@ -381,7 +387,7 @@
                   <string>&lt;</string>
                  </property>
                 </widget>
-                <widget class="QListWidget" name="listWidget_3">
+                <widget class="QListWidget" name="latitudeVariable">
                  <property name="geometry">
                   <rect>
                    <x>0</x>
@@ -389,6 +395,9 @@
                    <width>81</width>
                    <height>21</height>
                   </rect>
+                 </property>
+                 <property name="selectionMode">
+                  <enum>QAbstractItemView::NoSelection</enum>
                  </property>
                 </widget>
                </widget>
@@ -406,6 +415,9 @@
                   <widget class="QRadioButton" name="radioButton">
                    <property name="text">
                     <string>Projected</string>
+                   </property>
+                   <property name="checked">
+                    <bool>true</bool>
                    </property>
                   </widget>
                  </item>
@@ -454,6 +466,9 @@
               </property>
               <property name="text">
                <string>Lat+Lon</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
               </property>
              </widget>
             </widget>
@@ -615,6 +630,9 @@
                    <width>91</width>
                    <height>21</height>
                   </rect>
+                 </property>
+                 <property name="selectionMode">
+                  <enum>QAbstractItemView::NoSelection</enum>
                  </property>
                 </widget>
                </widget>
