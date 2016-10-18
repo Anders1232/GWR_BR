@@ -1,0 +1,50 @@
+*************************************************
+*       Geographically Weighted Regression      *
+*               Release 3.0.1                   *
+*            Dated: 06-vii-2003                 *
+*                                               *
+*       Martin Charlton, Chris Brunsdon         *
+*            Stewart Fotheringham               *
+*     (c) University of Newcastle upon Tyne     *
+*************************************************
+Program starts at: Thu Nov 05 09:22:22 2009
+ 
+** Program limits:
+** Maximum number of variables.....     52
+** Maximum number of observations..  80000
+** Maximum number of fit locations.  80000
+ 
+TER                                                                             
+** Observed data file:        C:\GWR3\SampleData\base_tese500.csv     
+** Prediction location file:  Estimation at sample point locations    
+** Result output file:        C:\GWR3\SampleData\base_tese500.csv     
+ 
+** Variables in the data file...
+ Munic_pi uf       nome     codigo   REGIAO   total    utiliza  distm   
+ FPM      valorPNA y        x       
+ 
+** Dependent (y) variable..........valorPNA
+** Easting  (x-coord) variable.....x       
+** Northing (y-coord) variable.....y       
+** No weight variable specified
+** Independent variables in your model...
+ total    utiliza  distm    FPM     
+** Kernel type:  Fixed
+** Kernel shape: Gaussian
+** Bandwidth selection by crossvalidation
+** Use all regression points
+** No calibration history requested
+** No prediction report requested
+** Output estimates to be written to .txt file
+** No significance test for spatial variation
+** No casewise diagnostics requested
+ 
+*** Analysis method ***
+*** Geographically weighted multiple regression
+** Spherical coordinates: Great Circle Distance
+***************************************************************
+*                                                             *
+*        GEOGRAPHICALLY WEIGHTED GAUSSIAN REGRESSION          *
+*                                                             *
+***************************************************************
+ Error reading case  0
