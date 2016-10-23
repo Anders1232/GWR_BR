@@ -606,124 +606,86 @@
              <property name="frameShadow">
               <enum>QFrame::Raised</enum>
              </property>
-             <widget class="QWidget" name="widget_10" native="true">
-              <property name="geometry">
-               <rect>
-                <x>19</x>
-                <y>20</y>
-                <width>121</width>
-                <height>80</height>
-               </rect>
+             <layout class="QVBoxLayout" name="verticalLayout_12">
+              <property name="topMargin">
+               <number>3</number>
               </property>
-              <widget class="QToolButton" name="toolButton">
-               <property name="geometry">
-                <rect>
-                 <x>0</x>
-                 <y>30</y>
-                 <width>28</width>
-                 <height>21</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>&lt;</string>
-               </property>
-              </widget>
-              <widget class="QToolButton" name="toolButton_2">
-               <property name="geometry">
-                <rect>
-                 <x>30</x>
-                 <y>30</y>
-                 <width>28</width>
-                 <height>21</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>&gt;</string>
-               </property>
-              </widget>
-              <widget class="QListWidget" name="listWidget">
-               <property name="geometry">
-                <rect>
-                 <x>60</x>
-                 <y>10</y>
-                 <width>256</width>
-                 <height>192</height>
-                </rect>
-               </property>
-              </widget>
-             </widget>
-             <widget class="QWidget" name="widget_11" native="true">
-              <property name="geometry">
-               <rect>
-                <x>19</x>
-                <y>130</y>
-                <width>131</width>
-                <height>80</height>
-               </rect>
+              <property name="bottomMargin">
+               <number>1</number>
               </property>
-              <widget class="QToolButton" name="toolButton_3">
-               <property name="geometry">
-                <rect>
-                 <x>0</x>
-                 <y>20</y>
-                 <width>28</width>
-                 <height>21</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>&lt;</string>
-               </property>
-              </widget>
-              <widget class="QToolButton" name="toolButton_4">
-               <property name="geometry">
-                <rect>
-                 <x>30</x>
-                 <y>20</y>
-                 <width>28</width>
-                 <height>21</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>&gt;</string>
-               </property>
-              </widget>
-              <widget class="QListWidget" name="listWidget_2">
-               <property name="geometry">
-                <rect>
-                 <x>60</x>
-                 <y>0</y>
-                 <width>256</width>
-                 <height>192</height>
-                </rect>
-               </property>
-              </widget>
-             </widget>
-             <widget class="QLabel" name="label_11">
-              <property name="geometry">
-               <rect>
-                <x>20</x>
-                <y>10</y>
-                <width>59</width>
-                <height>14</height>
-               </rect>
-              </property>
-              <property name="text">
-               <string>Local</string>
-              </property>
-             </widget>
-             <widget class="QLabel" name="label_12">
-              <property name="geometry">
-               <rect>
-                <x>30</x>
-                <y>100</y>
-                <width>59</width>
-                <height>14</height>
-               </rect>
-              </property>
-              <property name="text">
-               <string>Global</string>
-              </property>
-             </widget>
+              <item>
+               <widget class="QLabel" name="label_11">
+                <property name="text">
+                 <string>Local</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="widget_10" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_9">
+                 <property name="topMargin">
+                  <number>1</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>1</number>
+                 </property>
+                 <item>
+                  <widget class="QToolButton" name="toolButton">
+                   <property name="text">
+                    <string>&lt;</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QToolButton" name="toolButton_2">
+                   <property name="text">
+                    <string>&gt;</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QListWidget" name="listWidget"/>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_12">
+                <property name="text">
+                 <string>Global</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="widget_11" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_10">
+                 <property name="topMargin">
+                  <number>1</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>1</number>
+                 </property>
+                 <item>
+                  <widget class="QToolButton" name="toolButton_3">
+                   <property name="text">
+                    <string>&lt;</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QToolButton" name="toolButton_4">
+                   <property name="text">
+                    <string>&gt;</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QListWidget" name="listWidget_2"/>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+             </layout>
             </widget>
            </item>
           </layout>
