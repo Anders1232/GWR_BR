@@ -12,6 +12,13 @@ MainWindow::MainWindow(QWidget *parent) :
 	Q_ASSERT(table);
 	table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 	table->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);*/
+	QSpinBox *linesSpinBox = this->findChild<QSpinBox *>("previewLines");
+	Q_ASSERT(linesSpinBox);
+	this->linesInPreview= linesSpinBox->value();
+	QSpinBox *charsSpinBox = this->findChild<QSpinBox *>("previewCharsPerLine");
+	Q_ASSERT(charsSpinBox);
+	this->charsPerLineInPreview= charsSpinBox->value();
+
 }
 
 MainWindow::~MainWindow()
@@ -33,6 +40,8 @@ void MainWindow::on_SelectFileButton_clicked()
 	Q_ASSERT(lineEdit);
 	lineEdit->setText(fileName);
 	driver.FileSelected(fileName);
+//	driver.Load(fileName, linesInPreview, charsPerLineInPreview);
+	UpdatePreview();
 }
 
 void MainWindow::on_LoadButton_clicked()
@@ -62,7 +71,7 @@ void MainWindow::on_LoadButton_clicked()
 	}
 	QTabWidget *tabWidget = this->findChild<QTabWidget *>("tabWidget");
 	Q_ASSERT(tabWidget);
-	tabWidget->setCurrentIndex(1);
+	tabWidget->setCurrentIndex(2);
 }
 
 void MainWindow::on_TabRadioButton_clicked()
@@ -120,7 +129,7 @@ void MainWindow::on_modelReadyButton_clicked()
 {
 	QTabWidget *tabWidget = this->findChild<QTabWidget *>("tabWidget");
 	Q_ASSERT(tabWidget);
-	tabWidget->setCurrentIndex(2);
+	tabWidget->setCurrentIndex(3);
 }
 
 void MainWindow::on_offsetVariableInButton_clicked()
@@ -161,4 +170,74 @@ void MainWindow::on_latitudeInButton_clicked()
 void MainWindow::on_latitudeOutButton_clicked()
 {
 	MoveBetweenQListWidgets("latitudeVariable", "variablesList", false);
+}
+
+void MainWindow::on_localVariablesOut_clicked()
+{
+	MoveBetweenQListWidgets("localVariablesList", "variablesList", false);
+}
+
+void MainWindow::on_localVariablesIn_clicked()
+{
+	MoveBetweenQListWidgets("variablesList", "localVariablesList", false);
+}
+
+void MainWindow::on_globalVariablesOut_clicked()
+{
+	MoveBetweenQListWidgets("globalVariablesList", "variablesList", false);
+}
+
+void MainWindow::on_globalVariablesIn_clicked()
+{
+	MoveBetweenQListWidgets("variablesList", "globalVariablesList", false);
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+	QTabWidget *tabWidget = this->findChild<QTabWidget *>("tabWidget");
+	Q_ASSERT(tabWidget);
+	tabWidget->setCurrentIndex(1);
+}
+
+void MainWindow::UpdatePreview(void)
+{
+	QLineEdit *lineEdit = this->findChild<QLineEdit*>("fileNameLineEdit");
+	Q_ASSERT(lineEdit);
+	if("" != lineEdit->text())
+	{
+		QString preview = driver.GetPreview(linesInPreview, charsPerLineInPreview);
+		QTextEdit *previewArea = this->findChild<QTextEdit *>("previewText");
+		Q_ASSERT(previewArea);
+		previewArea->setText(preview);
+
+//		GuiDriver.FileSelected();
+	}
+}
+
+/*void MainWindow::on_previewLines_editingFinished()
+{
+	QSpinBox *linesSpinBox = this->findChild<QSpinBox *>("previewLines");
+	Q_ASSERT(linesSpinBox);
+	this->linesInPreview= linesSpinBox->value();
+	UpdatePreview();
+}*/
+
+/*void MainWindow::on_previewCharsPerLine_editingFinished()
+{
+	QSpinBox *linesSpinBox = this->findChild<QSpinBox *>("previewCharsPerLine");
+	Q_ASSERT(linesSpinBox);
+	this->charsPerLineInPreview= linesSpinBox->value();
+	UpdatePreview();
+}*/
+
+void MainWindow::on_previewLines_valueChanged(int arg1)
+{
+	this->linesInPreview= arg1;
+	UpdatePreview();
+}
+
+void MainWindow::on_previewCharsPerLine_valueChanged(int arg1)
+{
+	this->charsPerLineInPreview= arg1;
+	UpdatePreview();
 }

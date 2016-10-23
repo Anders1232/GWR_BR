@@ -51,10 +51,30 @@ class MainWindow : public QMainWindow
 
 		void on_latitudeOutButton_clicked();
 
+		void on_localVariablesOut_clicked();
+
+		void on_localVariablesIn_clicked();
+
+		void on_globalVariablesOut_clicked();
+
+		void on_globalVariablesIn_clicked();
+
+		void on_pushButton_clicked();
+
+//		void on_previewLines_editingFinished();
+
+//		void on_previewCharsPerLine_editingFinished();
+
+		void on_previewLines_valueChanged(int arg1);
+
+		void on_previewCharsPerLine_valueChanged(int arg1);
+
 	private:
 		Ui::MainWindow *ui;
 		GuiDriver driver;
 		void MoveBetweenQListWidgets(QString const &source, QString const &target, bool onlyOneElementOnTarget);
+		int linesInPreview, charsPerLineInPreview;
+		void UpdatePreview(void);
 };
 
 #endif // MAINWINDOW_H

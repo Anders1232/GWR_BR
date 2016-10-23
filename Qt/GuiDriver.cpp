@@ -1,9 +1,11 @@
 #include"GuiDriver.hpp"
 #include"QLineEdit"
 #include"QRadioButton"
+//#include<iostream>
 extern "C"
 {
 	#include "GuiInterface.h"
+	#include <stdio.h>
 }
 //C side functions implementations:
 
@@ -30,6 +32,24 @@ GuiDriver::GuiDriver(void)
 void GuiDriver::FileSelected(QString fileName)
 {
 	this->fileName= std::string(fileName.toLocal8Bit().data() );
+}
+
+QString GuiDriver::GetPreview(int linesInPreview, int charPerLineInPreview)
+{
+//	this->fileName;
+	FILE *temp= tmpfile();
+	LoadPreview(temp, this->fileName.c_str(), linesInPreview, charPerLineInPreview);
+	QString preview= "";
+	rewind(temp);
+	char aux;
+	while(EOF != (aux= getc(temp)))
+	{
+//		char aux= getc(temp);
+		preview+= aux;
+	}
+//	std::cout << preview.toLatin1().toStdString() << std::endl;
+	fclose(temp);
+	return(preview);
 }
 
 void GuiDriver::DelimiterSelected(char separator)

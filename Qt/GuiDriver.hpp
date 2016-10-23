@@ -18,11 +18,11 @@ class GuiDriver
 		static GuiDriver& GetReference(void);
 		GuiDriver(void);
 		NamedColumnDoubleTable* LoadFileButtonCliked(void);
+		QString GetPreview(int linesInPreview, int charPerLineInPreview);
 	private:
 		std::string fileName;
 		char separator;
 		NamedColumnDoubleTable *table;
-		void UpdatePreview();
 };
 
 #endif // GUI_DRIVER_HPP
