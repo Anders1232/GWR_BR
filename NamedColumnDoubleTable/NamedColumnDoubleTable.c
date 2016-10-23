@@ -194,6 +194,7 @@ NamedColumnDoubleTable *NewNamedColumnDoubleTableFromFile(char const *fileName, 
 	//modificação temporária só para mostrar que leu o arquivo
 //	NamedColumnDoubleTable_PrintAll(returnValue, stdout, "%s\t\t", "%lf\t\t", NEW_LINE);
 	//fim da modificação temporária
+	fclose(file);
 	return returnValue;
 }
 

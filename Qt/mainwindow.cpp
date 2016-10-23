@@ -62,9 +62,10 @@ void MainWindow::on_LoadButton_clicked()
 	Q_ASSERT(output);
 	output->setText(str);
 	int numberOfColumns= loadedTable->matrix->columns;
+	ClearLists();
 	QListWidget *list= this->findChild<QListWidget*>("variablesList");
 	Q_ASSERT(list);
-	list->clear();
+//	list->clear();
 	for(int cont=0; cont < numberOfColumns;cont++)
 	{
 		list->addItem(QString(loadedTable->columnsName[cont] ) );
@@ -72,6 +73,44 @@ void MainWindow::on_LoadButton_clicked()
 	QTabWidget *tabWidget = this->findChild<QTabWidget *>("tabWidget");
 	Q_ASSERT(tabWidget);
 	tabWidget->setCurrentIndex(2);
+}
+
+void MainWindow::ClearLists(void)
+{
+/*	QWidget *tab2= this->findChild<QWidget*>("Model");
+	Q_ASSERT(tab2);
+	QList<QListWidget *> list= tab2->findChildren<QListWidget*>(QRegularExpression("*"));
+	for(int count=0; count < list.count(); count++)
+	{
+		list[count]->clear();
+	}
+*/
+	QListWidget *list;
+	list= this->findChild<QListWidget*>("variablesList");
+	Q_ASSERT(list);
+	list->clear();
+	list= this->findChild<QListWidget*>("identifierVariable");
+	Q_ASSERT(list);
+	list->clear();
+	list= this->findChild<QListWidget*>("latitudeVariable");
+	Q_ASSERT(list);
+	list->clear();
+	list= this->findChild<QListWidget*>("longitudeVariable");
+	Q_ASSERT(list);
+	list->clear();
+	list= this->findChild<QListWidget*>("offsetVariable");
+	Q_ASSERT(list);
+	list->clear();
+	list= this->findChild<QListWidget*>("localVariablesList");
+	Q_ASSERT(list);
+	list->clear();
+	list= this->findChild<QListWidget*>("globalVariablesList");
+	Q_ASSERT(list);
+	list->clear();
+	list= this->findChild<QListWidget*>("dependentVariable");
+	Q_ASSERT(list);
+	list->clear();
+
 }
 
 void MainWindow::on_TabRadioButton_clicked()

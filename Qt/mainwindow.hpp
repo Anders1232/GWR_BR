@@ -75,6 +75,7 @@ class MainWindow : public QMainWindow
 		void MoveBetweenQListWidgets(QString const &source, QString const &target, bool onlyOneElementOnTarget);
 		int linesInPreview, charsPerLineInPreview;
 		void UpdatePreview(void);
+		void ClearLists(void);
 };
 
 #endif // MAINWINDOW_H
