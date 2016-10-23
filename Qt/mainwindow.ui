@@ -238,10 +238,16 @@
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
-                  <height>35</height>
+                  <height>20</height>
                  </size>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_4">
+                 <property name="topMargin">
+                  <number>2</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>2</number>
+                 </property>
                  <item>
                   <widget class="QListWidget" name="identifierVariable">
                    <property name="selectionMode">
@@ -278,10 +284,16 @@
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
-                  <height>35</height>
+                  <height>20</height>
                  </size>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_5">
+                 <property name="topMargin">
+                  <number>2</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>2</number>
+                 </property>
                  <item>
                   <widget class="QListWidget" name="longitudeVariable">
                    <property name="selectionMode">
@@ -318,10 +330,16 @@
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
-                  <height>35</height>
+                  <height>20</height>
                  </size>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_6">
+                 <property name="topMargin">
+                  <number>2</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>2</number>
+                 </property>
                  <item>
                   <widget class="QListWidget" name="latitudeVariable">
                    <property name="selectionMode">
@@ -355,6 +373,12 @@
                  </size>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_2">
+                 <property name="topMargin">
+                  <number>2</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>2</number>
+                 </property>
                  <item>
                   <widget class="QRadioButton" name="radioButton">
                    <property name="text">
@@ -481,48 +505,41 @@
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
-                  <height>19</height>
+                  <height>20</height>
                  </size>
                 </property>
-                <widget class="QToolButton" name="dependentVariableOutButton">
-                 <property name="geometry">
-                  <rect>
-                   <x>0</x>
-                   <y>0</y>
-                   <width>28</width>
-                   <height>21</height>
-                  </rect>
+                <layout class="QHBoxLayout" name="horizontalLayout_7">
+                 <property name="spacing">
+                  <number>1</number>
                  </property>
-                 <property name="text">
-                  <string>&lt;</string>
+                 <property name="topMargin">
+                  <number>2</number>
                  </property>
-                </widget>
-                <widget class="QToolButton" name="dependentVariableInButton">
-                 <property name="geometry">
-                  <rect>
-                   <x>30</x>
-                   <y>0</y>
-                   <width>28</width>
-                   <height>21</height>
-                  </rect>
+                 <property name="bottomMargin">
+                  <number>2</number>
                  </property>
-                 <property name="text">
-                  <string>&gt;</string>
-                 </property>
-                </widget>
-                <widget class="QListWidget" name="dependentVariable">
-                 <property name="geometry">
-                  <rect>
-                   <x>60</x>
-                   <y>0</y>
-                   <width>101</width>
-                   <height>21</height>
-                  </rect>
-                 </property>
-                 <property name="selectionMode">
-                  <enum>QAbstractItemView::NoSelection</enum>
-                 </property>
-                </widget>
+                 <item>
+                  <widget class="QToolButton" name="dependentVariableOutButton">
+                   <property name="text">
+                    <string>&lt;</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QToolButton" name="dependentVariableInButton">
+                   <property name="text">
+                    <string>&gt;</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QListWidget" name="dependentVariable">
+                   <property name="selectionMode">
+                    <enum>QAbstractItemView::NoSelection</enum>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
                </widget>
               </item>
               <item>
@@ -537,48 +554,38 @@
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
-                  <height>19</height>
+                  <height>20</height>
                  </size>
                 </property>
-                <widget class="QToolButton" name="offsetVariableOutButton">
-                 <property name="geometry">
-                  <rect>
-                   <x>0</x>
-                   <y>0</y>
-                   <width>28</width>
-                   <height>21</height>
-                  </rect>
+                <layout class="QHBoxLayout" name="horizontalLayout_8">
+                 <property name="topMargin">
+                  <number>2</number>
                  </property>
-                 <property name="text">
-                  <string>&lt;</string>
+                 <property name="bottomMargin">
+                  <number>2</number>
                  </property>
-                </widget>
-                <widget class="QToolButton" name="offsetVariableInButton">
-                 <property name="geometry">
-                  <rect>
-                   <x>30</x>
-                   <y>0</y>
-                   <width>28</width>
-                   <height>21</height>
-                  </rect>
-                 </property>
-                 <property name="text">
-                  <string>&gt;</string>
-                 </property>
-                </widget>
-                <widget class="QListWidget" name="offsetVariable">
-                 <property name="geometry">
-                  <rect>
-                   <x>60</x>
-                   <y>0</y>
-                   <width>91</width>
-                   <height>21</height>
-                  </rect>
-                 </property>
-                 <property name="selectionMode">
-                  <enum>QAbstractItemView::NoSelection</enum>
-                 </property>
-                </widget>
+                 <item>
+                  <widget class="QToolButton" name="offsetVariableOutButton">
+                   <property name="text">
+                    <string>&lt;</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QToolButton" name="offsetVariableInButton">
+                   <property name="text">
+                    <string>&gt;</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QListWidget" name="offsetVariable">
+                   <property name="selectionMode">
+                    <enum>QAbstractItemView::NoSelection</enum>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
                </widget>
               </item>
              </layout>
