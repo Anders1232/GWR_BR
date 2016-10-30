@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QListWidget>
 #include "GuiDriver.hpp"
 
 namespace Ui {
@@ -69,6 +70,10 @@ class MainWindow : public QMainWindow
 
 		void on_previewCharsPerLine_valueChanged(int arg1);
 
+		void on_LatPlusLonOperation_clicked();
+
+		void on_dependentTimesOffsetOperation_clicked();
+
 	private:
 		Ui::MainWindow *ui;
 		GuiDriver driver;
@@ -76,6 +81,7 @@ class MainWindow : public QMainWindow
 		int linesInPreview, charsPerLineInPreview;
 		void UpdatePreview(void);
 		void ClearLists(void);
+		std::list<std::string>* GetStringList(QListWidget *widgetList);
 };
 
 #endif // MAINWINDOW_H

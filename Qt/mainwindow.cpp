@@ -169,6 +169,47 @@ void MainWindow::on_modelReadyButton_clicked()
 	QTabWidget *tabWidget = this->findChild<QTabWidget *>("tabWidget");
 	Q_ASSERT(tabWidget);
 	tabWidget->setCurrentIndex(3);
+
+	QListWidget *variablesList= this->findChild<QListWidget*>("variablesList");
+	Q_ASSERT(variablesList);
+	std::list<std::string> *vList= GetStringList(variablesList);
+
+	QListWidget *identifierVariableList= this->findChild<QListWidget*>("identifierVariable");
+	Q_ASSERT(identifierVariableList);
+	std::string identitifer= identifierVariableList->item(0)->text().toStdString();
+
+	QListWidget *latitudeVariableList= this->findChild<QListWidget*>("latitudeVariable");
+	Q_ASSERT(latitudeVariableList);
+	std::string latitude= latitudeVariableList->item(0)->text().toStdString();
+
+	QListWidget *longitudeVariableList= this->findChild<QListWidget*>("longitudeVariable");
+	Q_ASSERT(longitudeVariableList);
+	std::string longitude= longitudeVariableList->item(0)->text().toStdString();
+
+	QListWidget *offsetVariableList= this->findChild<QListWidget*>("offsetVariable");
+	Q_ASSERT(offsetVariableList);
+	std::string offset = offsetVariableList->item(0)->text().toStdString();
+
+	QListWidget *localVariablesList= this->findChild<QListWidget*>("localVariablesList");
+	Q_ASSERT(localVariablesList);
+	std::list<std::string> *lvList= GetStringList(localVariablesList);
+
+	QListWidget *globalVariablesList= this->findChild<QListWidget*>("globalVariablesList");
+	Q_ASSERT(globalVariablesList);
+	std::list<std::string> *gvList= GetStringList(globalVariablesList);
+
+	QListWidget *dependentVariableList= this->findChild<QListWidget*>("dependentVariable");
+	Q_ASSERT(dependentVariableList);
+	std::string dependent = dependentVariableList->item(0)->text().toStdString();
+
+	QString result = driver.Calculate(*vList, identitifer, dependent, latitude, longitude, offset, *lvList, *gvList);
+
+	QTextEdit *resultArea= this->findChild<QTextEdit*>("OutputTextEdit");
+	Q_ASSERT(resultArea);
+	resultArea->setText(result);
+	delete vList;
+	delete lvList;
+	delete gvList;
 }
 
 void MainWindow::on_offsetVariableInButton_clicked()
@@ -279,4 +320,24 @@ void MainWindow::on_previewCharsPerLine_valueChanged(int arg1)
 {
 	this->charsPerLineInPreview= arg1;
 	UpdatePreview();
+}
+
+void MainWindow::on_LatPlusLonOperation_clicked()
+{
+	driver.SelectModelType(MODE_LAT_PLUS_LON);
+}
+
+void MainWindow::on_dependentTimesOffsetOperation_clicked()
+{
+	driver.SelectModelType(MODE_DEPENDENT_TIMES_OFFSET);
+}
+
+std::list<std::string> *MainWindow::GetStringList(QListWidget *widgetList)
+{
+	std::list<std::string> *ret= new std::list<std::string>();
+	for(int count =0; count < widgetList->count(); count++)
+	{
+		ret->push_back(widgetList->item(count)->text().toStdString());
+	}
+	return ret;
 }

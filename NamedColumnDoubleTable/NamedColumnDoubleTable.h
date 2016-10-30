@@ -27,6 +27,7 @@ void NamedColumnDoubleTable_PrintAll(NamedColumnDoubleTable *table, FILE *output
 									char const *doubleFormat,
 									char const *betweenLinesFormat);
 void DeleteNamedColumnDoubleTable(NamedColumnDoubleTable *table);
+int NamedColumnDoubleTable_GetColumnIndex(NamedColumnDoubleTable *table, char const *columnName);
 
 NamedColumnDoubleTable *NewNamedColumnDoubleTableFromFile(char const *fileName, char separator);
 #endif

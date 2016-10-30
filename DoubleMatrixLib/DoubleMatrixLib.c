@@ -149,13 +149,17 @@ DoubleMatrix* DoubleMatrixScalarMultiplication(DoubleMatrix *matrix, double scal
 }
 
 
-double DoubleMatrixGetElement(DoubleMatrix *matrix,int line, int column)
+double DoubleMatrixGetElement(DoubleMatrix *matrix, int column, int line)
 {
 	int position = (matrix->columns)*line+column;
 	return (matrix->elements)[position];
 }
 
-
+void DoubleMatrixSetElement(DoubleMatrix *matrix,int column, int line, double element)
+{
+	int position = (matrix->columns)*line+column;
+	(matrix->elements)[position]= element;
+}
 
 DoubleMatrix* DoubleMatrixTranspose(DoubleMatrix *matrix, bool resultInTheSameMatrix)
 {
@@ -217,3 +221,37 @@ void DoubleMatrixPrint(DoubleMatrix* matrix, FILE *output, const char *doubleFor
 	}
 }
 
+DoubleMatrix* DoubleMatrixElementBinaryOperation(DoubleMatrix* matrixA, DoubleMatrix*matrixB, bool resultInTheFirstMatrix, double(*ElementBinFunction)(double element1, double element2))
+{
+	DoubleMatrix* ret;
+	if(!DoubleMatrixHaveSameDimensionsAndSameElementSize(matrixA, matrixB))
+	{
+		fprintf(stderr, "[ERROR]Operation not possible.\r\n");
+		exit(1);
+	}
+	if(resultInTheFirstMatrix)
+	{
+		ret= matrixA;
+	}
+	else
+	{
+		ret= NewDoubleMatrix(matrixA->columns, matrixA->lines);
+		if(NULL == ret)
+		{
+			return NULL;
+		}
+	}
+	int numberOfElements= (matrixA->lines) * (matrixB->columns);
+	double *p1= matrixA->elements;
+	double *p2= matrixB->elements;
+	double *p3= ret->elements;
+	int count;
+	for(count =0; count < numberOfElements; count++)
+	{
+		*p3= ElementBinFunction(*p1, *p2);
+		p1++;
+		p2++;
+		p3++;
+		return ret;
+	}
+}

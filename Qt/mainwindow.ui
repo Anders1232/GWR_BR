@@ -33,7 +33,7 @@
        <enum>QTabWidget::Triangular</enum>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="Welcome">
        <attribute name="title">
@@ -442,7 +442,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QRadioButton" name="radioButton_3">
+               <widget class="QRadioButton" name="LatPlusLonOperation">
                 <property name="text">
                  <string>Lat+Lon</string>
                 </property>
@@ -452,7 +452,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QRadioButton" name="radioButton_4">
+               <widget class="QRadioButton" name="dependentTimesOffsetOperation">
                 <property name="text">
                  <string>dependent*offset</string>
                 </property>

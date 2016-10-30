@@ -204,3 +204,17 @@ void NamedColumnDoubleTable_PrintAll(NamedColumnDoubleTable *table, FILE *output
 	fprintf(output, betweenLinesFormat);
 	DoubleMatrixPrint(table->matrix, output, doubleFormat, betweenLinesFormat);
 }
+
+int NamedColumnDoubleTable_GetColumnIndex(NamedColumnDoubleTable *table, char const *columnName)
+{
+	int count;
+	for(count=0; count < table->matrix->columns; count++)
+	{
+		if(!strcmp(columnName, table->columnsName[count]))
+		{
+			return count;
+		}
+	}
+	fprintf(stderr, "[ERROR] Column index not found!"NEW_LINE);
+	exit(1);
+}
