@@ -176,19 +176,52 @@ void MainWindow::on_modelReadyButton_clicked()
 
 	QListWidget *identifierVariableList= this->findChild<QListWidget*>("identifierVariable");
 	Q_ASSERT(identifierVariableList);
-	std::string identitifer= identifierVariableList->item(0)->text().toStdString();
+	std::string identitifer;
+	if(0 == identifierVariableList->count())
+	{
+		identitifer= "";
+	}
+	else
+	{
+		identitifer= identifierVariableList->item(0)->text().toStdString();
+	}
 
 	QListWidget *latitudeVariableList= this->findChild<QListWidget*>("latitudeVariable");
 	Q_ASSERT(latitudeVariableList);
-	std::string latitude= latitudeVariableList->item(0)->text().toStdString();
+	std::string latitude;
+	if(0 == latitudeVariableList->count())
+	{
+		latitude= "";
+	}
+	else
+	{
+		latitude = latitudeVariableList->item(0)->text().toStdString();
+	}
 
 	QListWidget *longitudeVariableList= this->findChild<QListWidget*>("longitudeVariable");
 	Q_ASSERT(longitudeVariableList);
-	std::string longitude= longitudeVariableList->item(0)->text().toStdString();
+	std::string longitude;
+	if(0 == longitudeVariableList->count())
+	{
+		longitude= "";
+	}
+	else
+	{
+		longitude= longitudeVariableList->item(0)->text().toStdString();
+	}
+
 
 	QListWidget *offsetVariableList= this->findChild<QListWidget*>("offsetVariable");
 	Q_ASSERT(offsetVariableList);
-	std::string offset = offsetVariableList->item(0)->text().toStdString();
+	std::string offset;
+	if(0 == offsetVariableList->count())
+	{
+		offset= "";
+	}
+	else
+	{
+		offset= offsetVariableList->item(0)->text().toStdString();
+	}
 
 	QListWidget *localVariablesList= this->findChild<QListWidget*>("localVariablesList");
 	Q_ASSERT(localVariablesList);
@@ -200,7 +233,16 @@ void MainWindow::on_modelReadyButton_clicked()
 
 	QListWidget *dependentVariableList= this->findChild<QListWidget*>("dependentVariable");
 	Q_ASSERT(dependentVariableList);
-	std::string dependent = dependentVariableList->item(0)->text().toStdString();
+	std::string dependent;
+	if(0 == dependentVariableList->count())
+	{
+		dependent= "";
+	}
+	else
+	{
+		dependent= dependentVariableList->item(0)->text().toStdString();
+	}
+
 
 	QString result = driver.Calculate(*vList, identitifer, dependent, latitude, longitude, offset, *lvList, *gvList);
 
