@@ -1,6 +1,7 @@
 #include "mainwindow.hpp"
 #include "ui_mainwindow.h"
 #include "QFileDialog"
+#include "QMessageBox"
 //#include "QTableWidget"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -46,6 +47,16 @@ void MainWindow::on_SelectFileButton_clicked()
 
 void MainWindow::on_LoadButton_clicked()
 {
+	QLineEdit *lineEdit = this->findChild<QLineEdit*>("fileNameLineEdit");
+	Q_ASSERT(lineEdit);
+	if("" ==lineEdit->text())
+	{
+		QMessageBox msgBox;
+		msgBox.setText("No file selected!");
+		msgBox.exec();
+		return;
+	}
+
 	NamedColumnDoubleTable *loadedTable= driver.LoadFileButtonCliked();
 	FILE *tempFile= tmpfile ();
 	Q_ASSERT(tempFile);
