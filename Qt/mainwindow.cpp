@@ -383,3 +383,10 @@ std::list<std::string> *MainWindow::GetStringList(QListWidget *widgetList)
 	}
 	return ret;
 }
+
+void MainWindow::on_toolButton_3_clicked()
+{
+	QTabWidget *tabWidget = this->findChild<QTabWidget *>("tabWidget");
+	Q_ASSERT(tabWidget);
+	tabWidget->setCurrentIndex(1);
+}

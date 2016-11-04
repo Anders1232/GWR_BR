@@ -74,6 +74,8 @@ class MainWindow : public QMainWindow
 
 		void on_dependentTimesOffsetOperation_clicked();
 
+		void on_toolButton_3_clicked();
+
 	private:
 		Ui::MainWindow *ui;
 		GuiDriver driver;

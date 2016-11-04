@@ -171,7 +171,7 @@ NamedColumnDoubleTable *NewNamedColumnDoubleTableFromFile(char const *fileName, 
 		{
 			if(0 == fscanf(file, "%lf", &temp) )
 			{
-				fprintf(stderr, "File format invalid!\n");
+				fprintf(stderr, "File format invalid!"NEW_LINE);
 				exit(-1);
 			}
 #ifdef DEBUG_NAMED_COLUMN
@@ -179,10 +179,14 @@ NamedColumnDoubleTable *NewNamedColumnDoubleTableFromFile(char const *fileName, 
 #endif
 			*elements= temp;
 #ifdef DEBUG_NAMED_COLUMN
-			printf("Number read verification: %p contains %lf\n", elements, *(elements));
+			printf("Number read verification: %p contains %lf"NEW_LINE, elements, *(elements));
 #endif
 			elements++;
 			aux = getc(file);
+			if('\r' == aux)//for windows line ending format
+			{
+				aux = getc(file);
+			}
 			if(aux != separator && '\n' != aux && EOF != aux)
 			{
 				fprintf(stderr, "%s: %d\t\tWhat?? Expected: %x, Found: %x"NEW_LINE, __FILE__, __LINE__, separator, aux);
