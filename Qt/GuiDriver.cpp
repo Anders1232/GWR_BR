@@ -105,7 +105,7 @@ QString GuiDriver::Calculate(std::list<std::string> const &variables,
 		DoubleMatrix *result = DoubleMatrixElementBinaryOperation(operator1, operator2, false, Add);
 
 		FILE *temp= tmpfile();
-		DoubleMatrixPrint(result, temp, "\t%lf", "\n");
+		DoubleMatrixPrint(result, temp, "\t%lf", NEW_LINE);
 		QString ret= "";
 		rewind(temp);
 		char aux;
