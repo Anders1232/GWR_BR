@@ -27,7 +27,7 @@ GuiDriver::GuiDriver(void)
 	separator = '\t';
 	fileName= "";
 	table= NULL;
-	modelType = MODE_LAT_PLUS_LON;
+//	modelType = MODE_LAT_PLUS_LON;
 }
 
 void GuiDriver::FileSelected(QString fileName)
@@ -35,12 +35,12 @@ void GuiDriver::FileSelected(QString fileName)
 	this->fileName= std::string(fileName.toLocal8Bit().data() );
 }
 
-QString GuiDriver::GetPreview(int linesInPreview, int charPerLineInPreview)
+std::string GuiDriver::GetPreview(int linesInPreview, int charPerLineInPreview)
 {
 //	this->fileName;
 	FILE *temp= tmpfile();
 	LoadPreview(temp, this->fileName.c_str(), linesInPreview, charPerLineInPreview);
-	QString preview= "";
+	std::string preview= "";
 	rewind(temp);
 	char aux;
 	while(EOF != (aux= getc(temp)))
@@ -64,11 +64,11 @@ NamedColumnDoubleTable* GuiDriver::LoadFileButtonCliked(void)
 	return table;
 }
 
-void GuiDriver::SelectModelType(int mode)
+/*void GuiDriver::SelectModelType(int mode)
 {
 	this->modelType= mode;
 }
-
+*/
 static double Mult(double a, double b)
 {
 	return a*b;
@@ -79,7 +79,9 @@ static double Add(double a, double b)
 	return a+b;
 }
 
-QString GuiDriver::Calculate(std::list<std::string> const &variables,
+QString GuiDriver::Calculate(
+					int modelType,
+					std::list<std::string> const &variables,
 					std::string const &identifier,
 					const std::string &dependent,
 					const std::string &latitude,
@@ -118,6 +120,10 @@ QString GuiDriver::Calculate(std::list<std::string> const &variables,
 
 	}
 	else if (MODE_DEPENDENT_TIMES_OFFSET == modelType)
+	{
+
+	}
+	else if(MODE_DISTANCE_TO_ORIGIN == modelType)
 	{
 
 	}

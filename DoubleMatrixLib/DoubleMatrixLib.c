@@ -252,6 +252,6 @@ DoubleMatrix* DoubleMatrixElementBinaryOperation(DoubleMatrix* matrixA, DoubleMa
 		p1++;
 		p2++;
 		p3++;
-		return ret;
 	}
+	return ret;
 }

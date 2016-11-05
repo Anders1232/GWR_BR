@@ -76,6 +76,8 @@ class MainWindow : public QMainWindow
 
 		void on_toolButton_3_clicked();
 
+		void on_distanceToOrigin_clicked();
+
 	private:
 		Ui::MainWindow *ui;
 		GuiDriver driver;
@@ -84,6 +86,8 @@ class MainWindow : public QMainWindow
 		void UpdatePreview(void);
 		void ClearLists(void);
 		std::list<std::string>* GetStringList(QListWidget *widgetList);
+		int modelType;
+		void ShowErrorMessage(QString errorMessage);
 };
 
 #endif // MAINWINDOW_H

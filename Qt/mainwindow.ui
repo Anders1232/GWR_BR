@@ -477,6 +477,13 @@
                 </property>
                </widget>
               </item>
+              <item>
+               <widget class="QRadioButton" name="distanceToOrigin">
+                <property name="text">
+                 <string>Distance to origin(lon, lat)</string>
+                </property>
+               </widget>
+              </item>
              </layout>
             </widget>
            </item>

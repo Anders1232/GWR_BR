@@ -45,15 +45,21 @@ void MainWindow::on_SelectFileButton_clicked()
 	UpdatePreview();
 }
 
+void MainWindow::ShowErrorMessage(QString errorMessage)
+{
+	QMessageBox msgBox;
+	msgBox.setText(errorMessage);
+	msgBox.exec();
+	return;
+}
+
 void MainWindow::on_LoadButton_clicked()
 {
 	QLineEdit *lineEdit = this->findChild<QLineEdit*>("fileNameLineEdit");
 	Q_ASSERT(lineEdit);
 	if("" ==lineEdit->text())
 	{
-		QMessageBox msgBox;
-		msgBox.setText("No file selected!");
-		msgBox.exec();
+		ShowErrorMessage("No file selected!");
 		return;
 	}
 
@@ -255,7 +261,7 @@ void MainWindow::on_modelReadyButton_clicked()
 	}
 
 
-	QString result = driver.Calculate(*vList, identitifer, dependent, latitude, longitude, offset, *lvList, *gvList);
+	QString result = driver.Calculate(modelType, *vList, identitifer, dependent, latitude, longitude, offset, *lvList, *gvList);
 
 	QTextEdit *resultArea= this->findChild<QTextEdit*>("OutputTextEdit");
 	Q_ASSERT(resultArea);
@@ -338,7 +344,7 @@ void MainWindow::UpdatePreview(void)
 	Q_ASSERT(lineEdit);
 	if("" != lineEdit->text())
 	{
-		QString preview = driver.GetPreview(linesInPreview, charsPerLineInPreview);
+		QString preview = QString(driver.GetPreview(linesInPreview, charsPerLineInPreview).c_str() );
 		QTextEdit *previewArea = this->findChild<QTextEdit *>("previewText");
 		Q_ASSERT(previewArea);
 		previewArea->setText(preview);
@@ -377,12 +383,19 @@ void MainWindow::on_previewCharsPerLine_valueChanged(int arg1)
 
 void MainWindow::on_LatPlusLonOperation_clicked()
 {
-	driver.SelectModelType(MODE_LAT_PLUS_LON);
+	modelType= MODE_LAT_PLUS_LON;
+//	driver.SelectModelType(MODE_LAT_PLUS_LON);
 }
 
 void MainWindow::on_dependentTimesOffsetOperation_clicked()
 {
-	driver.SelectModelType(MODE_DEPENDENT_TIMES_OFFSET);
+	modelType= MODE_DEPENDENT_TIMES_OFFSET;
+//	driver.SelectModelType(MODE_DEPENDENT_TIMES_OFFSET);
+}
+
+void MainWindow::on_distanceToOrigin_clicked()
+{
+	modelType= MODE_DISTANCE_TO_ORIGIN;
 }
 
 std::list<std::string> *MainWindow::GetStringList(QListWidget *widgetList)
@@ -401,3 +414,4 @@ void MainWindow::on_toolButton_3_clicked()
 	Q_ASSERT(tabWidget);
 	tabWidget->setCurrentIndex(1);
 }
+
