@@ -68,7 +68,6 @@ NamedColumnDoubleTable* GuiDriver::LoadFileButtonCliked(void)
 {
 	this->modelType= mode;
 }
-*/
 static double Mult(double a, double b)
 {
 	return a*b;
@@ -78,6 +77,7 @@ static double Add(double a, double b)
 {
 	return a+b;
 }
+*/
 
 QString GuiDriver::Calculate(
 					int modelType,
@@ -93,19 +93,9 @@ QString GuiDriver::Calculate(
 {
 	if(MODE_LAT_PLUS_LON == modelType)
 	{
-//		NamedColumnDoubleTable *operator1= NewNamedColumnDoubleTableWithNoMatrix(3);
-		int linesNumber= table->matrix->lines;
-		DoubleMatrix *operator1= NewDoubleMatrix(linesNumber, 1);
-		DoubleMatrix *operator2= NewDoubleMatrix(linesNumber, 1);
 		int column1= NamedColumnDoubleTable_GetColumnIndex(table, latitude.c_str());
 		int column2= NamedColumnDoubleTable_GetColumnIndex(table, longitude.c_str());
-		for(int count =0; count < linesNumber; count++)
-		{
-			DoubleMatrixSetElement(operator1, 0, count, DoubleMatrixGetElement(table->matrix, column1, count));
-			DoubleMatrixSetElement(operator2, 0, count, DoubleMatrixGetElement(table->matrix, column2, count));
-		}
-		DoubleMatrix *result = DoubleMatrixElementBinaryOperation(operator1, operator2, false, Add);
-
+		DoubleMatrix *result= LatPlusLon(table->matrix, column1, column2);
 		FILE *temp= tmpfile();
 		DoubleMatrixPrint(result, temp, "\t%lf", NEW_LINE);
 		QString ret= "";
@@ -117,7 +107,6 @@ QString GuiDriver::Calculate(
 		}
 		fclose(temp);
 		return(ret);
-
 	}
 	else if (MODE_DEPENDENT_TIMES_OFFSET == modelType)
 	{
@@ -125,7 +114,21 @@ QString GuiDriver::Calculate(
 	}
 	else if(MODE_DISTANCE_TO_ORIGIN == modelType)
 	{
-
+		int column1= NamedColumnDoubleTable_GetColumnIndex(table, latitude.c_str());
+		int column2= NamedColumnDoubleTable_GetColumnIndex(table, longitude.c_str());
+		DoubleMatrix *result= DistanceToOrigin(table->matrix, column1, column2);
+		FILE *temp= tmpfile();
+		DoubleMatrixPrint(result, temp, "\t%lf", NEW_LINE);
+		QString ret= "";
+		rewind(temp);
+		char aux;
+		while(EOF != (aux= getc(temp)))
+		{
+			ret+= aux;
+		}
+		fclose(temp);
+		DeleteDoubleMatrix(result);
+		return(ret);
 	}
 	return QString("");
 }

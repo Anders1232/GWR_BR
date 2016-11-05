@@ -60,5 +60,7 @@ int DoubleMatrixColumnsNumber(DoubleMatrix*);
 int DoubleMatrixLinesNumber(DoubleMatrix*);
 bool DoubleMatrixHaveSameDimensionsAndSameElementSize(DoubleMatrix*, DoubleMatrix*);	//implemented
 void DoubleMatrixPrint(DoubleMatrix* matrix, FILE *output, char const *doubleFormat, char const *betweenLinesFormat);//implemented
+DoubleMatrix* LatPlusLon(DoubleMatrix *matrix, int latColumn, int lonColumn);//implemented
+DoubleMatrix* DistanceToOrigin(DoubleMatrix* matrix, int column1, int column2);
 
 #endif
