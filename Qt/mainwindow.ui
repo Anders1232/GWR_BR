@@ -14,7 +14,7 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QVBoxLayout" name="verticalLayout_2">
+   <layout class="QHBoxLayout" name="horizontalLayout_11">
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="sizeIncrement">
@@ -39,25 +39,29 @@
        <attribute name="title">
         <string>Welcome</string>
        </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout_11">
-        <item>
-         <widget class="QToolButton" name="toolButton_3">
-          <property name="text">
-           <string>Bem vindo ao GWR BR! TODO: fazer uma imagem logo aqui.</string>
-          </property>
-          <property name="icon">
-           <iconset resource="../resources.qrc">
-            <normaloff>:/img/fimSemestre.jpg</normaloff>:/img/fimSemestre.jpg</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>700</width>
-            <height>700</height>
-           </size>
-          </property>
-         </widget>
-        </item>
-       </layout>
+       <widget class="QToolButton" name="toolButton_3">
+        <property name="geometry">
+         <rect>
+          <x>9</x>
+          <y>9</y>
+          <width>626</width>
+          <height>376</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Bem vindo ao GWR BR! TODO: fazer uma imagem logo aqui.</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../resources.qrc">
+          <normaloff>:/img/fimSemestre.jpg</normaloff>:/img/fimSemestre.jpg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>700</width>
+          <height>700</height>
+         </size>
+        </property>
+       </widget>
       </widget>
       <widget class="QWidget" name="Data">
        <property name="toolTip">

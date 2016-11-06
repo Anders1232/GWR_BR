@@ -20,6 +20,10 @@ MainWindow::MainWindow(QWidget *parent) :
 	Q_ASSERT(charsSpinBox);
 	this->charsPerLineInPreview= charsSpinBox->value();
 
+	QRadioButton *latPlusLon = this->findChild<QRadioButton *>("LatPlusLonOperation");
+	Q_ASSERT(latPlusLon);
+	latPlusLon->click();
+//	this->charsPerLineInPreview= charsSpinBox->value();
 }
 
 MainWindow::~MainWindow()
@@ -183,10 +187,6 @@ void MainWindow::on_dependentVariableOutButton_clicked()
 
 void MainWindow::on_modelReadyButton_clicked()
 {
-	QTabWidget *tabWidget = this->findChild<QTabWidget *>("tabWidget");
-	Q_ASSERT(tabWidget);
-	tabWidget->setCurrentIndex(3);
-
 	QListWidget *variablesList= this->findChild<QListWidget*>("variablesList");
 	Q_ASSERT(variablesList);
 	std::list<std::string> *vList= GetStringList(variablesList);
@@ -260,6 +260,30 @@ void MainWindow::on_modelReadyButton_clicked()
 		dependent= dependentVariableList->item(0)->text().toStdString();
 	}
 
+	if(MODE_DEPENDENT_TIMES_OFFSET == modelType && 0 == dependentVariableList->count())
+	{
+		ShowErrorMessage("Dependent variable not set.");
+		return;
+	}
+	if(MODE_DEPENDENT_TIMES_OFFSET == modelType && 0 == offsetVariableList->count())
+	{
+		ShowErrorMessage("Offset variable not set.");
+		return;
+	}
+	if( (MODE_DISTANCE_TO_ORIGIN == modelType || MODE_LAT_PLUS_LON == modelType ) && 0 == latitudeVariableList->count())
+	{
+		ShowErrorMessage("Latitude not set.");
+		return;
+	}
+	if( (MODE_DISTANCE_TO_ORIGIN == modelType || MODE_LAT_PLUS_LON == modelType ) && 0 == longitudeVariableList->count())
+	{
+		ShowErrorMessage("Longitude not set.");
+		return;
+	}
+
+	QTabWidget *tabWidget = this->findChild<QTabWidget *>("tabWidget");
+	Q_ASSERT(tabWidget);
+	tabWidget->setCurrentIndex(3);
 
 	QString result = driver.Calculate(modelType, *vList, identitifer, dependent, latitude, longitude, offset, *lvList, *gvList);
 
