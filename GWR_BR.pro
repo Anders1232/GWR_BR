@@ -15,6 +15,7 @@ INCLUDEPATH += $$PWD/DoubleMatrixLib \
 TARGET = GWR_BR
 TEMPLATE = app
 CONFIG+= static
+RESOURCES     = resources.qrc
 
 QMAKE_CXXFLAGS += -finline-functions -Wall -pedantic -std=c++11
 
