@@ -97,7 +97,13 @@ QString GuiDriver::Calculate(
 		int column2= NamedColumnDoubleTable_GetColumnIndex(table, longitude.c_str());
 		DoubleMatrix *result= LatPlusLon(table->matrix, column1, column2);
 		FILE *temp= tmpfile();
-		DoubleMatrixPrint(result, temp, "\t%lf", NEW_LINE);
+		fprintf(temp, "GWR BR" NEW_LINE);
+		fprintf(temp, "File: %s\t\t\tDelimiter: %c(%d)"NEW_LINE, fileName.c_str(), separator, separator);
+		fprintf(temp, "Operation: Latitude + Longitude"NEW_LINE);
+		fprintf(temp, "Latitude column: %s"NEW_LINE, latitude.c_str());
+		fprintf(temp, "Longitude column: %s"NEW_LINE, longitude.c_str());
+		fprintf(temp, "Result:"NEW_LINE NEW_LINE);
+		DoubleMatrixPrint(result, temp, "\t%lf"NEW_LINE, NEW_LINE);
 		QString ret= "";
 		rewind(temp);
 		char aux;
@@ -118,6 +124,12 @@ QString GuiDriver::Calculate(
 		int column2= NamedColumnDoubleTable_GetColumnIndex(table, longitude.c_str());
 		DoubleMatrix *result= DistanceToOrigin(table->matrix, column1, column2);
 		FILE *temp= tmpfile();
+		fprintf(temp, "GWR BR" NEW_LINE);
+		fprintf(temp, "File: %s\t\t\tDelimiter: %c(%d)"NEW_LINE, fileName.c_str(), separator, separator);
+		fprintf(temp, "Operation: Distance to origin from (Longitude, Latitude)"NEW_LINE);
+		fprintf(temp, "Latitude column: %s"NEW_LINE, latitude.c_str());
+		fprintf(temp, "Longitude column: %s"NEW_LINE, longitude.c_str());
+		fprintf(temp, "Result:"NEW_LINE NEW_LINE);
 		DoubleMatrixPrint(result, temp, "\t%lf", NEW_LINE);
 		QString ret= "";
 		rewind(temp);
