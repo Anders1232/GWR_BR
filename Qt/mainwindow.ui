@@ -33,7 +33,7 @@
        <enum>QTabWidget::Triangular</enum>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="Welcome">
        <attribute name="title">
@@ -765,6 +765,60 @@
         <string>Execute</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <widget class="QWidget" name="widget_12" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_12">
+           <item>
+            <widget class="QWidget" name="widget_13" native="true">
+             <layout class="QVBoxLayout" name="verticalLayout_2">
+              <item>
+               <widget class="QLabel" name="executeFileLabel">
+                <property name="text">
+                 <string>File: </string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="executeDelimiterLabel">
+                <property name="text">
+                 <string>Delimiter:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="executeModelTypeLabel">
+                <property name="text">
+                 <string>Model type: </string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="executeIDLabel">
+                <property name="text">
+                 <string>ID column: </string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="executeLocationalTypeLabel">
+                <property name="text">
+                 <string>Locational type: </string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_2">
+             <property name="text">
+              <string>Start computing!</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
         <item>
          <widget class="QTextEdit" name="OutputTextEdit">
           <property name="textInteractionFlags">

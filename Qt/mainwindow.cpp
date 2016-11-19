@@ -67,6 +67,8 @@ void MainWindow::on_LoadButton_clicked()
 		return;
 	}
 
+//	SetExecuteTabLabel("FILE");
+
 	NamedColumnDoubleTable *loadedTable= driver.LoadFileButtonCliked();
 	FILE *tempFile= tmpfile ();
 	Q_ASSERT(tempFile);
@@ -86,7 +88,6 @@ void MainWindow::on_LoadButton_clicked()
 	ClearLists();
 	QListWidget *list= this->findChild<QListWidget*>("variablesList");
 	Q_ASSERT(list);
-//	list->clear();
 	for(int cont=0; cont < numberOfColumns;cont++)
 	{
 		list->addItem(QString(loadedTable->columnsName[cont] ) );
