@@ -52,8 +52,8 @@ DoubleMatrix* DoubleMatrixElementBinaryOperation(DoubleMatrix* , DoubleMatrix*, 
 DoubleMatrix* DoubleMatrixElementUnaryOperation(DoubleMatrix*, bool resultInTheFirstMatrix, double(*ElementUnaFunction)(double element));
 double DoubleMatrixMaxElement(DoubleMatrix*);
 double DoubleMatrixMinElement(DoubleMatrix*);
-double DoubleMatrixGetElement(DoubleMatrix *, int column, int line);	//implemented
-void DoubleMatrixSetElement(DoubleMatrix *,int column, int line, double Element);	//implemented
+double DoubleMatrixGetElement(DoubleMatrix *, int line, int column);	//implemented
+void DoubleMatrixSetElement(DoubleMatrix *,int line, int column, double Element);	//implemented
 DoubleMatrix* DoubleMatrixKroneckerProduct(DoubleMatrix*, DoubleMatrix*, bool resultInTheFirstMatrix);
 DoubleMatrix* DoubleMatrixElementDivision(DoubleMatrix*, DoubleMatrix*, bool resultInTheFirstMatrix);
 int DoubleMatrixColumnsNumber(DoubleMatrix*);

@@ -1,0 +1,1573 @@
+/* Global default styles. */
+* {
+    /* Zero out all padding and margins to start with for better
+     * cross-browser control. */
+    padding: 0;
+    margin: 0;
+}
+
+body, input, select, textarea, .inProgress {
+    font-family: Geneva,Arial,"DejuVu Sans",sans-serif;
+}
+body {
+    font-size: 75%;
+    background: #fff;
+    color: #000;
+}
+
+p {
+    margin-bottom: 10px;
+}
+
+a {
+    cursor: pointer;
+}
+.horde-block-links a, a.horde-block-links {
+    display: block;
+}
+
+img, .img, .img:active, .img:hover, .img:visited, .image {
+    border: none;
+    vertical-align: middle;
+    background: transparent;
+}
+/* This must be declared seperately or IE will ignore all of the selectors. */
+input[type=image] {
+    border: none;
+    vertical-align: middle;
+    background: transparent;
+}
+
+.iconImg {
+    background-color: transparent;
+    background-position: center right;
+    background-repeat: no-repeat;
+    display: -moz-inline-stack;
+    display: inline-block;
+    height: 16px;
+    vertical-align: bottom;
+    width: 16px;
+}
+
+span.hordeIcon {
+    background-image: url("graphics/horde.png");
+}
+
+ins {
+    background: #cfc;
+}
+del {
+    background: #fcc;
+}
+
+br.spacer {
+    line-height: 8px;
+}
+
+.box {
+    padding: 3px;
+    border: 1px dashed #999;
+    background: #fff;
+}
+.solidbox {
+    border: 1px solid #000;
+}
+.greybox {
+    border: 1px solid #000;
+    background: #e9e9e9;
+}
+.headerbox {
+    border-left: 1px solid #000;
+    border-right: 1px solid #000;
+    border-bottom: 1px solid #000;
+    background: #fff;
+    vertical-align: top;
+}
+.headerbox form {
+    padding: 2px;
+}
+.roundedBox {
+    -moz-border-radius: 15px;
+    -webkit-border-radius: 15px;
+    border-radius: 15px;
+}
+.roundedTop {
+    -moz-border-radius-topright: 15px;
+    -moz-border-radius-topleft: 15px;
+    -webkit-border-top-right-radius: 15px;
+    -webkit-border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    border-top-left-radius: 15px;
+}
+.roundedBottom {
+    -moz-border-radius-bottomright: 15px;
+    -moz-border-radius-bottomleft: 15px;
+    -webkit-border-bottom-right-radius: 15px;
+    -webkit-border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+    border-bottom-left-radius: 15px;
+}
+.header {
+    text-align: left;
+    font-weight: bold;
+    font-size: 125%;
+    padding: 3px;
+}
+.header a:hover, a.header:hover {
+    color: #333;
+}
+.header img {
+    vertical-align: bottom;
+}
+.header input, .header select {
+    font-size: 80%;
+}
+.header .smallheader input, .header .smallheader select {
+    font-size: 100%;
+}
+.header .button, .header .smallheader .button {
+    font-size: 72%;
+}
+
+.nowrap {
+    white-space: nowrap;
+}
+.clear {
+    clear: both;
+    line-height: 0;
+    height: 0;
+}
+
+a {
+    color: blue;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+.selected {
+    background: #bbcbff;
+}
+.selected-over {
+    background: #cef;
+}
+
+/* Table styles. */
+table {
+    border: none;
+}
+td, th {
+    padding: 1px;
+}
+th {
+    color: #333;
+}
+td {
+}
+ul.linedRow {
+    list-style-type: none;
+}
+.linedRow, tr.linedRow td, table.linedRow td, ul.linedRow li {
+    color: #000;
+    background: #fff;
+    border-bottom: 1px solid #ddd;
+}
+table.linedRow, ul.linedRow {
+    border-bottom: none;
+}
+.linedRowSelectedCol, td.linedRowSelectedCol, table.linedRow td.linedRowSelectedCol {
+    color: #000;
+    background: #f3f3f3;
+    border-bottom: 1px solid #ddd;
+}
+.selectedRow, tr.selectedRow td {
+    background: #ffc;
+}
+.selectedRow:hover, tr.selectedRow:hover td, .selectedRow-over, tr.selectedRow-over td {
+    background: #ffd;
+}
+table.nopadding td, table.nopadding th {
+    padding: 0;
+}
+.sortup {
+    background: #bbcbff url("graphics/za.png") center left no-repeat;
+    padding-left: 10px;
+}
+.sortdown {
+    background: #bbcbff url("graphics/az.png") center left no-repeat;
+    padding-left: 10px;
+}
+/* Horde UI standard tables */
+table.horde-table {
+    width: 99%;
+    margin-bottom: 8px;
+    border-top: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+    border-spacing: 0;
+}
+table.horde-table th {
+    padding: 3px;
+    background: #e9e9e9;
+    border-right: 1px solid #ccc;
+    text-align: left;
+}
+table.horde-table th.rightAlign {
+    text-align: right;
+}
+table.horde-table td {
+    padding: 3px;
+    border-right: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+}
+table.horde-table th.sortup {
+    background: #bbcbff url("graphics/za.png") center left no-repeat;
+    padding-left: 10px;
+}
+table.horde-table th.sortdown {
+    background: #bbcbff url("graphics/az.png") center left no-repeat;
+    padding-left: 10px;
+}
+/* Alternating styles. item0, item1 are deprecated. */
+.striped, .rowEven, .item0 {
+    background-color: #eee;
+}
+.rowOdd, .item1 {
+    background-color: #ddd;
+}
+
+.widget {
+    font-size: 90%;
+}
+
+.light {
+}
+.smallheader {
+    font-size: 100%;
+    font-weight: bold;
+    padding: 2px;
+}
+.header .smallheader {
+    font-size: 80%;
+}
+.header .smallheader a.smallheader {
+    font-size: 100%;
+}
+small, .small {
+    font-size: 80%;
+}
+.control {
+    color: #000;
+    background: #ccc;
+    border-bottom: 1px solid #999;
+    padding: 1px;
+}
+.item {
+    color: #000;
+    background: #eee;
+}
+.accessKey {
+    text-decoration: underline;
+}
+.text {
+    color: #000;
+    background: #fff;
+}
+
+/* Form styles. */
+.form table {
+    width: 100%;
+    padding: 2px;
+    border-collapse: collapse;
+}
+form[action^="https://"] input[type="submit"] {
+    background-image: url("graphics/locked.png");
+    background-position: right center;
+    background-repeat: no-repeat;
+    padding-right: 18px;
+}
+input[disabled], input[disabled]:hover, textarea[disabled] {
+    background-color: #e9e9e9;
+    color: #a8a8a8;
+}
+.htmlarea .statusBar .statusBarTree a {
+    font: inherit;
+}
+.htmlarea table {
+    width: auto;
+}
+.form-header {
+    margin-bottom: 1em;
+    border-bottom: thin dashed #ccc;
+}
+.form-error {
+    color: #f00;
+}
+.form-field-description {
+    color: #666;
+    font-size: 70%;
+}
+input, select, textarea {
+    font-size: 100%;
+    font-weight: normal;
+}
+input {
+    padding: 1px;
+}
+option {
+    padding: 0 5px 0 3px;
+}
+.checkbox, .radio {
+    border: 0;
+    height: 14px;
+    width: 14px;
+    background: transparent;
+}
+.button {
+    cursor: pointer;
+    font-size: 90%;
+    padding: 1px 6px;
+}
+a.button {
+    padding: 2px 8px;
+    font-weight: normal;
+    text-decoration: none;
+}
+
+pre, code, .fixed, table.lineNumbered * {
+    font-family: Menlo,Consolas,"Lucida Console","DejaVu Sans Mono",monospace;
+}
+
+/* Styles for email-like messages. */
+.signature {
+    color: #ccc;
+}
+.signature .fixed {
+    color: #ccc;
+}
+.citation {
+    margin: 1em 0;
+    padding-left: 1em;
+    border-left-width: 1px;
+    border-left-style: solid;
+    min-height: 12px;
+}
+.quoted1 {
+    color: #606;
+    border-color: #606;
+    background-color: #eee;
+}
+.quoted2 {
+    color: #077;
+    border-color: #077;
+}
+.quoted3 {
+    color: #900;
+    border-color: #900;
+}
+.quoted4 {
+    color: #009;
+    border-color: #009;
+}
+.quoted5 {
+    color: #b60;
+    border-color: #b60;
+}
+
+/* Various popup and status layers. */
+.notices {
+    text-align: left;
+    margin: .5em 8px;
+    list-style-type: none;
+}
+.notices li, .notice {
+    font-weight: bold;
+    color: #000;
+    background: #ffc;
+    border: 1px solid #aaa;
+    padding: 1px 3px;
+}
+.notices img, .notice img {
+    margin-right: .5em;
+}
+.tooltip, div.nicetitle {
+    color: #000;
+    background: #ffc;
+    border: 1px solid #000;
+    padding: 5px;
+    z-index: 1001;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+}
+div.nicetitle {
+    position: absolute;
+    overflow: hidden;
+    opacity: .9;
+}
+.inProgress {
+    font-size: 80%;
+    padding: 2px;
+    color: #fff;
+    background: #f00;
+}
+
+/* Tree styles. */
+.treeIcon {
+    padding-right: 5px;
+}
+.treeRow {
+    clear: both;
+    min-height: 20px;
+    overflow: hidden;
+}
+.treeToggle {
+    cursor: pointer;
+}
+
+.treeHdrSpacer {
+    width: 50%;
+}
+
+span.treeImg {
+    height: 20px;
+    width: 20px;
+    display: -moz-inline-stack;
+    display: inline-block;
+    vertical-align: middle;
+}
+span.treeImg1 {
+    background-image: url("graphics/tree/line.png");
+}
+span.treeImg2 {
+    background-image: url("graphics/tree/join.png");
+}
+span.treeImg3 {
+    background-image: url("graphics/tree/joinbottom-down.png");
+}
+span.treeImg4 {
+    background-image: url("graphics/tree/joinbottom.png");
+}
+span.treeImg5 {
+    background-image: url("graphics/tree/minustop.png");
+}
+span.treeImg6 {
+    background-image: url("graphics/tree/minus.png");
+}
+span.treeImg7 {
+    background-image: url("graphics/tree/minusbottom.png");
+}
+span.treeImg8 {
+    background-image: url("graphics/tree/minusonly.png");
+}
+span.treeImg9 {
+    background-image: url("graphics/tree/plustop.png");
+}
+span.treeImg10 {
+    background-image: url("graphics/tree/plus.png");
+}
+span.treeImg11 {
+    background-image: url("graphics/tree/plusbottom.png");
+}
+span.treeImg12 {
+    background-image: url("graphics/tree/plusonly.png");
+}
+span.treeImg13 {
+    background-image: url("graphics/tree/nullonly.png");
+}
+span.treeImg14 {
+    background-image: url("graphics/tree/folder.png");
+}
+span.treeImg15 {
+    background-image: url("graphics/tree/folderopen.png");
+}
+span.treeImg16 {
+    background-image: url("graphics/tree/leaf.png");
+}
+
+/* Menu styles. */
+#menu {
+    overflow: hidden;
+    min-height: 50px;
+    padding-right: 8px;
+}
+#menu ul {
+    padding: 5px;
+}
+#menu li {
+    list-style-type: none;
+    text-align: center;
+    margin: 2px;
+    float: left;
+}
+#menu li.separator {
+    width: 40px;
+}
+#menu a {
+    display: block;
+    white-space: pre;
+    font-size: 90%;
+    text-decoration: none;
+    padding: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+}
+#menu h1 {
+    font-weight: bold;
+    font-size: 150%;
+    line-height: 48px;
+    vertical-align: bottom;
+}
+#menu input, #menu select {
+    margin-top: 16px;
+}
+#menuBottom {
+    margin: -8px 0 0 0;
+    padding: 4px;
+    float: right;
+    text-align: right;
+    font-size: 90%;
+}
+
+/* Modal forms */
+body.modal-form {
+    background-color: #e9e9e9;
+}
+div.modal-form {
+    font-size: 150%;
+    width: 20em;
+/*    margin: 5em auto;*/ 
+    margin: 5em auto 5em 20%;
+
+    background-color: #fff;
+
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+
+    -moz-box-shadow: 0 0 2em #ccc;
+    -webkit-box-shadow: 0 0 2em #ccc;
+    box-shadow: 0 0 2em #ccc;
+}
+div.modal-form .notices {
+    padding-top: 1em;
+    font-size: 75%;
+}
+div.modal-form a {
+    color: #00f;
+}
+div.modal-form form {
+    padding: 1em;
+}
+div.modal-form label {
+    font-weight: bold;
+}
+div.modal-form input, div.modal-form select {
+    -webkit-transition-property: -webkit-box-shadow, background;
+    -webkit-transition-duration: 0.25s;
+
+    width: 18em;
+    margin-bottom: .5em;
+}
+div.modal-form .submit-button {
+    display: block;
+    margin: .5em auto;
+    text-align: center;
+    width: auto;
+}
+div.modal-form .extras {
+    font-size: 75%;
+    border-top: thin dashed #ccc;
+    margin: .5em 0;
+}
+
+/* Login tasks */
+div.logintasks-item {
+    margin-bottom: 1em;
+}
+div.logintasks-item label {
+    font-weight: normal;
+    font-size: 90%;
+}
+div.logintasks-item input {
+    width: auto;
+    margin-bottom: 0;
+}
+
+/* Sidebar styles. */
+.sidebar {
+    float: left;
+}
+#sidebarPanel {
+    -moz-border-radius-bottomright: 15px;
+    -webkit-border-bottom-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+    padding-top: 5px;
+    padding-bottom: 10px;
+    background: #eee;
+    white-space: nowrap;
+    text-align: left;
+}
+#sidebarPanel a, #sidebarPanel span {
+    color: #000;
+    white-space: pre;
+    font-size: 90%;
+    text-decoration: none;
+}
+#sidebarPanel a a, #sidebarPanel a span, #sidebarPanel span a, #sidebarPanel span span {
+    font-size: 100%;
+}
+#sidebarPanel span.accessKey {
+    text-decoration: underline;
+}
+#sidebarPanel span.toggle {
+    cursor: pointer;
+}
+#sidebarPanel a:hover {
+    color: #000;
+}
+
+#expandedSidebar {
+    overflow: hidden;
+}
+#expandedSidebar #expandButton {
+    background-image: url("graphics/hide_panel.png");
+    cursor: pointer;
+    margin-right: 0.5em;
+    float: right;
+}
+#hiddenSidebar {
+    background-image: url("graphics/show_panel.png");
+    cursor: pointer;
+    margin-right: 2px;
+}
+
+/* Main body. */
+.body {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin-top: 8px;
+}
+
+/* Pager. */
+.pager {
+    text-align: center;
+}
+
+/* Tab styles. */
+.tabset {
+    float: left;
+    width: 100%;
+    font-weight: bold;
+}
+.tabset ul {
+    margin-top: 4px;
+    padding-left: 8px;
+    list-style: none;
+}
+.tabset li {
+    float: left;
+    margin: -3px 2px 0 0;
+    white-space: nowrap;
+}
+.tabset li a {
+    padding: 2px 0.5em;
+    display: block;
+}
+.tabset li a:hover {
+}
+.tabset li.activeTab a {
+}
+.tabset li.activeTab a:hover {
+}
+.tabset img {
+    display: block;
+    float: left;
+    padding-right: 2px;
+}
+
+/* Preferences. */
+#services_prefs .header ul {
+    float: right;
+    text-align: right;
+    font-size: 80%;
+}
+#services_prefs .header li {
+    list-style: none;
+    display: inline;
+}
+.prefsOverview div {
+    float: left;
+}
+.prefsOverview div div {
+    padding-left: 10px;
+    width: 95%;
+}
+.prefsOverview h2 {
+    font-size: 150%;
+    font-weight: bold;
+}
+.prefsOverview dt a {
+    display: block;
+    padding: 2px;
+    font-weight: bold;
+}
+.prefsOverview dd {
+    padding: 2px;
+    margin-bottom: 10px;
+}
+div.prefsContainer {
+    padding: 1em;
+}
+div.prefsContainer p {
+    padding-top: 1em;
+}
+img.prefsLinkImg {
+    padding-right: 1px;
+}
+span.prefsAdvanced {
+    padding: 3px 10px 0 0;
+    font-size: 80%;
+    font-weight: normal;
+}
+
+div.prefsErrorDiv {
+    border: 1px solid red;
+    display: inline-block;
+    padding: 2px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+}
+
+div.prefsError {
+    color: red;
+}
+
+/* Block styles. */
+.currentBlock {
+    border: 2px solid red;
+}
+.blockIcons {
+    padding-top: 5px;
+    display:none;
+}
+.blockHeader:hover .blockIcons {
+    display: block;
+}
+#googlesearch {
+    padding: .3em;
+}
+table.horde-block-weather {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid transparent;
+}
+table.horde-block-weather td {
+    border: 1px solid #ddd;
+    text-align:center;
+}
+
+/* Help styles. */
+body.help_about, body.help_entry {
+    margin: 0.5em;
+}
+.helplink {
+    cursor: help;
+}
+.help {
+    background: #fff;
+    color: #000;
+}
+.help h1 {
+    font-size: 125%;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+}
+.help h2 {
+    padding-top: 1em;
+    padding-bottom: 0.5em;
+    font-size: 110%;
+}
+.help p {
+    margin-left: 1em;
+    margin-right: 1em;
+    margin-bottom: 1em;
+}
+.help em {
+    display: block;
+    padding: 5px;
+    margin-left: 1em;
+    margin-right: 1em;
+    margin-bottom: 1em;
+}
+.help em.helpTip {
+    color: #090;
+    background: #e0f0e0;
+}
+.help em.helpWarn {
+    color: #900;
+    background: #f0e0e0;
+}
+
+/* Source markup styles. */
+table.lineNumbered * {
+    line-height: 16px;
+}
+.lineNumbered th {
+    background: #e9e9e9;
+    border-right: 1px solid #e0e0e0;
+    border-bottom: none;
+    padding-left: 10px;
+    padding-right: 10px;
+    text-align: right;
+}
+.lineNumbered td {
+    vertical-align: top;
+    width: 100%;
+    white-space: pre;
+    background: #fff;
+    padding-left: 10px;
+}
+.parentheses {
+    color: #2a6;
+    font-weight: bold;
+}
+.comment {
+    color: #aac;
+}
+.htag {
+    color: #569;
+    background: #d5d6da;
+    font-weight: bold;
+}
+.metac {
+    color: #0ff;
+    background: #d5d6da;
+}
+.id {
+    color: #e82;
+    background: #e4e4e0;
+}
+.attr {
+    color: #6af;
+}
+.value {
+    color: #d46;
+}
+.color {
+    color: #f57;
+}
+.eol {
+    color: #26e;
+}
+.url {
+    color: #962;
+}
+.file {
+    color: #444;
+    background: #fe4;
+}
+.class {
+    font-style: italic;
+}
+
+/* Sound selection. */
+ul.sound-list {
+    list-style: none;
+}
+.sound-list li {
+    height: 24px;
+}
+.sound-list embed {
+    vertical-align: middle;
+    height: 24px;
+}
+
+/* Calendar Popup. */
+.hordeCalendarPopup {
+    border: 1px solid #ccc;
+    background: #fff;
+    width: 12em;
+}
+.hordeCalendarPopup thead {
+    font-weight: bold;
+}
+.hordeCalendarPopup th {
+    border-bottom: 1px solid #ccc;
+}
+.hordeCalendarPopup tbody {
+    text-align: right;
+}
+.hordeCalendarPopup a {
+    color: #000;
+    display: block;
+    padding: 2px;
+}
+.hordeCalendarPopup tbody a:hover {
+    background: #ffc;
+}
+.hordeCalendarPopup .hordeCalendarCurrent {
+    font-weight: bold;
+    background: #eef;
+}
+.hordeCalendarPopup .hordeCalendarToday {
+    font-weight: bold;
+}
+.hordeCalendarPopup .hordeCalendarWeek {
+    background: #bbb;
+    font-size: 90%;
+    font-style: italic;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Redbox styles. */
+#RB_overlay {
+    position: absolute;
+    z-index: 100;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    min-height: 100%;
+    background-color: #000;
+    filter: alpha(opacity=60);
+    -moz-opacity: .6;
+    opacity: .6;
+}
+#RB_loading {
+    z-index: 101;
+    width: 66px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 200px;
+    padding-bottom: 66px;
+    text-align: center;
+    background: url("graphics/redbox_spinner.gif") no-repeat bottom center;
+}
+#RB_window {
+    z-index: 102;
+    background-color: #fff;
+    display: block;
+    text-align: left;
+    margin: 20px auto 0 auto;
+    position: absolute;
+}
+#RB_window p, #RB_window ul {
+    margin-bottom: 3px;
+}
+.RB_confirm {
+    width: 20em;
+    padding: 1em;
+    border: 1px solid #ccc;
+    background: #ffc;
+}
+.RB_confirm input {
+    margin: .2em;
+}
+.RB_confirm ul {
+    margin-left: .5em;
+}
+#RB_info {
+    width: 30em;
+    padding: 1em;
+    border: 1px solid #ccc;
+    background: #ccf;
+}
+#RB_info input {
+    margin: .2em;
+}
+
+/* Color picker styles. */
+#color-picker {
+    color: #999;
+    background: #000;
+    padding-bottom: 8px;
+    border: 1px solid #111;
+    width: 148px;
+    height: 155px;
+    z-index: 100;
+}
+#color-picker .north {
+    background: #111;
+    border-bottom: 1px solid #171717;
+    font-size: 11px;
+}
+#color-picker .north div {
+    color: #999;
+    float: right;
+    padding: 5px 7px;
+    cursor: pointer;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    user-select: none;
+}
+#color-picker .north div:hover {
+    color: #fff;
+}
+#color-picker .south {
+    margin: 32px 0 0 10px;
+    cursor: crosshair;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    user-select: none;
+}
+#color-picker .south img {
+    height: 100%;
+    width: 100%;
+    position: relative;
+    top: -8px;
+    left: -1px;
+}
+#color-picker #color-picker-cursor {
+    background: url("graphics/color-picker-cursor.gif") no-repeat;
+    position: absolute;
+    height: 9px;
+    width: 9px;
+    z-index: 101;
+}
+#color-picker #color-picker-cursor img {
+    height: 100%;
+    width: 100%;
+    position: relative;
+    top: -8px;
+    left: -1px;
+}
+#color-picker #color-picker-hex {
+    padding: 5px 0 4px 7px;
+    cursor: text;
+    float: left;
+}
+#color-picker #color-picker-hex:hover {
+    color: #fff;
+}
+#color-picker #color-picker-hex-edit {
+    float: left;
+}
+#color-picker #color-picker-resize {
+    float: right;
+    top: -14px;
+    left: 7px;
+    height: 14px;
+    width: 14px;
+    cursor: se-resize;
+}
+#color-picker #color-picker-sphere {
+    height: 128px;
+    width: 128px;
+}
+.color-picker-palette-src {
+    background-image: url("graphics/color-picker-palette.png");
+}
+.color-picker-resize-src {
+    background-image: url("graphics/color-picker-resize.gif");
+}
+
+.leftAlign {
+    text-align: left;
+}
+.rightAlign {
+    text-align: right;
+}
+.leftFloat {
+    float: left;
+}
+.rightFloat {
+    float: right;
+}
+
+/* Activesync styles. */
+.activesyncHdr1 {
+    width: 30%;
+}
+.activesyncHdr2 {
+    width: 22%;
+}
+.activesyncHdr3 {
+    width: 6%;
+}
+.activesyncHdr4 {
+    width: 10%;
+}
+.activesyncHdr5 {
+    width: 12%;
+}
+.activesyncHdr6 {
+    width: 10%;
+}
+
+/* Toggle quote styles. */
+.toggleQuoteHide, .toggleQuoteShow {
+    cursor: pointer;
+    background: #ddd;
+}
+.toggleQuoteHide:hover, .toggleQuoteShow:hover {
+    text-decoration: underline;
+}
+.toggleQuoteParent {
+    margin-bottom: 8px;
+}
+
+/* SpellChecker styles. */
+.spellcheckChecking, .spellcheckIncorrect {
+    color: #f00;
+}
+.spellcheckIncorrect, .spellcheckCorrected {
+    text-decoration: underline;
+    cursor: pointer;
+}
+.spellcheckCorrected {
+    color: #090;
+}
+
+/* Permissions. */
+.permsAdd, .permsDelete, .permsEdit {
+    padding-left: 3px;
+}
+
+/* KeyNavList styling. */
+.KeyNavList {
+    background: #f4f4f4;
+    border: 1px solid #d4d4d4;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 2px;
+    position: absolute;
+    z-index: 10000;
+}
+.KeyNavList ul {
+    list-style-type: none;
+    padding: 1px;
+}
+.KeyNavList ul li {
+    cursor: pointer;
+    color: #000;
+    padding: 3px;
+    white-space: nowrap;
+}
+.KeyNavList ul li.selected {
+    background: gray;
+    color: #fff;
+}
+.KeyNavList ul li:hover, .KeyNavList ul li.selected:hover {
+    background: lightgrey;
+    color: #fff;
+}
+
+/* Growler notice styling. */
+#Growler {
+    width: 340px;
+}
+#Growler div.GrowlerNotice {
+    filter: alpha(opacity=80);
+    -moz-opacity: .8;
+    opacity: .8;
+    zoom: 1;
+    width: 300px;
+    padding: 10px 10px 10px 25px;
+    margin: 5px auto;
+    text-align: left;
+    display: none;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    min-height: 20px;
+    border-width: 1px;
+    border-style: solid;
+    background-position: 3px center;
+    background-repeat: no-repeat;
+    color: #fff;
+    cursor: pointer;
+}
+#Growler div.GrowlerNoticeHead {
+    font-weight: bold;
+}
+.GrowlerNoticeBody {
+    margin-right: 20px;
+    overflow-x: hidden;
+}
+#Growler div.horde-error, #GrowlerLog li.horde-error {
+    background-image: url("graphics/alerts/error.png");
+}
+#Growler div.horde-error div.GrowlerNoticeBody {
+    padding-right: 15px;
+}
+#Growler div.horde-message, #GrowlerLog li.horde-message {
+    background-image: url("graphics/alerts/message.png");
+}
+#Growler div.horde-success, #GrowlerLog li.horde-success  {
+    background-image: url("graphics/alerts/success.png");
+}
+#Growler div.horde-warning, #GrowlerLog li.horde-warning {
+    background-image: url("graphics/alerts/warning.png");
+}
+#Growler div.horde-alarm, #GrowlerLog li.horde-alarm {
+    background-image: url("graphics/alerts/alarm.png");
+}
+#GrowlerLog {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    max-height: 200px;
+    z-index: 10000;
+    overflow-y: auto;
+}
+#GrowlerLog ul {
+    overflow: auto;
+    filter: alpha(opacity=90);
+    -moz-opacity: .9;
+    opacity: .9;
+}
+#GrowlerLog ul li {
+    color: #333;
+    font-size: 12px;
+    list-style-type: none;
+    overflow: hidden;
+    padding: 10px 30px;
+    border-bottom: 1px dotted;
+    background-position: 3px center;
+    background-repeat: no-repeat;
+}
+#GrowlerLog ul li:last-child {
+    border: 0;
+}
+#GrowlerLog li.GrowlerInfo {
+    font-weight: bold;
+    background: #999;
+}
+#GrowlerLog li.GrowlerNoAlerts {
+    background: #999;
+}
+#GrowlerLog span.GrowlerAlertDate {
+    font-size: 90%;
+    font-style: italic;
+    padding-left: 10px;
+}
+div.GrowlerNoticeExit {
+    cursor: pointer;
+    float: right;
+    font-weight: bold;
+}
+div.GrowlerNoticeExit:hover {
+    color: #444;
+}
+.horde-message, .horde-success, .horde-warning, .horde-error {
+    border-color: #316600;
+    background-color: #5db110;
+    color: #fff;
+}
+.horde-error {
+    background-color: #e81222;
+    border-color: maroon;
+}
+.horde-warning {
+    background-color: #ebe20c;
+    border-color: #807b00;
+}
+.horde-warning, #Growler div.horde-warning {
+    color: #000;
+}
+.horde-message {
+    background-color: #369;
+    border-color: #123;
+}
+.horde-alarm {
+    background-color: orange;
+    border-color: red;
+}
+
+.hordeACBox {
+    background:white none repeat scroll 0 0;
+    border:1px solid #666699;
+    cursor:default;
+    /*overflow:hidden;*/
+    text-align:left;
+    min-height: 58px;
+}
+.hordeACList {
+    display:block;
+    overflow:hidden;
+    width:100%;
+    cursor:default;
+    list-style-type:none;
+    margin:0;
+    padding:0;
+}
+.hordeACListMember {
+    display:inline-block;
+    font-size:90%;
+    padding:2px 1px 1px 2px;
+    height: 17px;
+    white-space:nowrap;
+}
+.hordeACListItem {
+    background-color:lightblue;
+    border:1px solid #C0C0C0;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+    margin:5px;
+}
+.hordeACTrigger, .hordeACTrigger:focus, .hordeACTrigger:disabled {
+    background:transparent none repeat scroll 0 0;
+    border:0 none;
+    display:inline;
+    position:static;
+    width:80px;
+}
+/*.hordeACContainer {
+    height:18px;
+    margin:2px;
+    padding:2px 2px 2px 0;
+}*/
+.hordeACItemRemove:hover {
+    cursor:pointer;
+}
+
+/* Horde_Mime_Viewer styles. */
+.mimeHeaders {
+    border: 1px solid #ccc;
+    background: #f9f9f9;
+    display: -moz-inline-stack;
+    display: inline-block;
+    margin-bottom: 3px;
+    padding: 5px;
+}
+
+/* Context Menus */
+.context {
+    min-width: 180px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10000;
+    border: 1px #d4d4d4 solid;
+    padding: 1px;
+    background: #f4f4f4;
+    color: #000;
+    font-size: 90%;
+}
+.context a, .context a:visited {
+    white-space: nowrap;
+    display: block;
+    padding: 3px 2px;
+    text-decoration: none;
+    color: #000;
+}
+.context a:hover, .context a.contextSubmenu.contextHover {
+    background-color: gray;
+    color: #fff;
+    cursor: pointer;
+    text-decoration: none;
+}
+.context div.sep {
+    background: silver;
+    height: 1px !important;
+    margin: 1px 0;
+    padding: 0;
+}
+.contextSubmenu {
+    background: url("graphics/popright.png") 100% 50% no-repeat;
+    padding-left: 16px;
+}
+.contextSelected {
+    background: #ffa;
+}
+.contextMenu .iconImg {
+    vertical-align: top;
+}
+
+/* Form ghosting. */
+.formGhost {
+    color: #a0a0a0 !important;
+    font-style: italic;
+}
+
+/* Social Media Related CSS */
+.hordeSmStreamstory {
+    margin-bottom: 7px;
+    padding-top: 7px;
+    position: relative;
+}
+.hordeSmStreambody {
+    min-height: 70px;
+}
+.hordeSmStreaminfo {
+    color: #777777;
+    padding: 2px 0 0;
+    font-style: italic;
+    font-size: 90%;
+}
+.hordeSmGetmore {
+    text-align: center;
+}
+.hordeSmCurrent {
+    font-style: italic;
+    color: gray;
+}
+.hordeSmAvatar {
+    float: left;
+    text-align: center;
+    height: 73px;
+    width: 73px;
+    margin-right: 5px;
+    padding-top: 5px;
+}
+.hordeSmNew {
+    color: red;
+}
+.hordeSmPreview {
+    text-align: center;
+    position: absolute;
+    z-index: 10000;
+}
+.hordeSmOverlay {
+    position: absolute;
+    opacity: 0.8;
+    z-index: 9000;
+    background-color: #000000;
+}
+
+/* Uploader */
+.hordeUploaderHeaderContent {
+    font-size: 18px;
+    background: url("graphics/uploader/backgrounds.gif") no-repeat scroll 0 -317px transparent;
+    min-height: 56px;
+    padding-left: 60px;
+    color: white;
+}
+.hordeUploaderHeader {
+  background: url("graphics/uploader/backgrounds.gif") repeat-x scroll 0 0 #2A2C2E;
+}
+.hordeUploaderFilelistHeader {
+    background: none repeat scroll 0 0 #DFDFDF;
+    color: #42454A;
+    padding: 8px;
+    height: 20px;
+}
+.hordeUploaderSubHeader {
+    font-size: 12px;
+}
+.hordeUploaderFooter {
+  border-top: 1px solid #FFFFFF;
+  height: 22px;
+  line-height: 20px;
+  vertical-align: middle;
+  background: none repeat scroll 0 0 #DFDFDF;
+  color: #42454A;
+  padding: 8px;
+}
+.hordeUploaderAdd {
+    background: url("graphics/plus.png") no-repeat !important;
+    padding-left: 16px !important;
+}
+.hordeUploaderStart {
+     background: url("graphics/uploader/up.png") no-repeat !important;
+    padding-left: 16px !important;
+}
+.hordeUploaderFilelist {
+    height: 350px;
+    overflow: auto;
+}
+.hordeUploaderFilelistItem {
+    background: url("graphics/uploader/backgrounds.gif") repeat-x scroll 0 -156px #F5F5F5;
+    border-bottom: 1px solid #DDDDDD;
+    padding: 10px 8px;
+}
+.hordeUploaderFilelistItemDone {
+    color: #aaaaaa;
+}
+.hordeUploaderFilelistItemError {
+    color: red;
+    font-weight: bold;
+}
+.hordeUploaderFilename {
+    float: left;
+    width: 200px;
+}
+.hordeUploaderFilestatus,
+.hordeUploaderFilesize,
+.hordeUploaderFileaction
+{
+   float: right;
+   text-align: right;
+}
+.hordeUploaderFilestatus,
+.hordeUploaderFilesize
+{
+    width: 80px;
+}
+.hordeUploaderFileaction
+{
+    width: 16px;
+}
+.hordeUploaderSuccess
+{
+    background-image: url("graphics/alerts/success.png");
+}
+.hordeUploaderError
+{
+    background-image: url("graphics/alerts/error.png");
+}
+.hordeUploaderRemove
+{
+    background-image: url("graphics/delete.png");
+}
+/* For in place editing */
+form.inplaceeditor-form {
+    background: none;
+}
+.inplaceeditor-empty {
+    font-style: italic;
+    color: #999;
+}
+
+/* Print CSS. */
+@media print {
+    body, .header, .smallheader {
+        background: #fff;
+        color: #000;
+    }
+
+    a, .widget, .signature, .signature .fixed {
+        color: #000;
+    }
+
+    #menu, .togglequotehide, .togglequoteshow {
+        display: none;
+    }
+
+    .headerbox {
+        border: none;
+    }
+
+    .control, .rowEven, .rowOdd, .item0, .item1 {
+        background-color: #fff;
+        border-bottom: thin solid #000;
+    }
+
+    .selected {
+        background: #ddd;
+    }
+
+    .quoted1, .quoted2, .quoted3, .quoted4, .quoted5 {
+        color: #000;
+        border-left-color: #000;
+    }
+
+    .download {
+        padding: 2px 2px 2px 0;
+        background-image: none;
+    }
+
+    #Growler, #GrowlerLog {
+        display: none !important;
+    }
+}

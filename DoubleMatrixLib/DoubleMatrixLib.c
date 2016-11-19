@@ -150,13 +150,13 @@ DoubleMatrix* DoubleMatrixScalarMultiplication(DoubleMatrix *matrix, double scal
 }
 
 
-double DoubleMatrixGetElement(DoubleMatrix *matrix, int column, int line)
+double DoubleMatrixGetElement(DoubleMatrix *matrix, int line, int column)
 {
 	int position = (matrix->columns)*line+column;
 	return (matrix->elements)[position];
 }
 
-void DoubleMatrixSetElement(DoubleMatrix *matrix,int column, int line, double element)
+void DoubleMatrixSetElement(DoubleMatrix *matrix, int line, int column, double element)
 {
 	int position = (matrix->columns)*line+column;
 	(matrix->elements)[position]= element;

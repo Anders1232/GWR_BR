@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>666</width>
-    <height>481</height>
+    <height>491</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -33,7 +33,7 @@
        <enum>QTabWidget::Triangular</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>5</number>
       </property>
       <widget class="QWidget" name="Welcome">
        <attribute name="title">
@@ -284,7 +284,7 @@
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
-                  <height>20</height>
+                  <height>25</height>
                  </size>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -330,7 +330,7 @@
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
-                  <height>20</height>
+                  <height>25</height>
                  </size>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_5">
@@ -376,7 +376,7 @@
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
-                  <height>20</height>
+                  <height>25</height>
                  </size>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_6">
@@ -415,7 +415,7 @@
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
-                  <height>35</height>
+                  <height>25</height>
                  </size>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -555,7 +555,7 @@
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
-                  <height>20</height>
+                  <height>25</height>
                  </size>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -604,7 +604,7 @@
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
-                  <height>20</height>
+                  <height>25</height>
                  </size>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_8">
@@ -766,6 +766,36 @@
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
+         <widget class="QWidget" name="widget_12" native="true">
+          <widget class="QLabel" name="label_13">
+           <property name="geometry">
+            <rect>
+             <x>50</x>
+             <y>0</y>
+             <width>59</width>
+             <height>14</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>TextLabel</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_14">
+           <property name="geometry">
+            <rect>
+             <x>370</x>
+             <y>0</y>
+             <width>59</width>
+             <height>14</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>TextLabel</string>
+           </property>
+          </widget>
+         </widget>
+        </item>
+        <item>
          <widget class="QTextEdit" name="OutputTextEdit">
           <property name="textInteractionFlags">
            <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
@@ -783,7 +813,7 @@
       </widget>
       <widget class="QWidget" name="Credits">
        <attribute name="title">
-        <string>Page</string>
+        <string>About</string>
        </attribute>
       </widget>
      </widget>
