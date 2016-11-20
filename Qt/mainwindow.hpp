@@ -5,6 +5,12 @@
 #include <QListWidget>
 #include "GuiDriver.hpp"
 
+enum CoordsMode
+{
+	PROJECTED,
+	SPHERICAL
+};
+
 namespace Ui {
 	class MainWindow;
 }
@@ -78,6 +84,12 @@ class MainWindow : public QMainWindow
 
 		void on_distanceToOrigin_clicked();
 
+		void on_modelProjected_clicked();
+
+		void on_modelSpherical_clicked();
+
+		void on_executeStartComputingButton_clicked();
+
 	private:
 		Ui::MainWindow *ui;
 		GuiDriver driver;
@@ -88,6 +100,9 @@ class MainWindow : public QMainWindow
 		std::list<std::string>* GetStringList(QListWidget *widgetList);
 		int modelType;
 		void ShowErrorMessage(QString errorMessage);
+		CoordsMode coordsMode;
+		QString fileName;
+		char separator;
 };
 
 #endif // MAINWINDOW_H

@@ -24,22 +24,15 @@ int Gui_Init(int argc, char *argv[])
 */
 GuiDriver::GuiDriver(void)
 {
-	separator = '\t';
-	fileName= "";
 	table= NULL;
 //	modelType = MODE_LAT_PLUS_LON;
 }
 
-void GuiDriver::FileSelected(QString fileName)
-{
-	this->fileName= std::string(fileName.toLocal8Bit().data() );
-}
-
-std::string GuiDriver::GetPreview(int linesInPreview, int charPerLineInPreview)
+std::string GuiDriver::GetPreview(std::string fileName, int linesInPreview, int charPerLineInPreview)
 {
 //	this->fileName;
 	FILE *temp= tmpfile();
-	LoadPreview(temp, this->fileName.c_str(), linesInPreview, charPerLineInPreview);
+	LoadPreview(temp, fileName.c_str(), linesInPreview, charPerLineInPreview);
 	std::string preview= "";
 	rewind(temp);
 	char aux;
@@ -53,12 +46,7 @@ std::string GuiDriver::GetPreview(int linesInPreview, int charPerLineInPreview)
 	return(preview);
 }
 
-void GuiDriver::DelimiterSelected(char separator)
-{
-	this->separator= separator;
-}
-
-NamedColumnDoubleTable* GuiDriver::LoadFileButtonCliked(void)
+NamedColumnDoubleTable* GuiDriver::LoadFileButtonCliked(std::string fileName, char separator)
 {
 	table= LoadFile(fileName.c_str(), separator);
 	return table;
@@ -80,6 +68,8 @@ static double Add(double a, double b)
 */
 
 QString GuiDriver::Calculate(
+					std::string fileName,
+					char separator,
 					int modelType,
 					std::list<std::string> const &variables,
 					std::string const &identifier,

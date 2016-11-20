@@ -19,13 +19,13 @@ extern "C"
 class GuiDriver
 {
 	public:
-		void FileSelected(QString fileName);
-		void DelimiterSelected(char separator);
+//		void FileSelected(QString fileName);
+//		void DelimiterSelected(char separator);
 		GuiDriver(void);
-		NamedColumnDoubleTable* LoadFileButtonCliked(void);
-		std::string GetPreview(int linesInPreview, int charPerLineInPreview);
+		NamedColumnDoubleTable* LoadFileButtonCliked(std::string fileName, char separator);
+		std::string GetPreview(std::string filename, int linesInPreview, int charPerLineInPreview);
 //		void SelectModelType(int);
-		QString Calculate(
+		QString Calculate(std::string fileName, char separator,
 							int modelType,
 							std::list<std::string> const &variables,
 							std::string const &identifier,
@@ -37,8 +37,6 @@ class GuiDriver
 							std::list<std::string> const &globalVariables
 						);
 	private:
-		std::string fileName;
-		char separator;
 		NamedColumnDoubleTable *table;
 //		int modelType;
 };

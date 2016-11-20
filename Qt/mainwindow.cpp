@@ -24,6 +24,13 @@ MainWindow::MainWindow(QWidget *parent) :
 	Q_ASSERT(latPlusLon);
 	latPlusLon->click();
 //	this->charsPerLineInPreview= charsSpinBox->value();
+	coordsMode= PROJECTED;
+	QRadioButton *coordProjected = this->findChild<QRadioButton *>("modelProjected");
+	Q_ASSERT(coordProjected);
+	coordProjected->click();
+
+	separator = '\t';
+	fileName= "";
 }
 
 MainWindow::~MainWindow()
@@ -44,7 +51,7 @@ void MainWindow::on_SelectFileButton_clicked()
 	QLineEdit *lineEdit = this->findChild<QLineEdit*>("fileNameLineEdit");
 	Q_ASSERT(lineEdit);
 	lineEdit->setText(fileName);
-	driver.FileSelected(fileName);
+	this->fileName= fileName.toLocal8Bit().data();
 //	driver.Load(fileName, linesInPreview, charsPerLineInPreview);
 	UpdatePreview();
 }
@@ -67,9 +74,23 @@ void MainWindow::on_LoadButton_clicked()
 		return;
 	}
 
-//	SetExecuteTabLabel("FILE");
+	QLabel *auxLabel= this->findChild<QLabel*>("executeFileLabel");
+	Q_ASSERT(auxLabel);
+	auxLabel->setText(QString("File: ") + lineEdit->text());
 
-	NamedColumnDoubleTable *loadedTable= driver.LoadFileButtonCliked();
+	auxLabel= this->findChild<QLabel*>("executeDelimiterLabel");
+	Q_ASSERT(auxLabel);
+
+	if('\t' == separator)
+	{
+		auxLabel->setText(QString("Delimiter: \\t") );
+	}
+	else
+	{
+		auxLabel->setText(QString("Delimiter: ") + separator);
+	}
+
+	NamedColumnDoubleTable *loadedTable= driver.LoadFileButtonCliked(fileName.toStdString(), separator);
 	FILE *tempFile= tmpfile ();
 	Q_ASSERT(tempFile);
 	NamedColumnDoubleTable_PrintAll(loadedTable, tempFile, "%s\t\t", "%lf\t\t", NEW_LINE);
@@ -137,12 +158,12 @@ void MainWindow::ClearLists(void)
 
 void MainWindow::on_TabRadioButton_clicked()
 {
-	driver.DelimiterSelected('\t');
+	separator= '\t';
 }
 
 void MainWindow::on_SemicolonRadioButton_clicked()
 {
-	driver.DelimiterSelected(';');
+	separator= ';';
 }
 
 void MainWindow::on_DelimiterLineEdit_textEdited(const QString &arg1)
@@ -151,7 +172,7 @@ void MainWindow::on_DelimiterLineEdit_textEdited(const QString &arg1)
 	char lastCharacter[2];
 	lastCharacter[0]= str[str.size()-1];
 	lastCharacter[1]= '\0';
-	driver.DelimiterSelected(lastCharacter[0]);
+	separator= lastCharacter[0];
 	QLineEdit *lineEdit = this->findChild<QLineEdit*>("DelimiterLineEdit");
 	Q_ASSERT(lineEdit);
 	lineEdit->setText(lastCharacter);
@@ -194,14 +215,49 @@ void MainWindow::on_modelReadyButton_clicked()
 
 	QListWidget *identifierVariableList= this->findChild<QListWidget*>("identifierVariable");
 	Q_ASSERT(identifierVariableList);
-	std::string identitifer;
+	std::string identifer;
 	if(0 == identifierVariableList->count())
 	{
-		identitifer= "";
+		identifer= "";
 	}
 	else
 	{
-		identitifer= identifierVariableList->item(0)->text().toStdString();
+		identifer= identifierVariableList->item(0)->text().toStdString();
+	}
+
+	QLabel* aux= this->findChild<QLabel *>("executeIDLabel");
+	Q_ASSERT(aux);
+	aux->setText(QString("ID column: ") + identifer.c_str());
+
+	aux= this->findChild<QLabel *>("executeModelTypeLabel");
+	Q_ASSERT(aux);
+	QRadioButton *radioButton= this->findChild<QRadioButton *>("LatPlusLonOperation");
+	Q_ASSERT(radioButton);
+	if(true == radioButton->isChecked())
+	{
+		aux->setText(QString("Model type: Lat + Lon"));
+	}
+	else
+	{
+		QRadioButton *radioButton= this->findChild<QRadioButton *>("dependentTimesOffsetOperation");
+		Q_ASSERT(radioButton);
+		if(true == radioButton->isChecked())
+		{
+			aux->setText(QString("Model type: Dependent * Offset"));
+		}
+		else
+		{
+			QRadioButton *radioButton= this->findChild<QRadioButton *>("distanceToOrigin");
+			Q_ASSERT(radioButton);
+			if(true == radioButton->isChecked())
+			{
+				aux->setText(QString("Model type: Distance to origin from (Lat, Lon)"));
+			}
+			else
+			{
+				fprintf(stderr,"[ERROR] Operation not Selected!\t\t%s:%d" NEW_LINE, __FILE__, __LINE__);
+			}
+		}
 	}
 
 	QListWidget *latitudeVariableList= this->findChild<QListWidget*>("latitudeVariable");
@@ -284,13 +340,8 @@ void MainWindow::on_modelReadyButton_clicked()
 
 	QTabWidget *tabWidget = this->findChild<QTabWidget *>("tabWidget");
 	Q_ASSERT(tabWidget);
-	tabWidget->setCurrentIndex(3);
+	tabWidget->setCurrentIndex(5);
 
-	QString result = driver.Calculate(modelType, *vList, identitifer, dependent, latitude, longitude, offset, *lvList, *gvList);
-
-	QTextEdit *resultArea= this->findChild<QTextEdit*>("OutputTextEdit");
-	Q_ASSERT(resultArea);
-	resultArea->setText(result);
 	delete vList;
 	delete lvList;
 	delete gvList;
@@ -369,7 +420,7 @@ void MainWindow::UpdatePreview(void)
 	Q_ASSERT(lineEdit);
 	if("" != lineEdit->text())
 	{
-		QString preview = QString(driver.GetPreview(linesInPreview, charsPerLineInPreview).c_str() );
+		QString preview = QString(driver.GetPreview(fileName.toLocal8Bit().toStdString(), linesInPreview, charsPerLineInPreview).c_str() );
 		QTextEdit *previewArea = this->findChild<QTextEdit *>("previewText");
 		Q_ASSERT(previewArea);
 		previewArea->setText(preview);
@@ -440,3 +491,125 @@ void MainWindow::on_toolButton_3_clicked()
 	tabWidget->setCurrentIndex(1);
 }
 
+
+void MainWindow::on_modelProjected_clicked()
+{
+	this->coordsMode= PROJECTED;
+	QLabel *coordsTypelabel= this->findChild<QLabel *>("executeLocationalTypeLabel");
+	Q_ASSERT(coordsTypelabel);
+	coordsTypelabel->setText(QString("Coordinates type: Projected"));
+}
+
+void MainWindow::on_modelSpherical_clicked()
+{
+	this->coordsMode= SPHERICAL;
+	QLabel *coordsTypelabel= this->findChild<QLabel *>("executeLocationalTypeLabel");
+	Q_ASSERT(coordsTypelabel);
+	coordsTypelabel->setText(QString("Coordinates type: Spherical"));
+}
+
+void MainWindow::on_executeStartComputingButton_clicked()
+{
+	QListWidget *variablesList= this->findChild<QListWidget*>("variablesList");
+	Q_ASSERT(variablesList);
+	std::list<std::string> *vList= GetStringList(variablesList);
+
+	QListWidget *identifierVariableList= this->findChild<QListWidget*>("identifierVariable");
+	Q_ASSERT(identifierVariableList);
+	std::string identifer;
+	if(0 == identifierVariableList->count())
+	{
+		identifer= "";
+	}
+	else
+	{
+		identifer= identifierVariableList->item(0)->text().toStdString();
+	}
+
+	QListWidget *latitudeVariableList= this->findChild<QListWidget*>("latitudeVariable");
+	Q_ASSERT(latitudeVariableList);
+	std::string latitude;
+	if(0 == latitudeVariableList->count())
+	{
+		latitude= "";
+	}
+	else
+	{
+		latitude = latitudeVariableList->item(0)->text().toStdString();
+	}
+
+	QListWidget *longitudeVariableList= this->findChild<QListWidget*>("longitudeVariable");
+	Q_ASSERT(longitudeVariableList);
+	std::string longitude;
+	if(0 == longitudeVariableList->count())
+	{
+		longitude= "";
+	}
+	else
+	{
+		longitude= longitudeVariableList->item(0)->text().toStdString();
+	}
+
+
+	QListWidget *offsetVariableList= this->findChild<QListWidget*>("offsetVariable");
+	Q_ASSERT(offsetVariableList);
+	std::string offset;
+	if(0 == offsetVariableList->count())
+	{
+		offset= "";
+	}
+	else
+	{
+		offset= offsetVariableList->item(0)->text().toStdString();
+	}
+
+	QListWidget *localVariablesList= this->findChild<QListWidget*>("localVariablesList");
+	Q_ASSERT(localVariablesList);
+	std::list<std::string> *lvList= GetStringList(localVariablesList);
+
+	QListWidget *globalVariablesList= this->findChild<QListWidget*>("globalVariablesList");
+	Q_ASSERT(globalVariablesList);
+	std::list<std::string> *gvList= GetStringList(globalVariablesList);
+
+	QListWidget *dependentVariableList= this->findChild<QListWidget*>("dependentVariable");
+	Q_ASSERT(dependentVariableList);
+	std::string dependent;
+	if(0 == dependentVariableList->count())
+	{
+		dependent= "";
+	}
+	else
+	{
+		dependent= dependentVariableList->item(0)->text().toStdString();
+	}
+
+	if(MODE_DEPENDENT_TIMES_OFFSET == modelType && 0 == dependentVariableList->count())
+	{
+		ShowErrorMessage("Dependent variable not set.");
+		return;
+	}
+	if(MODE_DEPENDENT_TIMES_OFFSET == modelType && 0 == offsetVariableList->count())
+	{
+		ShowErrorMessage("Offset variable not set.");
+		return;
+	}
+	if( (MODE_DISTANCE_TO_ORIGIN == modelType || MODE_LAT_PLUS_LON == modelType ) && 0 == latitudeVariableList->count())
+	{
+		ShowErrorMessage("Latitude not set.");
+		return;
+	}
+	if( (MODE_DISTANCE_TO_ORIGIN == modelType || MODE_LAT_PLUS_LON == modelType ) && 0 == longitudeVariableList->count())
+	{
+		ShowErrorMessage("Longitude not set.");
+		return;
+	}
+
+	QString result = driver.Calculate(fileName.toLocal8Bit().toStdString(), separator, modelType, *vList, identifer, dependent, latitude, longitude, offset, *lvList, *gvList);
+
+	QTextEdit *resultArea= this->findChild<QTextEdit*>("OutputTextEdit");
+	Q_ASSERT(resultArea);
+	resultArea->setText(result);
+	delete vList;
+	delete lvList;
+	delete gvList;
+}
