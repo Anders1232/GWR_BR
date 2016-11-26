@@ -14,6 +14,8 @@ extern "C"
 	//C side
 	int InitQtGui(int argc, char**argv);
 #include "NamedColumnDoubleTable.h"
+#include "gwr-lib.h"
+//#include
 }
 //C++ side
 class GuiDriver

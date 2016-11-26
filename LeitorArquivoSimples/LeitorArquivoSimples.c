@@ -62,7 +62,7 @@ printf("Essa if realmente e util! %s:\t\t%d"NEW_LINE , __FILE__, __LINE__);
 #endif
 			break;
 		}
-		if(separador == aux || '\r' == aux || '\n' == aux)
+		if(separator == aux || '\r' == aux || '\n' == aux)
 		{
 			columnName[cont]= '\0';
 			//agora e enviar
@@ -95,7 +95,7 @@ printf("Essa if realmente e util! %s:\t\t%d"NEW_LINE , __FILE__, __LINE__);
 	{
 		for(cont2=0; cont2 < columnCounter; cont2++)
 		{
-			fscanf(file, &separator, );
+			fscanf(file, "%c", &separator);
 		}
 	}
 }

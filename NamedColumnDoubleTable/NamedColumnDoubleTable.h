@@ -4,7 +4,7 @@
 #include"DoubleMatrixLib.h"
 
 #ifdef _WIN32
-	#define NEW_LINE "\r\n"
+	#define NEW_LINE "\r\n"s
 #else
 	#define NEW_LINE "\n"
 #endif

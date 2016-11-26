@@ -4,6 +4,7 @@ extern "C"
 #endif
 
 #include "GuiInterface.h"
+#include "NamedColumnDoubleTable.h"
 
 int main(int argc, char *argv[])
 {

@@ -1,0 +1,1562 @@
+ /******************************************************/
+/* Written By Alan Ricardo da Silva		   */
+/* University of Brasilia, Brazil (08/2014)		  */
+/* E-mail: alansilva@unb.br					  */
+/******************************************************/
+
+/********************************************************************************/
+/* Macro for searching the Bandwidth */
+/*
+/* REQUIRED PARAMETERS
+/*    DATA = the name of the SAS data set to be used
+/*    YVAR = the name of the dependent or response variable
+/*    XVAR = the name of the independent or explicative variables. A blank space
+/*	   should separate the names. Note: an intercept variable must not be
+/*	   created in advance
+/*  DCOORD = the name of the SAS data set with the geographic coordinates
+/*  OUTPUT = the name of the SAS data set to be used as output results
+/*    MINV = the minimum distance between two locations i and k to be consider
+/* MIDDLEV = the middle distance between two locations i and k to be consider
+/*    MAXV = the maximum distance between two locations i and k to be consider
+/*  METHOD = there are three choices:
+/*	   FIXED_G asks the program to compute the bandwidth as fixed gaussian;
+/*	   FIXED_BSQ to compute the bandwidth as fixed bi-square;
+/*	   ADAPTIVEN to compute the bandwidth as adaptive bi-square ($n$ values) and
+/*			 ADAPTIVE_BSQ to compute the bandwidth as adaptive bi-square ($one$ value)
+/*  DISTANCEKM = if the distances between two locations will be computed in Km
+/*	       using the Basic formulae for calculating spherical distance. The
+/*	       default value is NO, so the distance is computed using euclidian
+/*	       distance.
+/********************************************************************************/
+
+%macro Golden(DATA=,YVAR=,XVAR=,WEIGHT=,DCOORD=,OUTPUT=,MINV=,MIDDLEV=,MAXV=,METHOD=,DISTANCEKM=NO);
+/* remember that pi=arcos(-1)=3.1415926536 */
+proc iml;
+use &DATA;
+read all var {&YVAR} into y;
+read all var {&XVAR} into x;
+n=nrow(y);
+%IF &WEIGHT NE %THEN %DO;
+read all var {&WEIGHT} into wt;
+%END;
+%ELSE %DO;
+wt=j(n,1,1);
+%END;
+close &DATA;
+x=j(n,1,1)||x;
+yhat=j(n,1,0);
+%IF %UPCASE(&METHOD)=ADAPTIVEN %THEN %DO;
+	hv=j(1,1,0);
+	yhat=j(1,1,0);
+	create &OUTPUT from hv[colname='h'];
+		do i=1 to n;
+%END;
+			ax=&MINV;
+			bx=&MIDDLEV;
+			cx=&MAXV;
+			r=0.61803399;
+			tol=0.001;
+			c=1-r;
+			h0=ax;
+			h3=cx;
+			*bx=c*(cx-ax);
+			if abs(cx-bx)>abs(bx-ax) then do;
+				h1=bx;
+				h2=bx+c*(cx-bx);
+			end;
+			else do;
+				h2=bx;
+				h1=bx-c*(bx-ax);
+		end;
+
+use &DCOORD;															     
+read all var{x y} into COORD;														     
+close &DCOORD;
+
+start cv1;
+%IF %UPCASE(&METHOD)=FIXED_G or %UPCASE(&METHOD)=FIXED_BSQ or %UPCASE(&METHOD)=ADAPTIVE_BSQ %THEN %DO;
+	do i=1 to n;
+%END;
+*** Basic formulae for calculating spherical distance *** ;
+d=j(1,3,0);
+dist=d;
+	do j=1 to n;
+	%IF %UPCASE(&DISTANCEKM)=YES %THEN %DO;
+		dif=abs(COORD[i,1]-COORD[j,1]);   
+		raio=arcos(-1)/180;
+		argument=sin(COORD[i,2]*raio)*sin(COORD[j,2]*raio)+cos(COORD[i,2]*raio)*cos(COORD[j,2]*raio)*cos(dif*raio);
+		if argument>=1 then arco=0;
+		else
+		/* Law of Cosines */ 
+		arco=arcos(sin(COORD[i,2]*raio)*sin(COORD[j,2]*raio)+cos(COORD[i,2]*raio)*cos(COORD[j,2]*raio)*cos(dif*raio));
+		d1=arco*6371 /*Earth's Radius = 6371 (aproximately)*/;
+		if d1<=1e-3 then d1=0;
+	%END;
+	%ELSE %DO;
+		d1=sqrt((COORD[i,1]-COORD[j,1])**2+(COORD[i,2]-COORD[j,2])**2);
+	%END;
+%IF %UPCASE(&METHOD)=FIXED_G %THEN %DO;
+		if d1 ^=0 then do;
+%END;
+%ELSE %IF %UPCASE(&METHOD)=FIXED_BSQ or %UPCASE(&METHOD)=ADAPTIVEN %THEN %DO;
+		if d1<=h1 & d1 ^=0 then do;
+%END;
+%ELSE %IF %UPCASE(&METHOD)=ADAPTIVE_BSQ %THEN %DO;
+		if d1 ^=0 then do;
+%END;
+		d[1]=i; 
+		d[2]=j;
+	%IF %UPCASE(&DISTANCEKM)=YES %THEN %DO;
+		d[3]=arco*6371 /*Earth's Radius = 6371 (approximately)*/;   
+	%END;
+	%ELSE %DO;
+		d[3]=sqrt((COORD[i,1]-COORD[j,1])**2+(COORD[i,2]-COORD[j,2])**2);
+	%END;
+		dist=dist//d;
+		end;
+	end;
+u=nrow(dist);
+w=j(u,1,0);
+x1=x[i,];
+y1=y[i,];
+wt1=wt[i,];
+	do jj=2 to u;
+		w[jj]=exp(-(dist[jj,3]/h1)**2);
+%IF %UPCASE(&METHOD)=FIXED_BSQ or %UPCASE(&METHOD)=ADAPTIVEN %THEN %DO;
+		w[jj]=(1-(dist[jj,3]/h1)**2)**2;
+%END;
+		x1=x1//x[dist[jj,2],];
+		y1=y1//y[dist[jj,2],];
+		wt1=wt1//wt[dist[jj,2],];
+	end;
+%IF %UPCASE(&METHOD)=ADAPTIVE_BSQ %THEN %DO;
+	x1=x[i,];
+	y1=y[i,];
+	wt1=wt[i,];
+	call sort(dist,{3});
+	dist=dist||(1:nrow(dist))`;
+	w=j(n,2,0);	
+	hn=dist[h1,3];
+	do jj=2 to n;
+		 if dist[jj,4]<=h1 then
+		w[jj,1]=(1-(dist[jj,3]/hn)**2)**2;
+		else w[jj,1]=0;
+		w[jj,2]=dist[jj,2];
+	end;
+	position=w[loc(w[,1]>0),2];
+	w={0}//w[position,1];
+	x1=x1//x[position,];
+	y1=y1//y[position,];
+	wt1=wt1//wt[position,];
+%END;
+if det(x1`*(w#x1#wt1))=0 then b=j(ncol(x),1,0);
+else
+b=inv(x1`*(w#x1#wt1))*x1`*(w#y1#wt1);
+%IF %UPCASE(&METHOD)=FIXED_G or %UPCASE(&METHOD)=FIXED_BSQ or %UPCASE(&METHOD)=ADAPTIVE_BSQ %THEN %DO;
+	yhat[i]=x[i,]*b;
+	end;
+CV1=((y-yhat)#wt)`*(y-yhat);
+%END;
+%ELSE %IF %UPCASE(&METHOD)=ADAPTIVEN %THEN %DO;
+	yhat[1]=x[i,]*b;
+	CV1=((y[i]-yhat)#wt)`*(y[i]-yhat);
+%END;
+free dist w;
+finish cv1;
+
+start cv2;
+%IF %UPCASE(&METHOD)=FIXED_G or %UPCASE(&METHOD)=FIXED_BSQ or %UPCASE(&METHOD)=ADAPTIVE_BSQ %THEN %DO;
+*** Basic formulae for calculating spherical distance *** ;
+	do i=1 to n;
+%END;
+		d=j(1,3,0);
+		dist=d;
+	do j=1 to n;															 
+		%IF %UPCASE(&DISTANCEKM)=YES %THEN %DO;
+		dif=abs(COORD[i,1]-COORD[j,1]);   
+		raio=arcos(-1)/180;   
+		argument=sin(COORD[i,2]*raio)*sin(COORD[j,2]*raio)+cos(COORD[i,2]*raio)*cos(COORD[j,2]*raio)*cos(dif*raio);
+		if argument>=1 then arco=0;
+		else
+		/* Law of Cosines */ 
+		arco=arcos(sin(COORD[i,2]*raio)*sin(COORD[j,2]*raio)+cos(COORD[i,2]*raio)*cos(COORD[j,2]*raio)*cos(dif*raio));
+		d1=arco*6371 /*Earth's Radius = 6371 (aproximately)*/;
+		if d1<=1e-3 then d1=0;
+	%END;
+	%ELSE %DO;
+		d1=sqrt((COORD[i,1]-COORD[j,1])**2+(COORD[i,2]-COORD[j,2])**2);
+	%END;
+%IF %UPCASE(&METHOD)=FIXED_G %THEN %DO;
+		if d1<=&MAXV*1 & d1 ^=0 then do;
+%END;
+%ELSE %IF %UPCASE(&METHOD)=FIXED_BSQ or %UPCASE(&METHOD)=ADAPTIVEN %THEN %DO;
+		if d1<=h1 & d1 ^=0 then do;
+%END;
+%ELSE %IF %UPCASE(&METHOD)=ADAPTIVE_BSQ %THEN %DO;
+		if d1 ^=0 then do;
+%END;
+		d[1]=i; 
+		d[2]=j;
+	%IF %UPCASE(&DISTANCEKM)=YES %THEN %DO;
+		d[3]=arco*6371 /*Earth's Radius = 6371 (approximately)*/;   
+	%END;
+	%ELSE %DO;
+		d[3]=sqrt((COORD[i,1]-COORD[j,1])**2+(COORD[i,2]-COORD[j,2])**2);
+	%END;
+		dist=dist//d;
+		end;
+	end;
+		u=nrow(dist);
+		w=j(u,1,0);
+		x1=x[i,];
+		y1=y[i,];
+		wt1=wt[i,];
+		do jj=2 to u;
+			w[jj]=exp(-(dist[jj,3]/h1)**2);
+%IF %UPCASE(&METHOD)=FIXED_BSQ or %UPCASE(&METHOD)=ADAPTIVEN %THEN %DO;
+			w[jj]=(1-(dist[jj,3]/h1)**2)**2;
+%END;
+		x1=x1//x[dist[jj,2],];
+		y1=y1//y[dist[jj,2],];
+		wt1=wt1//wt[dist[jj,2],];
+	end;
+%IF %UPCASE(&METHOD)=ADAPTIVE_BSQ %THEN %DO;
+	x1=x[i,];
+	y1=y[i,];
+	wt1=wt[i,];
+	call sort(dist,{3});
+	dist=dist||(1:nrow(dist))`;
+	w=j(n,2,0);	
+	hn=dist[h1,3];
+	do jj=2 to n;
+		 if dist[jj,4]<=h1 then
+		w[jj,1]=(1-(dist[jj,3]/hn)**2)**2;
+		else w[jj,1]=0;
+		w[jj,2]=dist[jj,2];
+	end;
+	position=w[loc(w[,1]>0),2];
+	w={0}//w[position,1];
+	x1=x1//x[position,];
+	y1=y1//y[position,];
+	wt1=wt1//wt[position,];
+%END;
+		if det(x1`*(w#x1#wt1))=0 then b=j(ncol(x),1,0);
+		else
+		b=inv(x1`*(w#x1#wt1))*x1`*(w#y1#wt1);
+%IF %UPCASE(&METHOD)=FIXED_G or %UPCASE(&METHOD)=FIXED_BSQ or %UPCASE(&METHOD)=ADAPTIVE_BSQ %THEN %DO;
+		yhat[i]=x[i,]*b;
+	end;
+CV2=((y-yhat)#wt)`*(y-yhat);
+%END;
+%ELSE %IF %UPCASE(&METHOD)=ADAPTIVEN %THEN %DO;
+	yhat[1]=x[i,]*b;
+	CV2=((y[i]-yhat)#wt)`*(y[i]-yhat);
+%END;
+free dist w;
+finish cv2;
+
+run cv1;
+run cv2;
+
+%IF %UPCASE(&METHOD)=FIXED_G or %UPCASE(&METHOD)=FIXED_BSQ or %UPCASE(&METHOD)=ADAPTIVE_BSQ %THEN %DO;
+	create &OUTPUT var{h1 cv1 h2 cv2};
+%END;
+do while(abs(h3-h0) > tol*(abs(h1)+abs(h2)));
+	if CV2<CV1 then do;
+		h0=h1;
+		h1=h2;
+		h2=r*h1+c*h3;
+		CV1=CV2;
+		run cv2;
+	end;
+	else do;
+		h3=h2;
+		h2=h1;
+		h1=r*h2+c*h0;
+		CV2=CV1;
+		run cv1;
+	end;
+%IF %UPCASE(&METHOD)=FIXED_G or %UPCASE(&METHOD)=FIXED_BSQ or %UPCASE(&METHOD)=ADAPTIVE_BSQ %THEN %DO;
+		append;
+%END;
+end;
+if CV1<CV2 then do;
+	golden=CV1;
+	xmin=h1;
+%IF %UPCASE(&METHOD)=ADAPTIVE_BSQ %THEN %DO;
+	xmin=floor(h1);
+%end;
+end;
+else do;
+	golden=CV2;
+	xmin=h2;
+%IF %UPCASE(&METHOD)=ADAPTIVE_BSQ %THEN %DO;
+	xmin=floor(h2);
+%end;
+end;
+%IF %UPCASE(&METHOD)=FIXED_G or %UPCASE(&METHOD)=FIXED_BSQ or %UPCASE(&METHOD)=ADAPTIVE_BSQ %THEN %DO;
+	print golden xmin;
+%END;
+%ELSE %IF %UPCASE(&METHOD)=ADAPTIVEN %THEN %DO;
+	hv[1]=xmin;
+	append from hv;
+	end;
+%END;
+quit;
+
+%IF %UPCASE(&METHOD)=FIXED_G or %UPCASE(&METHOD)=FIXED_BSQ %THEN %DO;
+	%global _h_;
+	data _null_;
+	 set &OUTPUT;
+	 if CV1<CV2 then do;
+	  call symput('_h_',h1);
+	 end;
+	 else do;
+	  call symput('_h_',h2);
+	 end;
+	run;
+%put h=&_h_;
+%END;
+%ELSE %IF %UPCASE(&METHOD)=ADAPTIVE_BSQ %THEN %DO;
+%global _h_;
+	data _null_;
+	 set &OUTPUT;
+	 if CV1<CV2 then do;
+	  call symput('_h_',floor(h1));
+	 end;
+	 else do;
+	  call symput('_h_',floor(h2));
+	 end;
+	run;
+%put h=&_h_;
+%END;
+%mend Golden;
+
+/*******************************************************************************/
+/* Macro for estimating GWR Model */
+/* REQUIRED PARAMETERS
+/*    DATA = the name of the SAS data set to be used
+/*    YVAR = the name of the dependent or response variable
+/*    XVAR = the name of the independent or explicative variables. A blank space
+/*	   should separate the names. Note: an intercept variable must not be
+/*	   created in advance
+/*   WEIGHT = the name of the sample weight variable
+/*  CLUSTER = the name of the cluster variable
+/*   STRATA = the name of the strata variable
+/*      FPC = the name of the sampling rate (n/N) or probability selection variable
+/*  DCOORD = the name of the SAS data set with the geographic coordinates
+/*    GRID = the name of the SAS data set with the grid of geographic coordinates
+/*  SIGMA2 = the value of the variance to be used in the standard errors
+/* GMATRIX = the name of the SAS data set with the G MATRIX to be used in the
+/*	   the standard errors of complex data
+/*     DHV = the name of the SAS data set with the bandwidth adaptive ($n$ values),
+/*	   which must have an unique variable
+/*       H = A pre-defined bandwidth value for METHOD equal to FIXED or ADAPTIVE1
+/*    MAXV = the maximum distance between two locations i and k to be consider
+/*  METHOD = there are three choices:
+/*	   FIXED_G asks the program to compute the bandwidth as fixed gaussian;
+/*	   FIXED_BSQ to compute the bandwidth as fixed bi-square;
+/*	   ADAPTIVEN to compute the bandwidth as adaptive bi-square ($n$ values) and
+/*			 ADAPTIVE_BSQ to compute the bandwidth as adaptive bi-square ($one$ value)
+/*  DISTANCEKM = if the distances between two locations will be computed in Km
+/*	       using the Basic formulae for calculating spherical distance. The
+/*	       default value is NO, so the distance is computed using euclidian
+/*	       distance.
+/********************************************************************************/
+
+%macro GWR(DATA=,YVAR=,XVAR=,WEIGHT=,CLUSTER=,STRATA=,FPC=,DCOORD=,GRID=,SIGMA2=,GMATRIX=,DHV=,MAXV=,METHOD=,DISTANCEKM=NO,H=);
+%IF &CLUSTER NE AND &STRATA NE %THEN %DO;
+proc sort data=&data;by &STRATA &CLUSTER;
+%END;
+%ELSE %IF &CLUSTER NE %THEN %DO;
+proc sort data=&data;by &CLUSTER;
+%END;
+%ELSE %IF &STRATA NE %THEN %DO;
+proc sort data=&data;by &STRATA;
+%END;
+proc iml;
+use &DATA;
+read all var {&YVAR} into y;
+read all var {&XVAR} into x;
+n=nrow(y);
+%IF &CLUSTER NE %THEN %DO;
+read all var {&CLUSTER} into ci;
+%END;
+%IF &STRATA NE %THEN %DO;
+read all var {&STRATA} into sh;
+%END;
+fh=j(n,1,0);
+%IF &FPC NE %THEN %DO;
+read all var {&FPC} into fh;
+%END;
+wt=j(n,1,1);
+%IF &WEIGHT NE %THEN %DO;
+read all var {&WEIGHT} into wt;
+%END;
+close &DATA;
+ni=ncol(unique(ci));
+nh=ncol(unique(sh));
+
+%IF %UPCASE(&METHOD)=ADAPTIVEN %THEN %DO;
+	use &DHV;read all into hv;
+%END;
+x=j(n,1,1)||x;
+yhat=j(n,1,0);
+
+%IF &H NE %THEN %DO;
+	h=&H;
+	print h[label="Bandwidth"];
+%END;
+%ELSE %DO;
+	%IF %UPCASE(&METHOD)=FIXED_G or %UPCASE(&METHOD)=FIXED_BSQ or %UPCASE(&METHOD)=ADAPTIVE_BSQ %THEN %DO;
+		h=&_h_;
+		print h[label="Bandwidth"];
+	%END;
+%END;
+
+use &DCOORD;															     
+read all var{x y} into COORD;														     
+%if &grid= %then %do;
+	read all var{x y} into POINTS;     
+%end;
+close &DCOORD;
+%if &grid^= %then %do;
+	use &grid;															     
+	read all var{x y} into POINTS;     
+	close &grid;
+%end;
+m=nrow(POINTS);
+
+bi=j(ncol(x)*m,4,0);
+BB=j(ncol(x)*n,n,0);
+rsqri=j(m,1,0);
+sumwi=j(m,1,0);
+varbi=j(ncol(x)*m,1,0);
+varbigg=j(ncol(x)*m,1,0);
+varbis=j(ncol(x)*m,ncol(x),0);
+S=j(m,1,0);
+S2=j(m,1,0);
+biT=j(m,ncol(x)+1,0);
+ym=y-y[:];
+*rikl=j(n,comb(ncol(x)-1,2),0);
+vif=j(n,ncol(x)-1,0);
+
+
+
+*** Basic formulae for calculating spherical distance *** ;
+do i=1 to m;
+free dist;
+	d=j(1,3,0);
+	do j=1 to n;															 
+	%IF %UPCASE(&DISTANCEKM)=YES %THEN %DO;
+		dif=abs(POINTS[i,1]-COORD[j,1]);   
+		raio=arcos(-1)/180; 
+		argument=sin(POINTS[i,2]*raio)*sin(COORD[j,2]*raio)+cos(POINTS[i,2]*raio)*cos(COORD[j,2]*raio)*cos(dif*raio);
+		if argument>1 then arco=0;
+		else
+		/* Law of Cosines */ 
+		arco=arcos(sin(POINTS[i,2]*raio)*sin(COORD[j,2]*raio)+cos(POINTS[i,2]*raio)*cos(COORD[j,2]*raio)*cos(dif*raio));
+		d1=arco*6371 /*Earth's Radius = 6371 (aproximately)*/;
+		if d1<=1e-3 then d1=0;
+	%END;
+	%ELSE %DO;
+		d1=sqrt((POINTS[i,1]-COORD[j,1])**2+(POINTS[i,2]-COORD[j,2])**2);
+	%END;
+%IF %UPCASE(&METHOD)=FIXED_G %THEN %DO;
+		if d1<=&MAXV*1 & d1 ^=0 then do;
+%END;
+%ELSE %IF %UPCASE(&METHOD)=FIXED_BSQ %THEN %DO;
+		if d1<=h & d1 ^=0 then do;
+%END;
+%ELSE %IF %UPCASE(&METHOD)=ADAPTIVEN %THEN %DO;
+		if d1<=hv[i] & d1 ^=0 then do;
+%END;
+%ELSE %IF %UPCASE(&METHOD)=ADAPTIVE_BSQ %THEN %DO;
+		if d1 ^=0 then do;
+%END;
+			d[1]=i; 
+			d[2]=j;
+	%IF %UPCASE(&DISTANCEKM)=YES %THEN %DO;
+		d[3]=arco*6371 /*Earth's Radius = 6371 (approximately)*/;   
+	%END;
+	%ELSE %DO;
+		d[3]=sqrt((POINTS[i,1]-COORD[j,1])**2+(POINTS[i,2]-COORD[j,2])**2);
+	%END;
+			dist=dist//d;
+		end;
+	end;
+	u=nrow(dist);
+	w=j(u,1,0);
+	%if &grid= %then %do;
+	x1=x[i,];
+	y1=y[i,];
+	wt1=wt[i,];
+	ym1=ym[i,];
+	%end;
+	do jj=1 to u;
+%IF %UPCASE(&METHOD)=FIXED_G %THEN %DO;
+		w[jj]=exp(-(dist[jj,3]/h)**2);
+%END;
+%ELSE %IF %UPCASE(&METHOD)=FIXED_BSQ %THEN %DO;
+		w[jj]=(1-(dist[jj,3]/h)**2)**2;
+%END;
+%ELSE %IF %UPCASE(&METHOD)=ADAPTIVEN %THEN %DO;
+		w[jj]=(1-(dist[jj,3]/hv[i])**2)**2;
+%END;
+	%if &grid= %then %do;
+		x1=x1//x[dist[jj,2],];
+		y1=y1//y[dist[jj,2],];
+		wt1=wt1//wt[dist[jj,2],];
+		ym1=ym1//ym[dist[jj,2],];
+	end;
+	w={1}//w;
+	%IF %UPCASE(&METHOD)=ADAPTIVE_BSQ %THEN %DO;
+	x1=x[i,];
+	y1=y[i,];
+	wt1=wt[i,];
+	ym1=ym[i,];
+	call sort(dist,{3});
+	dist=dist||(1:nrow(dist))`;
+	w=j(n,2,0);	
+	hn=dist[h,3];
+	do jj=1 to n-1;
+		 if dist[jj,4]<=h then
+		w[jj,1]=(1-(dist[jj,3]/hn)**2)**2;
+		else w[jj,1]=0;
+		w[jj,2]=dist[jj,2];
+	end;
+	position=w[loc(w[,1]>0),2];
+	w={1}//w[loc(w[,1]>0),1];
+	x1=x1//x[position,];
+	y1=y1//y[position,];
+	wt1=wt1//wt[position,];
+	ym1=ym1//ym[position,];
+	%END;
+	%end;
+	%else %do;
+	if jj=1 then do;
+		x1=x[dist[jj,2],];
+		y1=y[dist[jj,2],];
+		wt1=wt[dist[jj,2],];
+		ym1=ym[dist[jj,2],];
+	end;
+	else do;
+		x1=x1//x[dist[jj,2],];
+		y1=y1//y[dist[jj,2],];
+		wt1=wt1//wt[dist[jj,2],];
+		ym1=ym1//ym[dist[jj,2],];
+	end;
+	end;
+	%IF %UPCASE(&METHOD)=ADAPTIVE_BSQ %THEN %DO;
+	call sort(dist,{3});
+	dist=dist||(1:n)`;
+	w=j(n,2,0);	
+	hn=dist[h,3];
+	do jj=1 to n;
+		 if dist[jj,4]<=h then
+		w[jj,1]=(1-(dist[jj,3]/hn)**2)**2;
+		else w[jj,1]=0;
+		w[jj,2]=dist[jj,2];
+	end;
+	position=w[loc(w[,1]>0),2];
+	w=w[loc(w[,1]>0),1];
+	x1=x[position,];
+	y1=y[position,];
+	wt1=wt[position,];
+	ym1=ym[position,];
+	%END;
+	%end;
+	if det(x1`*(w#x1#wt1))=0 then b=j(ncol(x),1,0);
+	else
+	b=inv(x1`*(w#x1#wt1))*x1`*(w#y1#wt1);
+	if det(x1`*(w#x1#wt1))=0 then C=j(ncol(x),1,0);
+	else
+	C=inv(x1`*(w#x1#wt1))*x1`#(w#wt1)`;
+	varbs=ginv(x1`*(w#x1#wt1));
+	varb=C*C`;
+	/*** standard GWR variance ****/
+	%IF &WEIGHT NE %THEN %DO;
+	varbgg=varbs;
+	%END;
+	%ELSE %DO;
+	varbgg=varb;
+	%END;
+	/*******************************/
+	m1=(i-1)*ncol(x)+1;
+	m2=m1+(ncol(x)-1);
+	bi[m1:m2,1]=i;
+	bi[m1:m2,2]=b;
+	bi[m1:m2,3]=POINTS[i,1];
+	bi[m1:m2,4]=POINTS[i,2];
+	varbi[m1:m2,1]=vecdiag(varb);
+	varbigg[m1:m2,1]=vecdiag(varbgg);
+	varbis[m1:m2,]=varbs;
+	%if &grid= %then %do;
+	if det(x1`*(w#x1#wt1))=0 then r=0;
+	else
+	r=x[i,]*C;
+	yhat[i]=x[i,]*b;
+	m1=(i-1)*ncol(x)+1;
+	m2=m1+(ncol(x)-1);
+	bi[m1:m2,1]=i;
+	bi[m1:m2,2]=b;
+	/** creating non-stationarity matrix **/
+	%IF %UPCASE(&METHOD) ne ADAPTIVE_BSQ %THEN %DO;
+	CCC=x1||w||wt1;
+	CCC1=CCC[1,];
+	if i=1 then CCC2=CCC;
+	else if i=n then CCC2=CCC[2:i,]//CCC1;
+	else CCC2=CCC[2:i,]//CCC1//CCC[i+1:nrow(CCC),];
+	BB[m1:m2,]=inv(CCC2[,1:ncol(x1)]`*(CCC2[,ncol(CCC)-1]#CCC2[,1:ncol(x1)]#CCC2[,ncol(CCC)]))*CCC2[,1:ncol(x1)]`#(CCC2[,ncol(CCC)-1]#CCC2[,ncol(CCC)])`;
+	%END;
+	/*************************************/
+	varbi[m1:m2,1]=vecdiag(varb);
+	varbigg[m1:m2,1]=vecdiag(varbgg);
+	varbis[m1:m2,]=varbs;
+	S[i]=r[1];
+	S2[i]=r*r`;
+	biT[i,1]=i;
+	biT[i,2:ncol(x)+1]=b`;
+	yhati=x*b;
+	yhati1=yhati[i,];
+	%IF %UPCASE(&METHOD)=ADAPTIVE_BSQ %THEN %DO;
+		yhati1=yhati1//yhati[position,];
+	%END;
+	%ELSE %DO;
+	do jj=1 to u;
+		yhati1=yhati1//yhati[dist[jj,2],];
+	end;
+	%END;
+	TSS=(y1#w#wt1)`*y1-((y1#w#wt1)[+]**2)/(w#wt1)[+];
+	RSS=((y1-yhati1)#wt1)`*(w#(y1-yhati1));
+	rsqri[i]=1-RSS/TSS;
+	_w_=w;
+	call sort(_w_,{1});
+	sumwi[i]=_w_[1:int(nrow(_w_)*1)][+];
+	%end;
+/*
+*CALCULATING CORRELATION BETWEEN VARIABLE K AND L;
+we=w/sum(w);
+x1es=j(1,ncol(x1),0);
+do kk=1 to ncol(x1);
+x1es[kk]=sum(we#x1[,kk]);
+end;
+do kk=2 to ncol(x1)-1;
+do kkm=kk+1 to ncol(x1);
+if kk=2 then do;
+rikl[i,1+kkm-(kk+1)]=sum(we#(x1[,kk]-x1es[kk])#(x1[,kkm]-x1es[kkm]))/(sqrt(sum(we#((x1[,kk]-x1es[kk])#(x1[,kk]-x1es[kk]))))*sqrt(sum(we#((x1[,kkm]-x1es[kkm])#(x1[,kkm]-x1es[kkm])))));
+rikl[i,1+kkm-(kk+1)]=1/(1-rikl[i,1+kkm-(kk+1)]*rikl[i,1+kkm-(kk+1)]);
+end;
+else do;
+rikl[i,2*(kk-1)+kkm-(kk+1)]=sum(we#(x1[,kk]-x1es[kk])#(x1[,kkm]-x1es[kkm]))/(sqrt(sum(we#((x1[,kk]-x1es[kk])#(x1[,kk]-x1es[kk]))))*sqrt(sum(we#((x1[,kkm]-x1es[kkm])#(x1[,kkm]-x1es[kkm])))));
+rikl[i,2*(kk-1)+kkm-(kk+1)]=1/(1-rikl[i,2*(kk-1)+kkm-(kk+1)]*rikl[i,2*(kk-1)+kkm-(kk+1)]);
+end;
+end;
+end;
+*/
+
+/* Calculating VIF */
+if ncol(x)>2 then do;
+do v=2 to ncol(x);
+	if v=2 then do;
+		yvif=x1[,v];
+		xvif=x1[,v+1:ncol(x)];
+		xv=x[,v+1:ncol(x)];
+	end;
+	else if v=ncol(x) then do;
+		yvif=x1[,v];
+		xvif=x1[,2:v-1];
+		xv=x[,2:v-1];
+	end;
+    else do;
+	    yvif=x1[,v];
+		xvif=x1[,2:v-1]||x1[,v+1:ncol(x)];
+		xv=x[,2:v-1]||x[,v+1:ncol(x)];
+	end;
+if det(xvif`*(w#xvif))=0 then bvif=j(ncol(xvif),1,0);
+else
+bvif=inv(xvif`*(w#xvif))*xvif`*(w#yvif);
+yhatvi=xv*bvif;
+yhatvi1=yhatvi[i,];
+ymvif=x1[,v]-x1[:,v];
+%IF %UPCASE(&METHOD)=ADAPTIVE_BSQ %THEN %DO;
+		ymvif1=ymvif;
+%END;
+%ELSE %DO;
+ymvif=x[,v]-x[:,v];
+ymvif1=ymvif[i,];
+do jj=1 to u;
+	ymvif1=ymvif1//ymvif[dist[jj,2],];
+	yhatvi1=yhatvi1//yhatvi[dist[jj,2],];
+end;
+%END;
+TSS=ymvif1`*(w#ymvif1);
+RSS=(yvif-yhatvi1)`*(w#(yvif-yhatvi1));
+vif[i,v-1]=1/(1-(TSS-RSS)/TSS);
+end;
+end;
+else do;
+vif=repeat(1,n);
+end;
+/**********END VIF ************/
+if i=1 then W_f=W||(1:nrow(w))`;else W_f=W_f//(W||(1:nrow(w))`);
+end;
+create w_f from W_f;append from W_f;close w_f;free w_f;
+%if &grid= %then %do;
+
+/***** incorporating survey design **************/
+v1=sum(S);
+*v11=sum(S);
+*v2=sum(S2);
+*v1=2*v11-v2;
+tab=y||x||wt;
+e=(y-yhat)#wt;
+e2=e#x;
+
+if nh>0 & ni>0 then do;
+_h_=j(nrow(sh),1,0);
+_h_[1]=1;
+_i_=j(nrow(ci),1,0);
+_i_[1]=1;
+do k=2 to nrow(sh);
+if sh[k]=sh[k-1] then _h_[k]=_h_[k-1];
+else _h_[k]=_h_[k-1]+1;
+if ci[k]=ci[k-1] then _i_[k]=_i_[k-1];
+else _i_[k]=_i_[k-1]+1;
+end;
+tab=tab||_h_||_i_;
+ ehi=j(1,ncol(x)+4,1);
+ ehi[1,3:2+ncol(x)]=e2[1,];
+ ehi[1]=tab[1,ncol(tab)-1];ehi[2]=tab[1,ncol(tab)];ehi[ncol(ehi)-1]=fh[1];
+ do j=2 to nrow(tab);
+  if tab[j,ncol(tab)-1]=tab[j-1,ncol(tab)-1] & tab[j,ncol(tab)]=tab[j-1,ncol(tab)] then do;ehi[nrow(ehi),3:2+ncol(x)]=ehi[nrow(ehi),3:2+ncol(x)]+e2[j,];ehi[nrow(ehi),ncol(ehi)]=ehi[nrow(ehi),ncol(ehi)]+1;ehi[nrow(ehi),ncol(ehi)-1]=(ehi[nrow(ehi),ncol(ehi)-1]+fh[j])/2;end;
+  else ehi=ehi//(tab[j,ncol(tab)-1]||tab[j,ncol(tab)]||e2[j,]||fh[j]||j(1,1,1));
+ end;
+ ee=ehi[,ncol(ehi)-1:ncol(ehi)];
+ ehi=ehi[,1:ncol(ehi)-2]||j(nrow(ehi),3+ncol(x),0);ehi[1,3+ncol(x):2+2*ncol(x)]=ehi[1,3:2+ncol(x)];ehi[,ncol(ehi)-2:ncol(ehi)-1]=ee;ehi[1,ncol(ehi)]=ehi[1,ncol(ehi)-1];
+ count=0;
+ do j=2 to nrow(ehi);
+  if ehi[j,1]=ehi[j-1,1] then do;ehi[j,3+ncol(x):2+2*ncol(x)]=ehi[j-1,3+ncol(x):2+2*ncol(x)]+ehi[j,3:2+ncol(x)];count=count+1;ehi[j,ncol(ehi)]=ehi[j-1,ncol(ehi)]+ehi[j,ncol(ehi)-1];ehi[j,ncol(ehi)-2]=ehi[j-1,ncol(ehi)-2];end;
+  else do;
+   if ehi[j-1,1]=1 then do;ehi[1:count+1,ncol(ehi)-1]=count+1;ehi[1:count+1,3+ncol(x):2+2*ncol(x)]=repeat(ehi[j-1,3+ncol(x):2+2*ncol(x)]/ehi[j-1,ncol(ehi)-1],count+1);in=ehi[j,2];ehi[1:count+1,ncol(ehi)]=repeat(ehi[j-1,ncol(ehi)],count+1);end;
+   else do;ehi[in:in+count,ncol(ehi)-1]=count+1;ehi[in:in+count,3+ncol(x):2+2*ncol(x)]=repeat(ehi[j-1,3+ncol(x):2+2*ncol(x)]/ehi[j-1,ncol(ehi)-1],count+1);ehi[in:in+count,ncol(ehi)]=repeat(ehi[j-1,ncol(ehi)],count+1);in=ehi[j,2];end;
+   ehi[j,3+ncol(x):2+2*ncol(x)]=ehi[j,3:2+ncol(x)];ehi[j,ncol(ehi)]=ehi[j,ncol(ehi)-1];count=0;
+  end;
+  if j=nrow(ehi) then do;
+   ehi[in:in+count,ncol(ehi)-1]=count+1;ehi[in:in+count,3+ncol(x):2+2*ncol(x)]=repeat(ehi[j,3+ncol(x):2+2*ncol(x)]/ehi[j,ncol(ehi)-1],count+1);ehi[in:in+count,ncol(ehi)]=repeat(ehi[j,ncol(ehi)],count+1);in=ehi[j,2];
+  end;
+ end;
+print 'Design Summary',,'Number of Strata' (ehi[nrow(ehi),1]), 'Number of Clusters' (ehi[nrow(ehi),2]);
+*print ehi;
+do jj=1 to nrow(ehi);if ehi[jj,ncol(ehi)-1]=1 then do;ehi[jj,ncol(ehi)-1]=2;ehi[jj,3:2+ncol(x)]=0;ehi[jj,3+ncol(x):2+2*ncol(x)]=0;end;end;
+G=((n-1)/(n-v1))*(((ehi[,ncol(ehi)-1]/(ehi[,ncol(ehi)-1]-1))#(ehi[,3:2+ncol(x)]-ehi[,3+ncol(x):2+2*ncol(x)]))`*(ehi[,3:2+ncol(x)]-ehi[,3+ncol(x):2+2*ncol(x)]));
+%IF &FPC NE %THEN %DO;
+G=((n-1)/(n-v1))*((((ehi[,ncol(ehi)-1]#(1-ehi[,ncol(ehi)-2]))/(ehi[,ncol(ehi)-1]-1))#(ehi[,3:2+ncol(x)]-ehi[,3+ncol(x):2+2*ncol(x)]))`*(ehi[,3:2+ncol(x)]-ehi[,3+ncol(x):2+2*ncol(x)]));
+%END;
+gl=ni-nh;
+print g;
+end;
+
+else if nh>0 & ni=0 then do;
+_h_=j(nrow(sh),1,0);
+_h_[1]=1;
+do k=2 to nrow(sh);
+if sh[k]=sh[k-1] then _h_[k]=_h_[k-1];
+else _h_[k]=_h_[k-1]+1;
+end;
+tab=tab||_h_;
+ehi=j(1,2*ncol(x)+3,0);
+ ehi[1,2:1+ncol(x)]=e2[1,];
+ ehi[1]=tab[1,ncol(tab)];ehi[ncol(ehi)-1]=fh[1];ehi[ncol(ehi)]=1;
+ do j=2 to nrow(tab);
+  if tab[j,ncol(tab)]=tab[j-1,ncol(tab)] then do;ehi[nrow(ehi),2:1+ncol(x)]=ehi[nrow(ehi),2:1+ncol(x)]+e2[j,];ehi[nrow(ehi),ncol(ehi)-1]=ehi[nrow(ehi),ncol(ehi)-1];ehi[nrow(ehi),ncol(ehi)]=ehi[nrow(ehi),ncol(ehi)]+1;end;
+  else do;ehi=ehi//(tab[j,ncol(tab)]||e2[j,]||j(1,ncol(x),1)||fh[j]||j(1,1,1));end;
+ end;
+ ehi[,2+ncol(x):1+2*ncol(x)]=ehi[,2:1+ncol(x)]/ehi[,ncol(ehi)];
+do jj=1 to nrow(ehi);
+ehi2=ehi2//repeat(ehi[jj,2+ncol(x):3+2*ncol(x)],ehi[jj,ncol(ehi)]);
+end;
+eh=e2||ehi2[,1:ncol(ehi2)-1]||ehi2[,ncol(ehi2)];
+print 'Design Summary',,'Number of Strata' (ehi[<>,1]);
+*print eh;
+do jj=1 to nrow(eh);if eh[jj,ncol(eh)]=1 then eh[jj,ncol(eh)]=2;end;
+G=((n-1)/(n-v1))*(((eh[,ncol(eh)]/(eh[,ncol(eh)]-1))#(eh[,1:ncol(x)]-eh[,1+ncol(x):2*ncol(x)]))`*(eh[,1:ncol(x)]-eh[,1+ncol(x):2*ncol(x)]));
+%IF &FPC NE %THEN %DO;
+G=((n-1)/(n-v1))*((((eh[,ncol(eh)]#(1-eh[,ncol(eh)-1]))/(eh[,ncol(eh)]-1))#(eh[,1:ncol(x)]-eh[,1+ncol(x):2*ncol(x)]))`*(eh[,1:ncol(x)]-eh[,1+ncol(x):2*ncol(x)]));
+%END;
+gl=nh-1;
+print g;
+end;
+
+else if ni>0 & nh=0 then do;
+_i_=j(nrow(ci),1,0);
+_i_[1]=1;
+do k=2 to nrow(ci);
+if ci[k]=ci[k-1] then _i_[k]=_i_[k-1];
+else _i_[k]=_i_[k-1]+1;
+end;
+tab=tab||_i_;
+ei=j(1,ncol(x)+3,0);
+ ei[1,2:1+ncol(x)]=e2[1,];
+ ei[1]=tab[1,ncol(tab)];ei[ncol(ei)]=fh[1];ei[1,ncol(ei)]=1;
+ do j=2 to nrow(tab);
+  if tab[j,ncol(tab)]=tab[j-1,ncol(tab)] then do;ei[nrow(ei),2:1+ncol(x)]=ei[nrow(ei),2:1+ncol(x)]+e2[j,];ei[nrow(ei),ncol(ei)]=(ei[nrow(ei),ncol(ei)]+fh[j])/2;ei[nrow(ei),ncol(ei)]=ei[nrow(ei),ncol(ei)]+1;end;
+  else ei=ei//(tab[j,ncol(tab)]||e2[j,]||fh[j]||j(1,1,1));
+ end;
+print 'Design Summary',,'Number of Clusters' (ei[<>,1]);
+*print ei;
+G=((n-1)/(n-v1))*(ei[<>,1]/(ei[<>,1]-1))*((ei[,2:1+ncol(x)]-ei[+,2:1+ncol(x)]/ei[+,ncol(ei)])`*(ei[,2:1+ncol(x)]-ei[+,2:1+ncol(x)]/ei[+,ncol(ei)]));
+%IF &FPC NE %THEN %DO;
+G=((n-1)/(n-v1))*((((ei[<>,1]#(1-ei[,ncol(ei)-1]))/(ei[<>,1]-1))#(ei[,2:1+ncol(x)]-ei[+,2:1+ncol(x)]/ei[+,ncol(ei)]))`*(ei[,2:1+ncol(x)]-ei[+,2:1+ncol(x)]/ei[+,ncol(ei)]));
+%END;
+gl=ni-1;
+print G;
+end;
+
+else do;
+G=(n-1)/(n-v1)*(n/(n-1))*((e2-e2[:,])`*(e2-e2[:,]));
+gl=n-v1;
+*print g;
+end;
+create _Gmatrix_ from G;append from G;close _Gmatrix_;
+/***********************************************/
+v1=sum(S);
+*v11=sum(S);
+*v2=sum(S2);
+*v1=2*v11-v2;
+res=(y-yhat);
+rsqr1=(res#wt)`*res;
+ym=(y#wt)`*y;
+rsqr2=ym-((y#wt)[+]**2)/wt[+];
+rsqr=1-rsqr1/rsqr2;
+rsqradj=1-((n-1)/(n-v1))*(1-rsqr);
+sigma2=n*rsqr1/((n-v1)*wt[+]);
+root_mse=sqrt(sigma2);
+print sigma2[label='Sigma2e'] root_mse[label='Root MSE'] v1[label='#GWR parameters'] /*v11[label='#GWR parameters (model)'] v2[label='#GWR parameters (variance)']*/;
+influence=S;
+resstd=res/(sqrt(sigma2)*sqrt(abs(1-influence)));
+CooksD=resstd#resstd#influence/(v1*(1-influence));
+varbi=varbi*sigma2;
+/*** standard GWR variance ****/
+sigma2gg=rsqr1/(n-v1);
+varbigg=varbigg*sigma2gg;
+%IF &FPC NE %THEN %DO;
+varbigg=varbigg*(1-n/wt[+]);
+%END;
+/******************************/
+if ni>0 | nh>0 | wt[+] ^= n then do;
+do i=1 to m;
+m1=(i-1)*ncol(x)+1;
+m2=m1+(ncol(x)-1);
+varbi[m1:m2,1]=vecdiag(varbis[m1:m2,]*G*varbis[m1:m2,]);
+end;
+end;
+deffgwr=varbi/varbigg;
+stdbi=sqrt(varbi);
+tstat = bi[,2]/stdbi;
+probt=2*(1-probt(abs(tstat),gl));
+_malpha_=0.05*(ncol(x)/v1);
+_t_critical_=abs(tinv(_malpha_/2,gl));
+print rsqr[format=comma6.4 label="R-Square"] rsqradj[format=comma6.4 label="Adj-R-Square"];
+lnlcl=-n*log(rsqr1/n)/2-n*log(2*arcos(-1))/2-sum((y-yhat)#(y-yhat))/(2*(rsqr1/n));
+AIC=2*v1-2*lnlcl+((n+v1)/(n-2-v1));
+*AIC=2*n*log(rsqr1/n)+n*log(2*arcos(-1))+n*((n+v1)/(n-2-v1));
+print AIC lnlcl;
+_beta_=shape(bi[,1:2],n);
+i=do(2,ncol(_beta_),2);
+_beta_=_beta_[,i];
+call qntl(qntl,_beta_);
+qntl=qntl//(qntl[3,]-qntl[1,]);
+descriptb=_beta_[:,]//_beta_[><,]//_beta_[<>,];
+
+print qntl[label="Quantiles of GWR Parameter Estimates"
+rowname={"P25", "P50", "P75", "IQR"} colname={'Intercept' &xvar}],,
+descriptb[label="Descriptive Statistics" rowname={"Mean", "Min", "Max"}
+colname={'Intercept' &xvar}];
+
+_stdbeta_=shape(stdbi,n);
+call qntl(qntls,_stdbeta_);
+qntls=qntls//(qntls[3,]-qntls[1,]);
+descripts=_stdbeta_[:,]//_stdbeta_[><,]//_stdbeta_[<>,];
+
+print _malpha_[label="alpha-level=0.05"] _t_critical_[format=comma6.2 label="t-Critical"] gl;
+print qntls[label="Quantiles of GWR Standard Errors"
+rowname={"P25", "P50", "P75", "IQR"} colname={'Intercept' &xvar}],,
+descripts[label="Descriptive Statistics of Standard Errors" rowname={"Mean", "Min", "Max"}
+colname={'Intercept' &xvar}];
+
+_deffgwr_=shape(deffgwr,n);
+call qntl(qntldeff,_deffgwr_);
+descriptdeff=_deffgwr_[:,]//_deffgwr_[><,]//_deffgwr_[<>,];
+
+print qntldeff[label="Quantiles of GWR Deff"
+rowname={"P25", "P50", "P75"} colname={'Intercept' &xvar}],,
+descriptdeff[label="Descriptive Statistics of GWR Deff" rowname={"Mean", "Min", "Max"}
+colname={'Intercept' &xvar}];
+%end;
+*print bi stdbi tstat probt influence cooksD;
+/****** Non-Stationarity Test *****************/
+%IF %UPCASE(&METHOD) ne ADAPTIVE_BSQ %THEN %DO;
+BBk=j(n,n,0);
+Vk=j(ncol(x),1,0);
+gl1k=j(ncol(x),1,0);
+gl2k=j(ncol(x),1,0);
+do k=1 to ncol(x);
+ek=j(ncol(x),1,0);
+ek[k]=1;
+do i=1 to n;
+m1=(i-1)*ncol(x)+1;
+m2=m1+(ncol(x)-1);
+BBk[i,]=ek`*BB[m1:m2,];
+end;
+Vk[k]=y`*(1/n)*BBk`*(I(n)-(1/n)*J(n,n,1))*BBk*y;
+gl1k[k]=trace((1/n)*BBk`*(I(n)-(1/n)*J(n,n,1))*BBk);
+gl2k[k]=trace(((1/n)*BBk`*(I(n)-(1/n)*J(n,n,1))*BBk)**2);
+end;
+Fk=(Vk/gl1k)/sigma2;
+ndf=gl1k##2/gl2k;
+ddf=n-v1;
+ddf=repeat(ddf,ncol(x));
+probf=1-probf(Fk,ndf,ddf);
+print ,,"Non-Stationarity Test (Leung et al., 2000)",,
+Vk[label='' rowname={'Intercept' &xvar} colname={"V"}] Fk[label=''  colname={"F"}] ndf ddf
+probf[format=pvalue6. label="Pr > F"];
+%END;
+
+/***** global estimates ***************/
+bg=inv(x`*(x#wt))*x`*(y#wt);
+s2g=((y-x*bg)#wt)`*(y-x*bg)/(n-nrow(bg));
+varg=vecdiag(inv(x`*(x#wt))*s2g);
+%IF &FPC NE %THEN %DO;
+varg=vecdiag(inv(x`*(x#wt))*s2g)*(1-n/wt[+]);
+%end;
+/***** incorporating survey design **************/
+tab=y||x||wt;
+eg=(y-x*bg)#wt;
+e2g=eg#x;
+
+if nh>0 & ni>0 then do;
+_h_=j(nrow(sh),1,0);
+_h_[1]=1;
+_i_=j(nrow(ci),1,0);
+_i_[1]=1;
+do k=2 to nrow(sh);
+if sh[k]=sh[k-1] then _h_[k]=_h_[k-1];
+else _h_[k]=_h_[k-1]+1;
+if ci[k]=ci[k-1] then _i_[k]=_i_[k-1];
+else _i_[k]=_i_[k-1]+1;
+end;
+tab=tab||_h_||_i_;
+ ehi=j(1,ncol(x)+4,1);
+ ehi[1,3:2+ncol(x)]=e2g[1,];
+ ehi[1]=tab[1,ncol(tab)-1];ehi[2]=tab[1,ncol(tab)];ehi[ncol(ehi)-1]=fh[1];
+ do j=2 to nrow(tab);
+  if tab[j,ncol(tab)-1]=tab[j-1,ncol(tab)-1] & tab[j,ncol(tab)]=tab[j-1,ncol(tab)] then do;ehi[nrow(ehi),3:2+ncol(x)]=ehi[nrow(ehi),3:2+ncol(x)]+e2g[j,];ehi[nrow(ehi),ncol(ehi)]=ehi[nrow(ehi),ncol(ehi)]+1;ehi[nrow(ehi),ncol(ehi)-1]=(ehi[nrow(ehi),ncol(ehi)-1]+fh[j])/2;end;
+  else ehi=ehi//(tab[j,ncol(tab)-1]||tab[j,ncol(tab)]||e2g[j,]||fh[j]||j(1,1,1));
+ end;
+ ee=ehi[,ncol(ehi)-1:ncol(ehi)];
+ ehi=ehi[,1:ncol(ehi)-2]||j(nrow(ehi),3+ncol(x),0);ehi[1,3+ncol(x):2+2*ncol(x)]=ehi[1,3:2+ncol(x)];ehi[,ncol(ehi)-2:ncol(ehi)-1]=ee;ehi[1,ncol(ehi)]=ehi[1,ncol(ehi)-1];
+ count=0;
+ do j=2 to nrow(ehi);
+  if ehi[j,1]=ehi[j-1,1] then do;ehi[j,3+ncol(x):2+2*ncol(x)]=ehi[j-1,3+ncol(x):2+2*ncol(x)]+ehi[j,3:2+ncol(x)];count=count+1;ehi[j,ncol(ehi)]=ehi[j-1,ncol(ehi)]+ehi[j,ncol(ehi)-1];ehi[j,ncol(ehi)-2]=ehi[j-1,ncol(ehi)-2];end;
+  else do;
+   if ehi[j-1,1]=1 then do;ehi[1:count+1,ncol(ehi)-1]=count+1;ehi[1:count+1,3+ncol(x):2+2*ncol(x)]=repeat(ehi[j-1,3+ncol(x):2+2*ncol(x)]/ehi[j-1,ncol(ehi)-1],count+1);in=ehi[j,2];ehi[1:count+1,ncol(ehi)]=repeat(ehi[j-1,ncol(ehi)],count+1);end;
+   else do;ehi[in:in+count,ncol(ehi)-1]=count+1;ehi[in:in+count,3+ncol(x):2+2*ncol(x)]=repeat(ehi[j-1,3+ncol(x):2+2*ncol(x)]/ehi[j-1,ncol(ehi)-1],count+1);ehi[in:in+count,ncol(ehi)]=repeat(ehi[j-1,ncol(ehi)],count+1);in=ehi[j,2];end;
+   ehi[j,3+ncol(x):2+2*ncol(x)]=ehi[j,3:2+ncol(x)];ehi[j,ncol(ehi)]=ehi[j,ncol(ehi)-1];count=0;
+  end;
+  if j=nrow(ehi) then do;
+   ehi[in:in+count,ncol(ehi)-1]=count+1;ehi[in:in+count,3+ncol(x):2+2*ncol(x)]=repeat(ehi[j,3+ncol(x):2+2*ncol(x)]/ehi[j,ncol(ehi)-1],count+1);ehi[in:in+count,ncol(ehi)]=repeat(ehi[j,ncol(ehi)],count+1);in=ehi[j,2];
+  end;
+ end;
+*print ehi;
+do jj=1 to nrow(ehi);if ehi[jj,ncol(ehi)-1]=1 then do;ehi[jj,ncol(ehi)-1]=2;ehi[jj,3:2+ncol(x)]=0;ehi[jj,3+ncol(x):2+2*ncol(x)]=0;end;end;
+Gg=((n-1)/(n-ncol(x)))*(((ehi[,ncol(ehi)-1]/(ehi[,ncol(ehi)-1]-1))#(ehi[,3:2+ncol(x)]-ehi[,3+ncol(x):2+2*ncol(x)]))`*(ehi[,3:2+ncol(x)]-ehi[,3+ncol(x):2+2*ncol(x)]));
+%IF &FPC NE %THEN %DO;
+Gg=((n-1)/(n-ncol(x)))*((((ehi[,ncol(ehi)-1]#(1-ehi[,ncol(ehi)-2]))/(ehi[,ncol(ehi)-1]-1))#(ehi[,3:2+ncol(x)]-ehi[,3+ncol(x):2+2*ncol(x)]))`*(ehi[,3:2+ncol(x)]-ehi[,3+ncol(x):2+2*ncol(x)]));
+%END;
+glg=ni-nh;
+end;
+
+else if nh>0 & ni=0 then do;
+_h_=j(nrow(sh),1,0);
+_h_[1]=1;
+do k=2 to nrow(sh);
+if sh[k]=sh[k-1] then _h_[k]=_h_[k-1];
+else _h_[k]=_h_[k-1]+1;
+end;
+tab=tab||_h_;
+ehi=j(1,2*ncol(x)+3,0);
+ ehi[1,2:1+ncol(x)]=e2g[1,];
+ ehi[1]=tab[1,ncol(tab)];ehi[ncol(ehi)-1]=fh[1];ehi[ncol(ehi)]=1;
+ do j=2 to nrow(tab);
+  if tab[j,ncol(tab)]=tab[j-1,ncol(tab)] then do;ehi[nrow(ehi),2:1+ncol(x)]=ehi[nrow(ehi),2:1+ncol(x)]+e2g[j,];ehi[nrow(ehi),ncol(ehi)-1]=ehi[nrow(ehi),ncol(ehi)-1];ehi[nrow(ehi),ncol(ehi)]=ehi[nrow(ehi),ncol(ehi)]+1;end;
+  else do;ehi=ehi//(tab[j,ncol(tab)]||e2g[j,]||j(1,ncol(x),1)||fh[j]||j(1,1,1));end;
+ end;
+ ehi[,2+ncol(x):1+2*ncol(x)]=ehi[,2:1+ncol(x)]/ehi[,ncol(ehi)];
+do jj=1 to nrow(ehi);
+ehi2=ehi2//repeat(ehi[jj,2+ncol(x):3+2*ncol(x)],ehi[jj,ncol(ehi)]);
+end;
+eh=e2g||ehi2[,1:ncol(ehi2)-1]||ehi2[,ncol(ehi2)];
+do jj=1 to nrow(eh);if eh[jj,ncol(eh)]=1 then eh[jj,ncol(eh)]=2;end;
+Gg=((n-1)/(n-ncol(x)))*(((eh[,ncol(eh)]/(eh[,ncol(eh)]-1))#(eh[,1:ncol(x)]-eh[,1+ncol(x):2*ncol(x)]))`*(eh[,1:ncol(x)]-eh[,1+ncol(x):2*ncol(x)]));
+%IF &FPC NE %THEN %DO;
+Gg=((n-1)/(n-ncol(x)))*((((eh[,ncol(eh)]#(1-eh[,ncol(eh)-1]))/(eh[,ncol(eh)]-1))#(eh[,1:ncol(x)]-eh[,1+ncol(x):2*ncol(x)]))`*(eh[,1:ncol(x)]-eh[,1+ncol(x):2*ncol(x)]));
+%END;
+glg=nh-1;
+end;
+
+else if ni>0 & nh=0 then do;
+_i_=j(nrow(ci),1,0);
+_i_[1]=1;
+do k=2 to nrow(ci);
+if ci[k]=ci[k-1] then _i_[k]=_i_[k-1];
+else _i_[k]=_i_[k-1]+1;
+end;
+tab=tab||_i_;
+ei=j(1,ncol(x)+3,0);
+ ei[1,2:1+ncol(x)]=e2g[1,];
+ ei[1]=tab[1,ncol(tab)];ei[ncol(ei)]=fh[1];ei[1,ncol(ei)]=1;
+ do j=2 to nrow(tab);
+  if tab[j,ncol(tab)]=tab[j-1,ncol(tab)] then do;ei[nrow(ei),2:1+ncol(x)]=ei[nrow(ei),2:1+ncol(x)]+e2[j,];ei[nrow(ei),ncol(ei)]=(ei[nrow(ei),ncol(ei)]+fh[j])/2;ei[nrow(ei),ncol(ei)]=ei[nrow(ei),ncol(ei)]+1;end;
+  else ei=ei//(tab[j,ncol(tab)]||e2g[j,]||fh[j]||j(1,1,1));
+ end;
+Gg=((n-1)/(n-ncol(x)))*(ei[<>,1]/(ei[<>,1]-1))*((ei[,2:1+ncol(x)]-ei[+,2:1+ncol(x)]/ei[+,ncol(ei)])`*(ei[,2:1+ncol(x)]-ei[+,2:1+ncol(x)]/ei[+,ncol(ei)]));
+%IF &FPC NE %THEN %DO;
+Gg=((n-1)/(n-ncol(x)))*((((ei[<>,1]#(1-ei[,ncol(ei)-1]))/(ei[<>,1]-1))#(ei[,2:1+ncol(x)]-ei[+,2:1+ncol(x)]/ei[+,ncol(ei)]))`*(ei[,2:1+ncol(x)]-ei[+,2:1+ncol(x)]/ei[+,ncol(ei)]));
+%END;
+glg=ni-1;
+end;
+
+else do;
+Gg=(n-1)/(n-ncol(x))*(n/(n-1))*((e2g-e2g[:,])`*(e2g-e2g[:,]));
+glg=n-1;
+end;
+
+vargd=vecdiag(inv(x`*(x#wt))*Gg*inv(x`*(x#wt)));
+%IF &WEIGHT = %THEN %DO;
+vargd=varg;
+glg=n-ncol(x);
+%END;
+deff=vargd/varg;
+stdg=sqrt(vargd);
+tg=bg/stdg;
+probtg=2*(1-probt(abs(tg),glg));
+bg_stdg=bg||stdg;
+print "Global Parameter Estimates",,bg_stdg[label=' ' rowname={'Intercept' &xvar}
+colname={"Par. Est." "Std Error"}] tg[format=comma6.2 label="t Value"] probtg[format=pvalue6. label="Pr > |t|"]
+deff[format=comma6.2 label="Deff"],,
+"NOTE: The denominator degrees of freedom for the t tests is" glg[label=' ']".";
+resg=(y-x*bg);
+rsqr1g=(resg#wt)`*resg;
+ymg=(y#wt)`*y;
+rsqr2g=ymg-((y#wt)[+]**2)/wt[+];
+rsqrg=1-rsqr1g/rsqr2g;
+rsqradjg=1-((n-1)/(n-ncol(x)))*(1-rsqrg);
+sigma2g=n*rsqr1g/((n-ncol(x))*wt[+]);
+root_mseg=sqrt(sigma2g);
+print sigma2g[label='Sigma2e'] root_mseg[label='Root MSE'];
+print rsqrg[format=comma6.4 label="R-Square"] rsqradjg[format=comma6.4 label="Adj-R-Square"];
+
+/****************************************/
+%if &grid= %then %do;
+create _res_ var{wt y yhat res resstd rsqri influence cooksD sumwi};
+append;
+create _beta_ from bi[colname={"id" "B"}];
+append from bi;
+bistdt=bi||stdbi||tstat||probt||deffgwr;
+create _parameters_ from bistdt[colname={"id" "B" "x" "y" "stdbi" "tstat" "probt" "GWRDeff"}];
+append from bistdt;
+_tstat_=_beta_/_stdbeta_;
+_probt_=2*(1-probt(abs(_tstat_),gl));
+_sig_=j(n,ncol(x),"not significant at 90%");
+v1=sum(S);
+do i=1 to n;
+do j=1 to ncol(x);
+if _probt_[i,j]<0.01*(ncol(x)/v1) then _sig_[i,j]="significant at 99%";
+else if _probt_[i,j]<0.05*(ncol(x)/v1) then _sig_[i,j]="significant at 95%";
+else if _probt_[i,j]<0.1*(ncol(x)/v1) then _sig_[i,j]="significant at 90%";
+else _sig_[i,j]="not significant at 90%";
+end;
+end;
+_bistdt_=COORD||_beta_||_stdbeta_||_tstat_||_probt_||_deffgwr_;
+_colname1_={"Intercept" &xvar};
+_label_=repeat("std_",ncol(x))//repeat("tstat_",ncol(x))//repeat("probt_",ncol(x))//repeat("GWRDeff_",ncol(x));
+_colname_={"x" "y"}||_colname1_||concat(_label_,repeat(_colname1_`,4))`;
+call change(_colname_, "_ ", "_");
+call change(_colname_, "_ ", "_");
+create _parameters2_ from _bistdt_[colname=_colname_];
+append from _bistdt_;
+close _parameters2_;
+_label_=repeat("sig_",ncol(x));
+_colname_=concat(_label_,repeat(_colname1_`,1))`;
+create _sig_parameters2_ from _sig_[colname=_colname_];
+append from _sig_;
+create _vif_ from vif[colname={&xvar}];
+append from vif;
+%end;
+%else %do;
+create _beta_ from bi[colname={"id" "B" "x" "y"}];
+append from bi;
+bistdt=bi||varbi;
+create _parameters_ from bistdt[colname={"id" "B" "x" "y" "varbi"}];
+append from bistdt;
+close _parameters_;
+%if &sigma2 ne and &GMATRIX = %then %do;
+varbi=varbi*&sigma2;
+varbiggg=varbigg*&sigma2*wt[+]/n;
+%IF &FPC NE %THEN %DO;
+varbiggg=varbiggg*(1-n/wt[+]);
+%END;
+deffgwr=varbi/varbiggg;
+stdbi=sqrt(varbi);
+tstat=bi[,2]/stdbi;
+do i=1 to nrow(tstat);
+if tstat[i]=. then tstat[i]=0;
+end;
+bistdt=bi||stdbi||tstat||deffgwr;
+create _parameters_ from bistdt[colname={"id" "B" "x" "y" "stdbi" "tstat" "GWRDeff"}];
+append from bistdt;
+close _parameters_;
+%end;
+%else %if &sigma2 = and &GMATRIX ne %then %do;
+use &GMATRIX;read all into G;close &GMATRIX;
+if ni>0 | nh>0 then do;
+do i=1 to m;
+m1=(i-1)*ncol(x)+1;
+m2=m1+(ncol(x)-1);
+varbi[m1:m2,1]=vecdiag(varbis[m1:m2,]*G*varbis[m1:m2,]);
+end;
+end;
+stdbi=sqrt(varbi);
+tstat=bi[,2]/stdbi;
+do i=1 to nrow(tstat);
+if tstat[i]=. then tstat[i]=0;
+end;
+bistdt=bi||stdbi||tstat;
+create _parameters_ from bistdt[colname={"id" "B" "x" "y" "stdbi" "tstat"}];
+append from bistdt;
+close _parameters_;
+%end;
+%else %if &sigma2 ne and &GMATRIX ne %then %do;
+use &GMATRIX;read all into G;close &GMATRIX;
+if ni>0 | nh>0 then do;
+do i=1 to m;
+m1=(i-1)*ncol(x)+1;
+m2=m1+(ncol(x)-1);
+varbi[m1:m2,1]=vecdiag(varbis[m1:m2,]*G*varbis[m1:m2,]);
+end;
+end;
+varbiggg=varbigg*&sigma2*wt[+]/n;
+%IF &FPC NE %THEN %DO;
+varbiggg=varbiggg*(1-n/wt[+]);
+%END;
+deffgwr=varbi/varbiggg;
+stdbi=sqrt(varbi);
+tstat=bi[,2]/stdbi;
+do i=1 to nrow(tstat);
+if tstat[i]=. then tstat[i]=0;
+end;
+bistdt=bi||stdbi||tstat||deffgwr;
+create _parameters_ from bistdt[colname={"id" "B" "x" "y" "stdbi" "tstat" "GWRDeff"}];
+append from bistdt;
+close _parameters_;
+%end;
+%end;
+quit;
+%mend GWR;
+
+/*****************************************************************************************/
+/* Macro to separe the datasets of GWR Grid Estimates*/
+/* REQUIRED PARAMETERS
+/*     PAR = the number of explicative variables without considers the intercept
+/*****************************************************************************************/
+
+%macro MAP(PAR=);
+proc iml;
+use _parameters_;
+read all into p[colname=names];
+var=1+&par;
+n=nrow(p)/2;
+nvar=ncol(p);
+_beta_=shape(p,n);
+label=names;
+do i=1 to var;
+seq1=(i-1)*nvar+1;
+seq2=seq1+(nvar-1);
+name="B0":"B&par";
+_betas_=_beta_[,seq1:seq2];
+create b from _betas_[colname=label];
+append from _betas_;
+close b;
+sastables=datasets("work");
+do j=1 to nrow(sastables);
+if sastables[j]=name[i] then
+call delete(name[i]);
+end;
+call rename(b,name[i]);
+end;
+quit;
+%mend MAP;
+
+/*****************************************************************************************/
+/* Macro for Drawing the Maps in 2D */
+/* REQUIRED PARAMETERS
+/*  TABLE = the name of the SAS data set to be used
+/*    VAR = the name of the variable to be plotted
+/*    MAP = the name of the SAS data set with the geographic coordinates
+/*  SAMPLEDATA = the name of the SAS data set with the geographic coordinates of the sample
+/*	       data
+/* METHOD = there are two choices to define the classes:
+/*	  EQUAL: using the same rule of histograms (the number of classes is defined by
+		   Sturges's ruke)
+/*	    STD: using the standard deviation for creating 6 classes: media-3std;
+/*		 media-2std;media-1std;media+1std;media+2std;media+3std;
+/*  WHERE = using a conditional to draw the maps (for example, plot only the parameters that
+/*	  are significant at 5% level)
+/*****************************************************************************************/
+
+
+%macro map2d(table=,var=,map=,sampledata=,method=EQUAL,where=);
+data anno&table;set &table;
+length function style $10. color $8.;
+retain line 1 xsys ysys '2' hsys '3' color 'red';
+function='label';text='U';position='5';style='marker';size=2;
+&where;
+run;
+proc sql noprint;
+select count(*) into:np from anno&table where &var>=0;
+select count(*) into:nn from anno&table where &var<0;
+select min(&var) into:minp from anno&table where &var>=0;
+select max(&var) into:maxp from anno&table where &var>=0;
+select min(&var) into:minn from anno&table where &var<0;
+select max(&var) into:maxn from anno&table where &var<0;
+quit;
+%put &np &nn;
+%if &np >0 and &nn = 0 %then %do;
+data _null_;
+np=floor(1+3.3*log10(&np))-1;
+call symput('np',np);
+run;
+%put &np;
+%if %upcase(&method)=EQUAL %then %do;
+%put &np &minp &maxp %sysevalf((&maxp-&minp)/&np);
+%colorscale(FFFFFF,,FF3333,&np,clist,no);%patt;
+data _null_;set clist;
+call symput('color'||trim(left(_n_)),'cx'||rgb);
+run;
+%macro cl;
+data anno&table;set anno&table;
+if round(&var,0.01)<=round(&minp+(&maxp-&minp)/&np,0.01) then color="&color1";
+%do i=2 %to &np;
+else if round(&var,0.01)<=&minp+round(&i*(&maxp-&minp)/&np,0.01) then color="&&color&i";
+%end;
+run;
+%mend cl;
+%cl;
+%end;
+%else %if %upcase(&method)=STD %then %do;
+data _null_;
+np=6;
+call symput('np',np);
+run;
+proc sql noprint;
+select mean(&var) into:meanp from anno&table where &var>=0;
+select std(&var) into:stdp from anno&table where &var>=0;
+quit;
+%put &meanp &stdp;
+%colorscale(FFFFFF,,FF3333,&np,clist,no);%patt;
+data _null_;set clist;
+call symput('color'||trim(left(_n_)),'cx'||rgb);
+run;
+%macro cl;
+data anno&table;set anno&table;
+if round(&var,0.01)<=round(&minp+(&meanp-3*&stdp),0.01) then color="&color1";
+else if round(&var,0.01)<=&minp+round(&meanp-2*&stdp,0.01) then color="&color2";
+else if round(&var,0.01)<=&minp+round(&meanp-&stdp,0.01) then color="&color3";
+else if round(&var,0.01)<=&minp+round(&meanp+&stdp,0.01) then color="&color4";
+else if round(&var,0.01)<=&minp+round(&meanp+2*&stdp,0.01) then color="&color5";
+else color="&color6";
+run;
+%mend cl;
+%cl;
+%end;
+data _null_;
+min=left(trim(putn(round(&minp,0.1),'commax10.')));
+max=left(trim(putn(round(&maxp,0.1),'commax10.')));
+call symput('min',min);
+call symput('max',max);
+run;
+%put &min &max;
+%bar(FF3333,FFFFFF,&minp,&maxp,vertical,y_i=30,x_i=90);
+%end;
+%else %if &nn > 0 and &np = 0 %then %do;
+data _null_;
+nn=floor(1+3.3*log10(&nn))-1;
+call symput('nn',nn);
+run;
+%put &nn;
+%put &nn &minn &maxn %sysevalf((&maxn-&minn)/&nn);
+%colorscale(FFFFFF,,3333FF,&nn,clist,no);%patt;
+data _null_;set clist;
+call symput('color'||trim(left(_n_)),'cx'||rgb);
+run;
+%macro cl;
+data anno&table;set anno&table;
+if round(&var,0.01)<=round(&minn+(&maxn-&minn)/&nn,0.01) then color="&color1";
+%do i=2 %to &nn;
+else if round(&var,0.01)<=&minn+round(&i*(&maxn-&minn)/&nn,0.01) then color="&&color&i";
+%end;
+run;
+%mend cl;
+%cl;
+data _null_;
+min=left(trim(putn(round(&minn,0.1),'commax10.')));
+max=left(trim(putn(round(&maxn,0.1),'commax10.')));
+call symput('min',min);
+call symput('max',max);
+run;
+%put &min &max;
+%bar(FF3333,3333FF,&minn,&maxn,vertical,y_i=30,x_i=90);
+%end;
+%else %do;
+data _null_;
+np=floor(1+3.3*log10(&np))-1;
+nn=floor(1+3.3*log10(&nn))-1;
+call symput('np',np);
+call symput('nn',nn);
+run;
+%put &np &nn;
+%put &np &minp &maxp %sysevalf((&maxp-&minp)/&np);
+%put &nn &minn &maxn %sysevalf((&maxn-&minn)/&nn);
+%colorscale(FFFFFF,,FF3333,&np,clist,no);%patt;
+data _null_;set clist;
+call symput('color'||trim(left(_n_)),'cx'||rgb);
+run;
+%macro cl;
+data anno&table.p;set anno&table(where=(&var>=0));
+if round(&var,0.01)<=round(&minp+(&maxp-&minp)/&np,0.01) then color="&color1";
+%do i=2 %to &np;
+else if round(&var,0.01)<=&minp+round(&i*(&maxp-&minp)/&np,0.01) then color="&&color&i";
+%end;
+run;
+%mend cl;
+%cl;
+%colorscale(3333FF,,FFFFFF,&nn,clist,no);%patt;
+data _null_;set clist;
+call symput('color'||trim(left(_n_)),'cx'||rgb);
+run;
+%macro cl;
+data anno&table.n;set anno&table(where=(&var<0));
+if round(&var,0.01)<=round(&minn+(&maxn-&minn)/&nn,0.01) then color="&color1";
+%do i=2 %to &nn;
+else if round(&var,0.01)<=&minn+round(&i*(&maxn-&minn)/&nn,0.01) then color="&&color&i";
+%end;
+run;
+%mend cl;
+%cl;
+data anno&table;set anno&table.p anno&table.n;run;
+data _null_;
+min=left(trim(putn(round(&minn,0.1),'commax10.')));
+max=left(trim(putn(round(&maxp,0.1),'commax10.')));
+call symput('min',min);
+call symput('max',max);
+run;
+%put &min &max;
+%bar(FF3333,FFFFFF,0,&maxp,vertical,y_i=50,x_i=90);
+data anno&table;set _a_ anno&table;run;
+%bar(FFFFFF,3333FF,&minn,0,vertical,y_i=16,x_i=90);
+%end;
+data anno&table;set _a_ anno&table;run;
+data a;id=0;v=2;run;
+
+%if &sampledata ne %then %do;
+data annodata;set &sampledata;
+length function style $10. color $8.;
+retain line 1 xsys ysys '2' hsys '3' color 'black' when 'a';
+function='label';text='J';position='5';style='special';size=2;
+run;
+%end;
+*goptions reset=all reset=global;
+proc gmap data=a map=&map all %if &sampledata ne %then %do;anno=annodata%end;;
+id id;
+choro v / anno=anno&table nolegend;
+run;
+quit;
+%mend map2d;
+
+/************** macro for stationarity test *************/
+
+%macro stationarity(DATA=,YVAR=,XVAR=,WEIGHT=,DCOORD=,MAXV=,METHOD=,DISTANCEKM=NO,H=,REP=99);
+proc iml;
+use &DATA;
+read all var {&YVAR} into y;
+read all var {&XVAR} into x;
+n=nrow(y);
+wt=j(n,1,1);
+%IF &WEIGHT NE %THEN %DO;
+read all var {&WEIGHT} into wt;
+%END;
+close &DATA;
+
+%IF %UPCASE(&METHOD)=ADAPTIVEN %THEN %DO;
+	use &DHV;read all into hv;
+%END;
+x=j(n,1,1)||x;
+
+%IF &H NE %THEN %DO;
+	h=&H;
+	print h[label="Bandwidth"];
+%END;
+%ELSE %DO;
+	%IF %UPCASE(&METHOD)=FIXED_G or %UPCASE(&METHOD)=FIXED_BSQ or %UPCASE(&METHOD)=ADAPTIVE_BSQ %THEN %DO;
+		h=&_h_;
+		print h[label="Bandwidth"];
+	%END;
+%END;
+
+use &DCOORD;															     
+read all var{x y} into COORD;														     
+	read all var{x y} into POINTS;     
+close &DCOORD;
+m=nrow(POINTS);
+
+bi=j(ncol(x)*m,4,0);
+biT=j(m,ncol(x)+1,0);
+ym=y-y[:];
+
+*** Basic formulae for calculating spherical distance *** ;
+do r=1 to &REP;
+do i=1 to m;
+free dist;
+	d=j(1,3,0);
+	do j=1 to n;															 
+	%IF %UPCASE(&DISTANCEKM)=YES %THEN %DO;
+		dif=abs(POINTS[i,1]-COORD[j,1]);   
+		raio=arcos(-1)/180; 
+		argument=sin(POINTS[i,2]*raio)*sin(COORD[j,2]*raio)+cos(POINTS[i,2]*raio)*cos(COORD[j,2]*raio)*cos(dif*raio);
+		if argument>1 then arco=0;
+		else
+		/* Law of Cosines */ 
+		arco=arcos(sin(POINTS[i,2]*raio)*sin(COORD[j,2]*raio)+cos(POINTS[i,2]*raio)*cos(COORD[j,2]*raio)*cos(dif*raio));
+		d1=arco*6371 /*Earth's Radius = 6371 (aproximately)*/;
+		if d1<=1e-3 then d1=0;
+	%END;
+	%ELSE %DO;
+		d1=sqrt((POINTS[i,1]-COORD[j,1])**2+(POINTS[i,2]-COORD[j,2])**2);
+	%END;
+%IF %UPCASE(&METHOD)=FIXED_G %THEN %DO;
+		if d1<=&MAXV*1 & d1 ^=0 then do;
+%END;
+%ELSE %IF %UPCASE(&METHOD)=FIXED_BSQ %THEN %DO;
+		if d1<=h & d1 ^=0 then do;
+%END;
+%ELSE %IF %UPCASE(&METHOD)=ADAPTIVEN %THEN %DO;
+		if d1<=hv[i] & d1 ^=0 then do;
+%END;
+%ELSE %IF %UPCASE(&METHOD)=ADAPTIVE_BSQ %THEN %DO;
+		if d1 ^=0 then do;
+%END;
+			d[1]=i; 
+			d[2]=j;
+	%IF %UPCASE(&DISTANCEKM)=YES %THEN %DO;
+		d[3]=arco*6371 /*Earth's Radius = 6371 (approximately)*/;   
+	%END;
+	%ELSE %DO;
+		d[3]=sqrt((POINTS[i,1]-COORD[j,1])**2+(POINTS[i,2]-COORD[j,2])**2);
+	%END;
+			dist=dist//d;
+		end;
+	end;
+	u=nrow(dist);
+	w=j(u,1,0);
+	x1=x[i,];
+	y1=y[i,];
+	wt1=wt[i,];
+	ym1=ym[i,];
+	do jj=1 to u;
+%IF %UPCASE(&METHOD)=FIXED_G %THEN %DO;
+		w[jj]=exp(-(dist[jj,3]/h)**2);
+%END;
+%ELSE %IF %UPCASE(&METHOD)=FIXED_BSQ %THEN %DO;
+		w[jj]=(1-(dist[jj,3]/h)**2)**2;
+%END;
+%ELSE %IF %UPCASE(&METHOD)=ADAPTIVEN %THEN %DO;
+		w[jj]=(1-(dist[jj,3]/hv[i])**2)**2;
+%END;
+		x1=x1//x[dist[jj,2],];
+		y1=y1//y[dist[jj,2],];
+		wt1=wt1//wt[dist[jj,2],];
+		ym1=ym1//ym[dist[jj,2],];
+	end;
+	w={1}//w;
+	%IF %UPCASE(&METHOD)=ADAPTIVE_BSQ %THEN %DO;
+	x1=x[i,];
+	y1=y[i,];
+	wt1=wt[i,];
+	ym1=ym[i,];
+	call sort(dist,{3});
+	dist=dist||(1:nrow(dist))`;
+	w=j(n,2,0);	
+	hn=dist[h,3];
+	do jj=1 to n-1;
+		 if dist[jj,4]<=h then
+		w[jj,1]=(1-(dist[jj,3]/hn)**2)**2;
+		else w[jj,1]=0;
+		w[jj,2]=dist[jj,2];
+	end;
+	position=w[loc(w[,1]>0),2];
+	w={1}//w[position,1];
+	x1=x1//x[position,];
+	y1=y1//y[position,];
+	wt1=wt1//wt[position,];
+	ym1=ym1//ym[position,];
+	%END;
+       
+	if det(x1`*(w#x1#wt1))=0 then b=j(ncol(x),1,0);
+	else
+	b=inv(x1`*(w#x1#wt1))*x1`*(w#y1#wt1);
+
+	/*******************************/
+	m1=(i-1)*ncol(x)+1;
+	m2=m1+(ncol(x)-1);
+	bi[m1:m2,1]=i;
+	bi[m1:m2,2]=b;
+	bi[m1:m2,3]=POINTS[i,1];
+	bi[m1:m2,4]=POINTS[i,2];
+end;
+_beta_=shape(bi[,1:2],n);
+i=do(2,ncol(_beta_),2);
+_beta_=_beta_[,i];
+
+do i=1 to ncol(_beta_);
+vk=(_beta_[,i]-_beta_[:,i])`*(_beta_[,i]-_beta_[:,i])/n;
+vr=vr||vk;
+end;
+if r=1 then v=vr;else v=v//vr;
+    ru = 1:n;
+	*call randseed(r);
+    call randgen(ru, "Uniform");
+	y=ru`||y;
+	x=ru`||x;
+    call sort(y,{1});
+	call sort(x,{1});
+	y=y[,2];
+	x=x[,2:ncol(x)];
+	ym=y-y[:];
+	free vr vk;
+end;
+
+pvalor=j(1,ncol(v),0);
+do var=1 to ncol(v);
+do i=1 to nrow(v);
+if v[i,var]>=v[1,var] then pvalor[var]=pvalor[var]+1;
+end;
+end;
+pvalor=pvalor/nrow(v);
+_colname_={"Intercept" &xvar};
+print pvalor[label="Nonstationarity test (p-value)" colname=_colname_];
+
+create _stationarity_ from v[colname=_colname_];
+append from v;
+quit;
+%mend stationarity;
