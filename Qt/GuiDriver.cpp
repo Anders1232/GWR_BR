@@ -86,7 +86,7 @@ QString GuiDriver::Calculate(
 		int column1= NamedColumnDoubleTable_GetColumnIndex(table, latitude.c_str());
 		int column2= NamedColumnDoubleTable_GetColumnIndex(table, longitude.c_str());
 		DoubleMatrix *result= LatPlusLon(table->matrix, column1, column2);
-		FILE *temp= fopen("result.txt", "w");
+		FILE *temp= fopen("result.txt", "w+");
 		fprintf(temp, "GWR BR" NEW_LINE);
 		fprintf(temp, "File: %s\t\t\tDelimiter: %c(%d)" NEW_LINE, fileName.c_str(), separator, separator);
 		fprintf(temp, "Operation: Latitude + Longitude" NEW_LINE);

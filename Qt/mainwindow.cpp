@@ -420,7 +420,8 @@ void MainWindow::UpdatePreview(void)
 	Q_ASSERT(lineEdit);
 	if("" != lineEdit->text())
 	{
-		QString preview = QString(driver.GetPreview(fileName.toLocal8Bit().toStdString(), linesInPreview, charsPerLineInPreview).c_str() );
+		QString preview = QString(driver.GetPreview(fileName.toStdString(), linesInPreview, charsPerLineInPreview).c_str() );
+//		QString preview = QString(driver.GetPreview(fileName.toLocal8Bit().toStdString() linesInPreview, charsPerLineInPreview).c_str() );
 		QTextEdit *previewArea = this->findChild<QTextEdit *>("previewText");
 		Q_ASSERT(previewArea);
 		previewArea->setText(preview);
@@ -604,7 +605,8 @@ void MainWindow::on_executeStartComputingButton_clicked()
 		return;
 	}
 
-	QString result = driver.Calculate(fileName.toLocal8Bit().toStdString(), separator, modelType, *vList, identifer, dependent, latitude, longitude, offset, *lvList, *gvList);
+	QString result = driver.Calculate(fileName.toStdString(), separator, modelType, *vList, identifer, dependent, latitude, longitude, offset, *lvList, *gvList);
+//	QString result = driver.Calculate(fileName.toLocal8Bit().toStdString(), separator, modelType, *vList, identifer, dependent, latitude, longitude, offset, *lvList, *gvList);
 
 	QTextEdit *resultArea= this->findChild<QTextEdit*>("OutputTextEdit");
 	Q_ASSERT(resultArea);

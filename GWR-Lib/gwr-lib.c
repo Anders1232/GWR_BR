@@ -22,7 +22,8 @@ DoubleMatrix* LatPlusLon(DoubleMatrix *matrix, int latColumn, int lonColumn)
 	int linesNumber= matrix->lines;
 	DoubleMatrix *latColumnMatrix= NewDoubleMatrix(linesNumber, 1);
 	DoubleMatrix *lonColumnMatrix= NewDoubleMatrix(linesNumber, 1);
-	for(int count =0; count < linesNumber; count++)
+	int count;
+	for(count =0; count < linesNumber; count++)
 	{
 		DoubleMatrixSetElement(latColumnMatrix, 0, count, DoubleMatrixGetElement(matrix, latColumn, count));
 		DoubleMatrixSetElement(lonColumnMatrix, 0, count, DoubleMatrixGetElement(matrix, lonColumn, count));
@@ -39,7 +40,8 @@ DoubleMatrix* DistanceToOrigin(DoubleMatrix *matrix, int latColumn, int lonColum
 	int linesNumber= matrix->lines;
 	DoubleMatrix *latColumnMatrix= NewDoubleMatrix(linesNumber, 1);
 	DoubleMatrix *lonColumnMatrix= NewDoubleMatrix(linesNumber, 1);
-	for(int count =0; count < linesNumber; count++)
+	int count;
+	for(count =0; count < linesNumber; count++)
 	{
 		DoubleMatrixSetElement(latColumnMatrix, 0, count, DoubleMatrixGetElement(matrix, latColumn, count));
 		DoubleMatrixSetElement(lonColumnMatrix, 0, count, DoubleMatrixGetElement(matrix, lonColumn, count));
@@ -153,7 +155,7 @@ DoubleMatrix* Golden(DoubleMatrix* base, int yVarColumn, int xVarColumn, ? dcoor
 		int i;
 		for(i=1; i < base->lines; i++)
 		{
-			/**/
+			/* bla*/
 		}
 	}
 }
