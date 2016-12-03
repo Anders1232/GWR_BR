@@ -772,28 +772,28 @@
           </property>
           <layout class="QGridLayout" name="gridLayout">
            <item row="1" column="0">
-            <widget class="QRadioButton" name="radioButton_2">
+            <widget class="QRadioButton" name="kernelFixedBiSquaButton">
              <property name="text">
               <string>Fixed bi-square</string>
              </property>
             </widget>
            </item>
            <item row="0" column="0">
-            <widget class="QRadioButton" name="radioButton">
+            <widget class="QRadioButton" name="kernelFixedGausButton">
              <property name="text">
               <string>Fixed Gaussian</string>
              </property>
             </widget>
            </item>
            <item row="0" column="1">
-            <widget class="QRadioButton" name="radioButton_3">
+            <widget class="QRadioButton" name="kernelAdaptativeGausButton">
              <property name="text">
               <string>Adaptative Gaussian</string>
              </property>
             </widget>
            </item>
            <item row="1" column="1">
-            <widget class="QRadioButton" name="radioButton_4">
+            <widget class="QRadioButton" name="kernelAdapatativeBiSquaButton">
              <property name="text">
               <string>Adaptative bi-square</string>
              </property>
@@ -819,28 +819,28 @@
           </property>
           <layout class="QGridLayout" name="gridLayout_2">
            <item row="0" column="0">
-            <widget class="QRadioButton" name="radioButton_5">
+            <widget class="QRadioButton" name="kernelAICc">
              <property name="text">
               <string>AICc</string>
              </property>
             </widget>
            </item>
            <item row="0" column="1">
-            <widget class="QRadioButton" name="radioButton_6">
+            <widget class="QRadioButton" name="kernelBIC_MDL">
              <property name="text">
               <string>BIC/MDL</string>
              </property>
             </widget>
            </item>
            <item row="1" column="0">
-            <widget class="QRadioButton" name="radioButton_7">
+            <widget class="QRadioButton" name="kernelAIC">
              <property name="text">
               <string>AIC</string>
              </property>
             </widget>
            </item>
            <item row="1" column="1">
-            <widget class="QRadioButton" name="radioButton_8">
+            <widget class="QRadioButton" name="kernelCV">
              <property name="text">
               <string>CV(Gaussian only)</string>
              </property>

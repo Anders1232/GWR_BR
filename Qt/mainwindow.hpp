@@ -10,6 +10,14 @@ enum CoordsMode
 	PROJECTED,
 	SPHERICAL
 };
+/*
+enum KernelType
+{
+	FIXED_G,
+	FIXED_BS,
+
+}
+*/
 
 namespace Ui {
 	class MainWindow;
@@ -90,6 +98,22 @@ class MainWindow : public QMainWindow
 
 		void on_executeStartComputingButton_clicked();
 
+		void on_kernelFixedGausButton_clicked();
+
+		void on_kernelAdaptativeGausButton_clicked();
+
+		void on_kernelFixedBiSquaButton_clicked();
+
+		void on_kernelAdapatativeBiSquaButton_clicked();
+
+		void on_kernelAICc_clicked();
+
+		void on_kernelAIC_clicked();
+
+		void on_kernelBIC_MDL_clicked();
+
+		void on_kernelCV_clicked();
+
 	private:
 		Ui::MainWindow *ui;
 		GuiDriver driver;
@@ -103,6 +127,8 @@ class MainWindow : public QMainWindow
 		CoordsMode coordsMode;
 		QString fileName;
 		char separator;
+		KernelType kernelType;
+		SelectionCriteria selectionCriteria;
 };
 
 #endif // MAINWINDOW_H

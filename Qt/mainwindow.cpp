@@ -29,6 +29,14 @@ MainWindow::MainWindow(QWidget *parent) :
 	Q_ASSERT(coordProjected);
 	coordProjected->click();
 
+	//setting kernel radio buttons
+	QRadioButton *radioButton = this->findChild<QRadioButton *>("kernelFixedGausButton");
+	Q_ASSERT(radioButton);
+	radioButton->click();
+	radioButton = this->findChild<QRadioButton *>("kernelAICc");
+	Q_ASSERT(radioButton);
+	radioButton->click();
+
 	separator = '\t';
 	fileName= "";
 }
@@ -461,13 +469,11 @@ void MainWindow::on_previewCharsPerLine_valueChanged(int arg1)
 void MainWindow::on_LatPlusLonOperation_clicked()
 {
 	modelType= MODE_LAT_PLUS_LON;
-//	driver.SelectModelType(MODE_LAT_PLUS_LON);
 }
 
 void MainWindow::on_dependentTimesOffsetOperation_clicked()
 {
 	modelType= MODE_DEPENDENT_TIMES_OFFSET;
-//	driver.SelectModelType(MODE_DEPENDENT_TIMES_OFFSET);
 }
 
 void MainWindow::on_distanceToOrigin_clicked()
@@ -614,4 +620,44 @@ void MainWindow::on_executeStartComputingButton_clicked()
 	delete vList;
 	delete lvList;
 	delete gvList;
+}
+
+void MainWindow::on_kernelFixedGausButton_clicked()
+{
+	kernelType= FIXED_G;
+}
+
+void MainWindow::on_kernelAdaptativeGausButton_clicked()
+{
+	kernelType= ADAPTATIVE_N;
+}
+
+void MainWindow::on_kernelFixedBiSquaButton_clicked()
+{
+	kernelType= FIXES_BSQ;
+}
+
+void MainWindow::on_kernelAdapatativeBiSquaButton_clicked()
+{
+	kernelType= ADAPTATIVE_BSQ;
+}
+
+void MainWindow::on_kernelAICc_clicked()
+{
+	selectionCriteria= AICc;
+}
+
+void MainWindow::on_kernelAIC_clicked()
+{
+	selectionCriteria= AIC;
+}
+
+void MainWindow::on_kernelBIC_MDL_clicked()
+{
+	selectionCriteria= BIC_MDL;
+}
+
+void MainWindow::on_kernelCV_clicked()
+{
+	selectionCriteria= CV;
 }
