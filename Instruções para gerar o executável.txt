@@ -1,0 +1,3 @@
+Primeiro, ajustar a path para ter acesso aos binários e bibliotecas do qt. Uma path de exemplo está no arquivo path.txt
+Segundo, gerar o executável no qt, encontrá-lo no sistema de arquivos e colocá-lo numa pasta vazia
+Pelo terminal(cmd), encontrar a pasta em que tem apenas o executável e rodar o comando windeployqt ..\[nomeDaPastaComExecutável]
