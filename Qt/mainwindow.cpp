@@ -661,3 +661,12 @@ void MainWindow::on_kernelCV_clicked()
 {
 	selectionCriteria= CV;
 }
+
+void MainWindow::on_OutputFileSelectButton_clicked()
+{
+	QString fileName = QFileDialog::getSaveFileName(this, tr("Open File"),
+													"/home",
+													tr("Text File (*.txt);; Any File(*)"));
+	ShowErrorMessage(QString("File selected: ") + fileName);
+	//fazer mais coisas aq
+}

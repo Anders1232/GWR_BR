@@ -114,6 +114,8 @@ class MainWindow : public QMainWindow
 
 		void on_kernelCV_clicked();
 
+		void on_OutputFileSelectButton_clicked();
+
 	private:
 		Ui::MainWindow *ui;
 		GuiDriver driver;

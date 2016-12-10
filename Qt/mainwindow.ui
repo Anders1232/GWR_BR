@@ -33,7 +33,7 @@
        <enum>QTabWidget::Triangular</enum>
       </property>
       <property name="currentIndex">
-       <number>3</number>
+       <number>4</number>
       </property>
       <widget class="QWidget" name="Welcome">
        <attribute name="title">
@@ -904,7 +904,7 @@
                      </widget>
                     </item>
                     <item>
-                     <widget class="QLineEdit" name="lineEdit_2"/>
+                     <widget class="QLineEdit" name="KernelGoldenMaxLineEdit"/>
                     </item>
                    </layout>
                   </widget>
@@ -938,7 +938,7 @@
                <widget class="QWidget" name="widget_25" native="true"/>
               </item>
               <item>
-               <widget class="QLineEdit" name="lineEdit_3"/>
+               <widget class="QLineEdit" name="KernelSingleBandwidthLineEdit"/>
               </item>
               <item>
                <widget class="QWidget" name="widget_24" native="true">
@@ -990,7 +990,7 @@
                      </widget>
                     </item>
                     <item>
-                     <widget class="QLineEdit" name="lineEdit_4"/>
+                     <widget class="QLineEdit" name="KernelIntervalMinLineEdit"/>
                     </item>
                    </layout>
                   </widget>
@@ -1012,7 +1012,7 @@
                      </widget>
                     </item>
                     <item>
-                     <widget class="QLineEdit" name="lineEdit_5"/>
+                     <widget class="QLineEdit" name="KernelIntervalMaxLineEdit"/>
                     </item>
                    </layout>
                   </widget>
@@ -1034,7 +1034,7 @@
                      </widget>
                     </item>
                     <item>
-                     <widget class="QLineEdit" name="lineEdit_6"/>
+                     <widget class="QLineEdit" name="KernelIntervalLineEdit"/>
                     </item>
                    </layout>
                   </widget>
@@ -1135,7 +1135,27 @@
          <widget class="QWidget" name="widget_9" native="true"/>
         </item>
         <item>
-         <widget class="QWidget" name="widget_29" native="true"/>
+         <widget class="QWidget" name="widget_29" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_24">
+           <item>
+            <widget class="QLabel" name="label_2">
+             <property name="text">
+              <string>Output file</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="OutputFileLineEdit"/>
+           </item>
+           <item>
+            <widget class="QPushButton" name="OutputFileSelectButton">
+             <property name="text">
+              <string>Select</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </item>
         <item>
          <widget class="QWidget" name="widget_28" native="true">
@@ -1148,9 +1168,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QWidget" name="widget_30" native="true">
-             <zorder>OutputKernelButton</zorder>
-            </widget>
+            <widget class="QWidget" name="widget_30" native="true"/>
            </item>
            <item>
             <widget class="QPushButton" name="OutputExecuteButton">
