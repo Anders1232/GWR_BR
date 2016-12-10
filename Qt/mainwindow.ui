@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>666</width>
-    <height>547</height>
+    <height>632</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -33,7 +33,7 @@
        <enum>QTabWidget::Triangular</enum>
       </property>
       <property name="currentIndex">
-       <number>4</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="Welcome">
        <attribute name="title">
@@ -754,7 +754,10 @@
        <attribute name="title">
         <string>Kernel</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_14" stretch="0,1,0,0,1,0">
+       <layout class="QVBoxLayout" name="verticalLayout_14" stretch="0,1,0,0,0,1,0">
+        <property name="spacing">
+         <number>1</number>
+        </property>
         <item>
          <widget class="QLabel" name="label_13">
           <property name="text">
@@ -771,6 +774,12 @@
            <enum>QFrame::Raised</enum>
           </property>
           <layout class="QGridLayout" name="gridLayout">
+           <property name="topMargin">
+            <number>3</number>
+           </property>
+           <property name="bottomMargin">
+            <number>3</number>
+           </property>
            <item row="1" column="0">
             <widget class="QRadioButton" name="kernelFixedBiSquaButton">
              <property name="text">
@@ -803,6 +812,13 @@
          </widget>
         </item>
         <item>
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Bandwidth selection method</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QFrame" name="frame_10">
           <property name="frameShape">
            <enum>QFrame::StyledPanel</enum>
@@ -811,6 +827,12 @@
            <enum>QFrame::Raised</enum>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_17">
+           <property name="topMargin">
+            <number>3</number>
+           </property>
+           <property name="bottomMargin">
+            <number>3</number>
+           </property>
            <item>
             <widget class="QWidget" name="widget_15" native="true">
              <layout class="QHBoxLayout" name="horizontalLayout_14" stretch="3,6">
@@ -821,7 +843,7 @@
                <number>3</number>
               </property>
               <item>
-               <widget class="QRadioButton" name="radioButton_2">
+               <widget class="QRadioButton" name="KernelGoldenRadioButton">
                 <property name="text">
                  <string>Golden Section Search</string>
                 </property>
@@ -837,7 +859,7 @@
                   <number>2</number>
                  </property>
                  <item>
-                  <widget class="QCheckBox" name="checkBox">
+                  <widget class="QCheckBox" name="KernelGoldenManualCheckBox">
                    <property name="text">
                     <string>Define range manually</string>
                    </property>
@@ -860,7 +882,7 @@
                      </widget>
                     </item>
                     <item>
-                     <widget class="QLineEdit" name="lineEdit"/>
+                     <widget class="QLineEdit" name="KernelGoldenMinLineEdit"/>
                     </item>
                    </layout>
                   </widget>
@@ -906,7 +928,7 @@
                <number>2</number>
               </property>
               <item>
-               <widget class="QRadioButton" name="radioButton_3">
+               <widget class="QRadioButton" name="KernelSingleRadioButton">
                 <property name="text">
                  <string>Single Bandwidth</string>
                 </property>
@@ -936,7 +958,7 @@
                <number>3</number>
               </property>
               <item>
-               <widget class="QRadioButton" name="radioButton">
+               <widget class="QRadioButton" name="KernelIntervalRadioButton">
                 <property name="text">
                  <string>Interval Search</string>
                 </property>
@@ -1042,6 +1064,12 @@
            <enum>QFrame::Raised</enum>
           </property>
           <layout class="QGridLayout" name="gridLayout_2">
+           <property name="topMargin">
+            <number>3</number>
+           </property>
+           <property name="bottomMargin">
+            <number>3</number>
+           </property>
            <item row="0" column="0">
             <widget class="QRadioButton" name="kernelAICc">
              <property name="text">
@@ -1077,7 +1105,7 @@
          <widget class="QWidget" name="widget_26" native="true">
           <layout class="QHBoxLayout" name="horizontalLayout_22">
            <item>
-            <widget class="QPushButton" name="pushButton_4">
+            <widget class="QPushButton" name="KernelModelButton">
              <property name="text">
               <string>Model</string>
              </property>
@@ -1087,7 +1115,7 @@
             <widget class="QWidget" name="widget_27" native="true"/>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_2">
+            <widget class="QPushButton" name="KernelOutputButton">
              <property name="text">
               <string>Output</string>
              </property>
@@ -1102,6 +1130,39 @@
        <attribute name="title">
         <string>Output</string>
        </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_18" stretch="5,5,1">
+        <item>
+         <widget class="QWidget" name="widget_9" native="true"/>
+        </item>
+        <item>
+         <widget class="QWidget" name="widget_29" native="true"/>
+        </item>
+        <item>
+         <widget class="QWidget" name="widget_28" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_23">
+           <item>
+            <widget class="QPushButton" name="OutputKernelButton">
+             <property name="text">
+              <string>Kernel</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="widget_30" native="true">
+             <zorder>OutputKernelButton</zorder>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="OutputExecuteButton">
+             <property name="text">
+              <string>Execute</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
       </widget>
       <widget class="QWidget" name="Execute">
        <attribute name="title">
@@ -1172,7 +1233,7 @@
         <item>
          <widget class="QPushButton" name="pushButton_3">
           <property name="text">
-           <string>Save result</string>
+           <string>About</string>
           </property>
          </widget>
         </item>
@@ -1193,7 +1254,7 @@
      <x>0</x>
      <y>0</y>
      <width>666</width>
-     <height>19</height>
+     <height>27</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
