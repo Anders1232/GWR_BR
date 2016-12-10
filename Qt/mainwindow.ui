@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>666</width>
-    <height>491</height>
+    <height>547</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -33,19 +33,19 @@
        <enum>QTabWidget::Triangular</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>4</number>
       </property>
       <widget class="QWidget" name="Welcome">
        <attribute name="title">
         <string>Welcome</string>
        </attribute>
-       <widget class="QToolButton" name="toolButton_3">
+       <widget class="QToolButton" name="welcomeNextButton">
         <property name="geometry">
          <rect>
           <x>9</x>
           <y>9</y>
           <width>626</width>
-          <height>376</height>
+          <height>441</height>
          </rect>
         </property>
         <property name="text">
@@ -85,7 +85,7 @@
              <item>
               <layout class="QHBoxLayout" name="FileSelectHorizontalLayout">
                <item>
-                <widget class="QLabel" name="label_2">
+                <widget class="QLabel" name="DataFileLabel">
                  <property name="text">
                   <string>File:</string>
                  </property>
@@ -110,7 +110,7 @@
              <item>
               <layout class="QHBoxLayout" name="FileDelimiterHorizontalLayout">
                <item>
-                <widget class="QLabel" name="label">
+                <widget class="QLabel" name="DataSelectDelimiterLabel">
                  <property name="text">
                   <string>Select Delimiter:</string>
                  </property>
@@ -176,17 +176,17 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_11" stretch="1,1,0">
            <item>
-            <widget class="QLabel" name="label_10">
+            <widget class="QLabel" name="DataPreviewLabel">
              <property name="text">
               <string>Preview</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QWidget" name="widget_9" native="true">
+            <widget class="QWidget" name="DataPreviewSizeWidget" native="true">
              <layout class="QHBoxLayout" name="horizontalLayout_3">
               <item>
-               <widget class="QLabel" name="label_8">
+               <widget class="QLabel" name="DataNoLinesLabel">
                 <property name="text">
                  <string>Number of lines:</string>
                 </property>
@@ -203,7 +203,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="label_9">
+               <widget class="QLabel" name="DataNocharsLabel">
                 <property name="text">
                  <string>Characters per line:</string>
                 </property>
@@ -252,7 +252,7 @@
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,1,1">
         <item>
-         <widget class="QFrame" name="frame_3">
+         <widget class="QFrame" name="ModelLeftArea">
           <property name="frameShape">
            <enum>QFrame::StyledPanel</enum>
           </property>
@@ -261,19 +261,19 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_5" stretch="1,1,1,0">
            <item>
-            <widget class="QFrame" name="frame_6">
+            <widget class="QFrame" name="ModelCoordsArea">
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
              </property>
              <property name="frameShadow">
               <enum>QFrame::Raised</enum>
              </property>
-             <layout class="QVBoxLayout" name="verticalLayout_9" stretch="1,2,1,2,1,2,2">
+             <layout class="QVBoxLayout" name="verticalLayout_9" stretch="1,0,1,2,1,2,2">
               <property name="spacing">
                <number>1</number>
               </property>
               <item>
-               <widget class="QLabel" name="label_4">
+               <widget class="QLabel" name="ModelIdentifierLabel">
                 <property name="text">
                  <string>identifier(optional)</string>
                 </property>
@@ -319,7 +319,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="label_5">
+               <widget class="QLabel" name="ModelLongitudeLabel">
                 <property name="text">
                  <string>Longitude(X coord)</string>
                 </property>
@@ -365,7 +365,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="label_6">
+               <widget class="QLabel" name="ModelLatitudeLabel">
                 <property name="text">
                  <string>Latitude(Y coord)</string>
                 </property>
@@ -502,7 +502,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton">
+            <widget class="QPushButton" name="ModelChooseFileButton">
              <property name="text">
               <string>Choose File</string>
              </property>
@@ -741,7 +741,7 @@
            <item>
             <widget class="QPushButton" name="modelReadyButton">
              <property name="text">
-              <string>Model Ready!</string>
+              <string>Kernel</string>
              </property>
             </widget>
            </item>
@@ -754,7 +754,7 @@
        <attribute name="title">
         <string>Kernel</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_14" stretch="0,1,0,1">
+       <layout class="QVBoxLayout" name="verticalLayout_14" stretch="0,1,0,0,1,0">
         <item>
          <widget class="QLabel" name="label_13">
           <property name="text">
@@ -803,6 +803,230 @@
          </widget>
         </item>
         <item>
+         <widget class="QFrame" name="frame_10">
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_17">
+           <item>
+            <widget class="QWidget" name="widget_15" native="true">
+             <layout class="QHBoxLayout" name="horizontalLayout_14" stretch="3,6">
+              <property name="topMargin">
+               <number>3</number>
+              </property>
+              <property name="bottomMargin">
+               <number>3</number>
+              </property>
+              <item>
+               <widget class="QRadioButton" name="radioButton_2">
+                <property name="text">
+                 <string>Golden Section Search</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="widget_17" native="true">
+                <layout class="QVBoxLayout" name="verticalLayout_15">
+                 <property name="topMargin">
+                  <number>2</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>2</number>
+                 </property>
+                 <item>
+                  <widget class="QCheckBox" name="checkBox">
+                   <property name="text">
+                    <string>Define range manually</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QWidget" name="widget_19" native="true">
+                   <layout class="QHBoxLayout" name="horizontalLayout_16" stretch="1,10">
+                    <property name="topMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="bottomMargin">
+                     <number>0</number>
+                    </property>
+                    <item>
+                     <widget class="QLabel" name="label_15">
+                      <property name="text">
+                       <string>Min</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QLineEdit" name="lineEdit"/>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QWidget" name="widget_20" native="true">
+                   <layout class="QHBoxLayout" name="horizontalLayout_17" stretch="1,10">
+                    <property name="topMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="bottomMargin">
+                     <number>0</number>
+                    </property>
+                    <item>
+                     <widget class="QLabel" name="label_16">
+                      <property name="text">
+                       <string>Max</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QLineEdit" name="lineEdit_2"/>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="widget_14" native="true">
+             <layout class="QHBoxLayout" name="horizontalLayout_13" stretch="8,7,20,1">
+              <property name="spacing">
+               <number>3</number>
+              </property>
+              <property name="topMargin">
+               <number>2</number>
+              </property>
+              <property name="bottomMargin">
+               <number>2</number>
+              </property>
+              <item>
+               <widget class="QRadioButton" name="radioButton_3">
+                <property name="text">
+                 <string>Single Bandwidth</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="widget_25" native="true"/>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="lineEdit_3"/>
+              </item>
+              <item>
+               <widget class="QWidget" name="widget_24" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_21"/>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="widget_16" native="true">
+             <layout class="QHBoxLayout" name="horizontalLayout_15" stretch="3,6">
+              <property name="topMargin">
+               <number>3</number>
+              </property>
+              <property name="bottomMargin">
+               <number>3</number>
+              </property>
+              <item>
+               <widget class="QRadioButton" name="radioButton">
+                <property name="text">
+                 <string>Interval Search</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="widget_18" native="true">
+                <layout class="QVBoxLayout" name="verticalLayout_16">
+                 <property name="topMargin">
+                  <number>2</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>2</number>
+                 </property>
+                 <item>
+                  <widget class="QWidget" name="widget_23" native="true">
+                   <layout class="QHBoxLayout" name="horizontalLayout_18" stretch="1,10">
+                    <property name="topMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="bottomMargin">
+                     <number>0</number>
+                    </property>
+                    <item>
+                     <widget class="QLabel" name="label_17">
+                      <property name="text">
+                       <string>   Min   </string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QLineEdit" name="lineEdit_4"/>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QWidget" name="widget_22" native="true">
+                   <layout class="QHBoxLayout" name="horizontalLayout_19" stretch="1,10">
+                    <property name="topMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="bottomMargin">
+                     <number>0</number>
+                    </property>
+                    <item>
+                     <widget class="QLabel" name="label_18">
+                      <property name="text">
+                       <string>   Max   </string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QLineEdit" name="lineEdit_5"/>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QWidget" name="widget_21" native="true">
+                   <layout class="QHBoxLayout" name="horizontalLayout_20" stretch="1,10">
+                    <property name="topMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="bottomMargin">
+                     <number>0</number>
+                    </property>
+                    <item>
+                     <widget class="QLabel" name="label_19">
+                      <property name="text">
+                       <string>Interval</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QLineEdit" name="lineEdit_6"/>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
          <widget class="QLabel" name="label_14">
           <property name="text">
            <string>Selection Criteria</string>
@@ -843,6 +1067,29 @@
             <widget class="QRadioButton" name="kernelCV">
              <property name="text">
               <string>CV(Gaussian only)</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="widget_26" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_22">
+           <item>
+            <widget class="QPushButton" name="pushButton_4">
+             <property name="text">
+              <string>Model</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="widget_27" native="true"/>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_2">
+             <property name="text">
+              <string>Output</string>
              </property>
             </widget>
            </item>

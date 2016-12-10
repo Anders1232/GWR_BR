@@ -74,7 +74,7 @@ class MainWindow : public QMainWindow
 
 		void on_globalVariablesIn_clicked();
 
-		void on_pushButton_clicked();
+		void on_ModelChooseFileButton_clicked();
 
 //		void on_previewLines_editingFinished();
 
@@ -88,7 +88,7 @@ class MainWindow : public QMainWindow
 
 		void on_dependentTimesOffsetOperation_clicked();
 
-		void on_toolButton_3_clicked();
+		void on_welcomeNextButton_clicked();
 
 		void on_distanceToOrigin_clicked();
 

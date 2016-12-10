@@ -415,7 +415,7 @@ void MainWindow::on_globalVariablesIn_clicked()
 	MoveBetweenQListWidgets("variablesList", "globalVariablesList", false);
 }
 
-void MainWindow::on_pushButton_clicked()
+void MainWindow::on_ModelChooseFileButton_clicked()
 {
 	QTabWidget *tabWidget = this->findChild<QTabWidget *>("tabWidget");
 	Q_ASSERT(tabWidget);
@@ -491,7 +491,7 @@ std::list<std::string> *MainWindow::GetStringList(QListWidget *widgetList)
 	return ret;
 }
 
-void MainWindow::on_toolButton_3_clicked()
+void MainWindow::on_welcomeNextButton_clicked()
 {
 	QTabWidget *tabWidget = this->findChild<QTabWidget *>("tabWidget");
 	Q_ASSERT(tabWidget);
