@@ -7,8 +7,8 @@ enum KernelType
 {
 	FIXED_G,
 	FIXES_BSQ,
-	ADAPTATIVE_N,
-	ADAPTATIVE_BSQ
+	ADAPTIVE_N,
+	ADAPTIVE_BSQ
 };
 
 enum SelectionCriteria

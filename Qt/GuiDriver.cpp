@@ -70,6 +70,7 @@ static double Add(double a, double b)
 QString GuiDriver::Calculate(
 					std::string fileName,
 					char separator,
+					std::string outputFileName,
 					int modelType,
 					std::list<std::string> const &variables,
 					std::string const &identifier,
@@ -86,7 +87,7 @@ QString GuiDriver::Calculate(
 		int column1= NamedColumnDoubleTable_GetColumnIndex(table, latitude.c_str());
 		int column2= NamedColumnDoubleTable_GetColumnIndex(table, longitude.c_str());
 		DoubleMatrix *result= LatPlusLon(table->matrix, column1, column2);
-		FILE *temp= fopen("result.txt", "w+");
+		FILE *temp= fopen(outputFileName.c_str(), "w+");
 		fprintf(temp, "GWR BR" NEW_LINE);
 		fprintf(temp, "File: %s\t\t\tDelimiter: %c(%d)" NEW_LINE, fileName.c_str(), separator, separator);
 		fprintf(temp, "Operation: Latitude + Longitude" NEW_LINE);
@@ -134,3 +135,4 @@ QString GuiDriver::Calculate(
 	}
 	return QString("");
 }
+

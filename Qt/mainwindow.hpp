@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QListWidget>
+#include <QRadioButton>
 #include "GuiDriver.hpp"
 
 enum CoordsMode
@@ -116,6 +117,24 @@ class MainWindow : public QMainWindow
 
 		void on_OutputFileSelectButton_clicked();
 
+		void on_OutputKernelButton_clicked();
+
+		void on_OutputExecuteButton_clicked();
+
+		void on_KernelModelButton_clicked();
+
+		void on_KernelOutputButton_clicked();
+
+		void on_ExecuteAboutButton_clicked();
+
+		void on_KernelGoldenRadioButton_clicked();
+
+		void on_KernelSingleRadioButton_clicked();
+
+		void on_KernelIntervalRadioButton_clicked();
+
+		void on_KernelGoldenManualCheckBox_clicked(bool checked);
+
 	private:
 		Ui::MainWindow *ui;
 		GuiDriver driver;
@@ -131,6 +150,13 @@ class MainWindow : public QMainWindow
 		char separator;
 		KernelType kernelType;
 		SelectionCriteria selectionCriteria;
+		//commonly used variables, so it is not necessary needed to findChild
+		QTabWidget *tabWidget;
+		QLineEdit *outputFileLineEdit;
+		//Implementinf myself the radioButton mechanics for radioButton on different QWidgets
+		QRadioButton *goldenRadioButton;
+		QRadioButton *singleRadioButton;
+		QRadioButton *intervalSearchRadioButton;
 };
 
 #endif // MAINWINDOW_H

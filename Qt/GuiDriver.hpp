@@ -27,7 +27,10 @@ class GuiDriver
 		NamedColumnDoubleTable* LoadFileButtonCliked(std::string fileName, char separator);
 		std::string GetPreview(std::string filename, int linesInPreview, int charPerLineInPreview);
 //		void SelectModelType(int);
-		QString Calculate(std::string fileName, char separator,
+		QString Calculate(
+							std::string fileName,
+							char separator,
+							std::string outputFileName,
 							int modelType,
 							std::list<std::string> const &variables,
 							std::string const &identifier,

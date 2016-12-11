@@ -4,6 +4,23 @@
 #include "QMessageBox"
 //#include "QTableWidget"
 
+static std::string RemovePath(std::string const &str)
+{
+	std::string ret= "";
+	char temp[2];
+	temp[1]= '\0';
+	for(int cont =str.size()-1; cont >= 0; cont--)
+	{
+		temp[0]= str[cont];
+		if( (temp[0] == '\\' ) ||  ( temp[0] == '/' ))
+		{
+			break;
+		}
+		ret.insert(0, temp);
+	}
+	return ret;
+}
+
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
 	ui(new Ui::MainWindow)
@@ -36,6 +53,20 @@ MainWindow::MainWindow(QWidget *parent) :
 	radioButton = this->findChild<QRadioButton *>("kernelAICc");
 	Q_ASSERT(radioButton);
 	radioButton->click();
+
+	tabWidget = this->findChild<QTabWidget *>("tabWidget");
+	Q_ASSERT(tabWidget);
+	tabWidget->setCurrentIndex(0);
+
+	outputFileLineEdit= this->findChild<QLineEdit *>("OutputFileLineEdit");
+	Q_ASSERT(outputFileLineEdit);
+
+	goldenRadioButton= this->findChild<QRadioButton *>("KernelGoldenRadioButton");
+	Q_ASSERT(goldenRadioButton);
+	singleRadioButton= this->findChild<QRadioButton *>("KernelSingleRadioButton");
+	Q_ASSERT(singleRadioButton);
+	intervalSearchRadioButton= this->findChild<QRadioButton *>("KernelIntervalRadioButton");
+	Q_ASSERT(intervalSearchRadioButton);
 
 	separator = '\t';
 	fileName= "";
@@ -121,8 +152,9 @@ void MainWindow::on_LoadButton_clicked()
 	{
 		list->addItem(QString(loadedTable->columnsName[cont] ) );
 	}
-	QTabWidget *tabWidget = this->findChild<QTabWidget *>("tabWidget");
-	Q_ASSERT(tabWidget);
+
+	outputFileLineEdit->setText(QString::fromStdString(RemovePath(fileName.toStdString() + "_Result.txt") ) );
+
 	tabWidget->setCurrentIndex(2);
 }
 
@@ -346,9 +378,7 @@ void MainWindow::on_modelReadyButton_clicked()
 		return;
 	}
 
-	QTabWidget *tabWidget = this->findChild<QTabWidget *>("tabWidget");
-	Q_ASSERT(tabWidget);
-	tabWidget->setCurrentIndex(5);
+	tabWidget->setCurrentIndex(3);
 
 	delete vList;
 	delete lvList;
@@ -417,8 +447,6 @@ void MainWindow::on_globalVariablesIn_clicked()
 
 void MainWindow::on_ModelChooseFileButton_clicked()
 {
-	QTabWidget *tabWidget = this->findChild<QTabWidget *>("tabWidget");
-	Q_ASSERT(tabWidget);
 	tabWidget->setCurrentIndex(1);
 }
 
@@ -493,8 +521,6 @@ std::list<std::string> *MainWindow::GetStringList(QListWidget *widgetList)
 
 void MainWindow::on_welcomeNextButton_clicked()
 {
-	QTabWidget *tabWidget = this->findChild<QTabWidget *>("tabWidget");
-	Q_ASSERT(tabWidget);
 	tabWidget->setCurrentIndex(1);
 }
 
@@ -611,7 +637,9 @@ void MainWindow::on_executeStartComputingButton_clicked()
 		return;
 	}
 
-	QString result = driver.Calculate(fileName.toStdString(), separator, modelType, *vList, identifer, dependent, latitude, longitude, offset, *lvList, *gvList);
+	std::string outputfileName= outputFileLineEdit->text().toStdString();
+
+	QString result = driver.Calculate(fileName.toStdString(), separator, outputfileName, modelType, *vList, identifer, dependent, latitude, longitude, offset, *lvList, *gvList);
 //	QString result = driver.Calculate(fileName.toLocal8Bit().toStdString(), separator, modelType, *vList, identifer, dependent, latitude, longitude, offset, *lvList, *gvList);
 
 	QTextEdit *resultArea= this->findChild<QTextEdit*>("OutputTextEdit");
@@ -629,7 +657,7 @@ void MainWindow::on_kernelFixedGausButton_clicked()
 
 void MainWindow::on_kernelAdaptativeGausButton_clicked()
 {
-	kernelType= ADAPTATIVE_N;
+	kernelType= ADAPTIVE_N;
 }
 
 void MainWindow::on_kernelFixedBiSquaButton_clicked()
@@ -639,7 +667,7 @@ void MainWindow::on_kernelFixedBiSquaButton_clicked()
 
 void MainWindow::on_kernelAdapatativeBiSquaButton_clicked()
 {
-	kernelType= ADAPTATIVE_BSQ;
+	kernelType= ADAPTIVE_BSQ;
 }
 
 void MainWindow::on_kernelAICc_clicked()
@@ -667,6 +695,83 @@ void MainWindow::on_OutputFileSelectButton_clicked()
 	QString fileName = QFileDialog::getSaveFileName(this, tr("Open File"),
 													"/home",
 													tr("Text File (*.txt);; Any File(*)"));
-	ShowErrorMessage(QString("File selected: ") + fileName);
+	outputFileLineEdit->setText(fileName + ".txt");
 	//fazer mais coisas aq
+}
+
+void MainWindow::on_OutputKernelButton_clicked()
+{
+	tabWidget->setCurrentIndex(3);
+}
+
+void MainWindow::on_OutputExecuteButton_clicked()
+{
+	tabWidget->setCurrentIndex(5);
+}
+
+void MainWindow::on_KernelModelButton_clicked()
+{
+	tabWidget->setCurrentIndex(2);
+}
+
+void MainWindow::on_KernelOutputButton_clicked()
+{
+	tabWidget->setCurrentIndex(4);
+}
+
+void MainWindow::on_ExecuteAboutButton_clicked()
+{
+	tabWidget->setCurrentIndex(6);
+}
+
+/*
+static std::string RemoverExtensao(std::string &str) const
+{
+	std::string ret= "";
+	for(int cont=0; str[cont] != '.' && cont < str.size(); cont++)
+	{
+		ret+= str[cont];
+	}
+	return ret;
+}
+*/
+
+void MainWindow::on_KernelGoldenRadioButton_clicked()
+{
+	goldenRadioButton->setChecked(true);
+	singleRadioButton->setChecked(false);
+	intervalSearchRadioButton->setChecked(false);
+}
+
+void MainWindow::on_KernelSingleRadioButton_clicked()
+{
+	singleRadioButton->setChecked(true);
+	goldenRadioButton->setChecked(false);
+	intervalSearchRadioButton->setChecked(false);
+}
+
+void MainWindow::on_KernelIntervalRadioButton_clicked()
+{
+	intervalSearchRadioButton->setChecked(true);
+	goldenRadioButton->setChecked(false);
+	singleRadioButton->setChecked(false);
+}
+
+void MainWindow::on_KernelGoldenManualCheckBox_clicked(bool checked)
+{
+	QLineEdit *goldenMinLineEdit = this->findChild<QLineEdit *>("KernelGoldenMinLineEdit");
+	Q_ASSERT(goldenMinLineEdit);
+	QLineEdit *goldenMaxLineEdit = this->findChild<QLineEdit *>("KernelGoldenMaxLineEdit");
+	Q_ASSERT(goldenMaxLineEdit);
+	if(checked)
+	{
+		goldenRadioButton->click();
+		goldenMinLineEdit->setDisabled(false);
+		goldenMaxLineEdit->setDisabled(false);
+	}
+	else
+	{
+		goldenMinLineEdit->setDisabled(true);
+		goldenMaxLineEdit->setDisabled(true);
+	}
 }

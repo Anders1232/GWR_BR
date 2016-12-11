@@ -33,7 +33,7 @@
        <enum>QTabWidget::Triangular</enum>
       </property>
       <property name="currentIndex">
-       <number>4</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="Welcome">
        <attribute name="title">
@@ -797,14 +797,14 @@
            <item row="0" column="1">
             <widget class="QRadioButton" name="kernelAdaptativeGausButton">
              <property name="text">
-              <string>Adaptative Gaussian</string>
+              <string>Adaptive Gaussian</string>
              </property>
             </widget>
            </item>
            <item row="1" column="1">
             <widget class="QRadioButton" name="kernelAdapatativeBiSquaButton">
              <property name="text">
-              <string>Adaptative bi-square</string>
+              <string>Adaptive bi-square</string>
              </property>
             </widget>
            </item>
@@ -882,7 +882,11 @@
                      </widget>
                     </item>
                     <item>
-                     <widget class="QLineEdit" name="KernelGoldenMinLineEdit"/>
+                     <widget class="QLineEdit" name="KernelGoldenMinLineEdit">
+                      <property name="enabled">
+                       <bool>false</bool>
+                      </property>
+                     </widget>
                     </item>
                    </layout>
                   </widget>
@@ -904,7 +908,11 @@
                      </widget>
                     </item>
                     <item>
-                     <widget class="QLineEdit" name="KernelGoldenMaxLineEdit"/>
+                     <widget class="QLineEdit" name="KernelGoldenMaxLineEdit">
+                      <property name="enabled">
+                       <bool>false</bool>
+                      </property>
+                     </widget>
                     </item>
                    </layout>
                   </widget>
@@ -1130,7 +1138,7 @@
        <attribute name="title">
         <string>Output</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_18" stretch="5,5,1">
+       <layout class="QVBoxLayout" name="verticalLayout_18" stretch="1,10,1">
         <item>
          <widget class="QWidget" name="widget_9" native="true"/>
         </item>
@@ -1249,7 +1257,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_3">
+         <widget class="QPushButton" name="ExecuteAboutButton">
           <property name="text">
            <string>About</string>
           </property>
@@ -1261,6 +1269,27 @@
        <attribute name="title">
         <string>About</string>
        </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_19">
+        <item>
+         <widget class="QPlainTextEdit" name="plainTextEdit">
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+          <property name="plainText">
+           <string>University of Brasília
+
+Version 1.0
+
+Developed by:
+	Alan Ricardo da Silva (alansilva@unb.br)
+	Francisco Anderson Bezerra Rodrigues(anders1232@mail.com)</string>
+          </property>
+          <property name="textInteractionFlags">
+           <set>Qt::NoTextInteraction</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </widget>
     </item>
@@ -1272,7 +1301,7 @@
      <x>0</x>
      <y>0</y>
      <width>666</width>
-     <height>27</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

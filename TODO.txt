@@ -1,1 +1,2 @@
 Aceitar uma string como separador
+Permitir q o arquivo de saída não seja txt.
