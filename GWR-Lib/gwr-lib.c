@@ -60,7 +60,12 @@ DoubleMatrix* Golden(DoubleMatrix* base, int yVarColumn, int xVarColumn, ? dcoor
 	{
 		return NULL;
 	}
-
+	double **distances= malloc(base->lines * sizeof(double*));
+	int count;
+	for(count=0; count < base->lines; count++)
+	{
+		distances[count]= malloc( (count+1) *sizeof(double));
+	}
 	//otimizar isso aq
 	//Calcular aq a distância mínima, média e máxima
 	int count, count2, double minDist, medDist, maxDist;
@@ -75,12 +80,19 @@ DoubleMatrix* Golden(DoubleMatrix* base, int yVarColumn, int xVarColumn, ? dcoor
 	{
 		for(count2= count+1; count2< base->lines; count2++)
 		{
-			temp= DistanceBetweenPoints(
+			if(count2 == count)
+			{
+				distances[count][count]= 0;
+			}
+			else
+			{
+				distances[count2][count]= DistanceBetweenPoints(
 							DoubleMatrixGetElement(base, count, xVarColumn),
 							DoubleMatrixGetElement(base, count, yVarColumn),
 							DoubleMatrixGetElement(base, count2, xVarColumn),
 							DoubleMatrixGetElement(base, count2, yVarColumn),
 							);
+			}
 			if(temp > maxDist)
 			{
 				maxDist= temp;
@@ -95,17 +107,6 @@ DoubleMatrix* Golden(DoubleMatrix* base, int yVarColumn, int xVarColumn, ? dcoor
 
 
 
-	/*
-	DoubleMatrix* wt;
-	%IF &WEIGHT NE %THEN %DO;		De onde veio esse weight?
-	{
-		wt= weight;
-	}
-	else
-	{
-		wt= NewDoubleMatrix(base->lines, 1);
-	}
-	*/
 	DoubleMatrix *x= NewDoubleMatrix(base->lines, 1);/**/
 	DoubleMatrix *yhat= NewDoubleMatrix(base->lines, 1);
 	if(ADAPTATIVE_N == method)

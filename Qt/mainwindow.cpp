@@ -21,6 +21,22 @@ static std::string RemovePath(std::string const &str)
 	return ret;
 }
 
+static std::string RemoveExtension(std::string const &str)
+{
+	std::string ret= "";
+	unsigned int count=0;
+	while(count < str.size())
+	{
+		if('.' == str[count])
+		{
+			break;
+		}
+		ret+= str[count];
+		count++;
+	}
+	return ret;
+}
+
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
 	ui(new Ui::MainWindow)
@@ -67,6 +83,26 @@ MainWindow::MainWindow(QWidget *parent) :
 	Q_ASSERT(singleRadioButton);
 	intervalSearchRadioButton= this->findChild<QRadioButton *>("KernelIntervalRadioButton");
 	Q_ASSERT(intervalSearchRadioButton);
+
+	QLineEdit *lineEdit= this->findChild<QLineEdit *>("KernelGoldenMinLineEdit");
+	Q_ASSERT(lineEdit);
+	lineEdit->setValidator(new QDoubleValidator());
+
+	lineEdit= this->findChild<QLineEdit *>("KernelGoldenMaxLineEdit");
+	Q_ASSERT(lineEdit);
+	lineEdit->setValidator(new QDoubleValidator());
+
+	lineEdit= this->findChild<QLineEdit *>("KernelIntervalMinLineEdit");
+	Q_ASSERT(lineEdit);
+	lineEdit->setValidator(new QDoubleValidator());
+
+	lineEdit= this->findChild<QLineEdit *>("KernelIntervalMaxLineEdit");
+	Q_ASSERT(lineEdit);
+	lineEdit->setValidator(new QDoubleValidator());
+
+	lineEdit= this->findChild<QLineEdit *>("KernelIntervalLineEdit");
+	Q_ASSERT(lineEdit);
+	lineEdit->setValidator(new QDoubleValidator());
 
 	separator = '\t';
 	fileName= "";
@@ -153,7 +189,8 @@ void MainWindow::on_LoadButton_clicked()
 		list->addItem(QString(loadedTable->columnsName[cont] ) );
 	}
 
-	outputFileLineEdit->setText(QString::fromStdString(RemovePath(fileName.toStdString() + "_Result.txt") ) );
+
+	outputFileLineEdit->setText(QString::fromStdString( RemoveExtension(RemovePath(fileName.toStdString()) ) + "_result.txt") );
 
 	tabWidget->setCurrentIndex(2);
 }
@@ -695,7 +732,10 @@ void MainWindow::on_OutputFileSelectButton_clicked()
 	QString fileName = QFileDialog::getSaveFileName(this, tr("Open File"),
 													"/home",
 													tr("Text File (*.txt);; Any File(*)"));
-	outputFileLineEdit->setText(fileName + ".txt");
+	if(!fileName.endsWith(".txt"))
+	{
+		outputFileLineEdit->setText(fileName + ".txt");
+	}
 	//fazer mais coisas aq
 }
 
@@ -774,4 +814,14 @@ void MainWindow::on_KernelGoldenManualCheckBox_clicked(bool checked)
 		goldenMinLineEdit->setDisabled(true);
 		goldenMaxLineEdit->setDisabled(true);
 	}
+}
+
+void MainWindow::on_actionQuit_triggered()
+{
+	QApplication::quit();
+}
+
+void MainWindow::on_actionAbout_triggered()
+{
+	tabWidget->setCurrentIndex(6);
 }
