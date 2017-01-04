@@ -5,8 +5,19 @@
 #include<stdlib.h>
 #include <stdio.h>
 
+enum doubleMatrixType
+{
+	NORMAL_MATRIX,
+	DIAGONAL,
+	IDENTITY,
+	TRIANGULAR_MATRIX
+};
+
+typedef enum doubleMatrixType DoubleMatrixType;
+
 struct doubleMatrix
 {
+	DoubleMatrixType type;
 	int lines;
 	int columns;
 	double *elements;

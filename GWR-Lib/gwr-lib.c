@@ -52,23 +52,38 @@ DoubleMatrix* DistanceToOrigin(DoubleMatrix *matrix, int latColumn, int lonColum
 	DeleteDoubleMatrix(lonColumnMatrix);
 	return result;
 }
+
+unsigned long int BinomialCoefficient(unsigned long int n, unsigned long int k)
+{
+	unsigned long int i, res=0;
+	for(i=1; i <= k; i++)
+	{
+		res+= (n+1-i)/i;
+	}
+	return res;
+
+}
+
 #ifdef GOLDEN_PRONTO
-DoubleMatrix* Golden(DoubleMatrix* base, int yVarColumn, int xVarColumn, ? dcoord, Method method, bool distanceInKM)
+//double** Generate
+
+DoubleMatrix* Golden(DoubleMatrix* base, int yVarColumn, int xVarColumn, int x_dCoord, int *y_dCoord, Method method, bool distanceInKM)
 {
 	DoubleMatrix *ret= NewDoubleMatrix(matrixA->columns, matrixA->lines);
 	if(NULL == ret)
 	{
 		return NULL;
 	}
+	//calculando matriz de distâncias
 	double **distances= malloc(base->lines * sizeof(double*));
-	int count;
+	int count, count2;
 	for(count=0; count < base->lines; count++)
 	{
 		distances[count]= malloc( (count+1) *sizeof(double));
 	}
 	//otimizar isso aq
 	//Calcular aq a distância mínima, média e máxima
-	int count, count2, double minDist, medDist, maxDist;
+	double minDist, medDist, maxDist;
 	double temp= DistanceBetweenPoints(
 				DoubleMatrixGetElement(base, 0, xVarColumn),
 				DoubleMatrixGetElement(base, 0, yVarColumn),
@@ -109,9 +124,9 @@ DoubleMatrix* Golden(DoubleMatrix* base, int yVarColumn, int xVarColumn, ? dcoor
 
 	DoubleMatrix *x= NewDoubleMatrix(base->lines, 1);/**/
 	DoubleMatrix *yhat= NewDoubleMatrix(base->lines, 1);
-	if(ADAPTATIVE_N == method)
+	if(ADAPTIVE_N == method)
 	{
-		hv= NewDoubleMatrix(1, 1);
+//		hv= NewDoubleMatrix(1, 1);
 		yhat= NewDoubleMatrix(1, 1);
 		for(int i =1; i < base->lines; i++)
 		{
@@ -136,7 +151,7 @@ DoubleMatrix* Golden(DoubleMatrix* base, int yVarColumn, int xVarColumn, ? dcoor
 	h0= ax;
 	h3= cx;
 	bx= c * (cx-ax);
-	if(abs(cx=bx) > abs(bx-ax))
+	if(abs(cx-bx) > abs(bx-ax))
 	{
 		h1= bx;
 		h2= bx - c (bx - ax);
