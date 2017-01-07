@@ -9,9 +9,15 @@ The main.cpp and GuiInterface.hpp should main.c and GuiInterface.h; but if I do 
 
 Descrição das pastas:
 	Core: Contém código C com funcionalidades cetrais
+
 	DoubleMatrixLib: Biblioteca de matrizes de elementos do tipo double
+
 	GWR-Lib: provê para as DoubleMatrix funcionalidades/operações relativas à Regressões Geograficamente Ponderadas
+
 	img: contém imagens utilizadas
+
 	NamedColumnDoubleTable: Contém uma extensão do DoubleMatrix capaz de nomear as colunas
+
 	Qt: Arquivos específicos da interface gráfica Qt
+
 	SampleData: dados de teste
