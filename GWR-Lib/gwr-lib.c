@@ -64,7 +64,7 @@ unsigned long int BinomialCoefficient(unsigned long int n, unsigned long int k)
 
 }
 
-#ifdef GOLDEN_PRONTO
+//#ifdef GOLDEN_PRONTO
 //double** Generate
 
 DoubleMatrix* Golden(DoubleMatrix* base, int yVarColumn, int xVarColumn, int x_dCoord, int *y_dCoord, Method method, bool distanceInKM)
@@ -138,7 +138,7 @@ DoubleMatrix* Golden(DoubleMatrix* base, int yVarColumn, int xVarColumn, int x_d
 //		func1();
 	}
 }
-/*
+///*
 ? func1(double min, double mid, double max)
 {
 	double ax, bx, cx, r, tol, c, h0, h3;
@@ -162,20 +162,42 @@ DoubleMatrix* Golden(DoubleMatrix* base, int yVarColumn, int xVarColumn, int x_d
 		h1=bx-c*(bx-ax);
 	}
 }
-*/
-/*
-? cv1(?)
+//*/
+///*
+? cv(?, DoubleMatrix *data, bool distanceInKm)
 {
+	DoubleMatrix *d= NewDoubleMatrix(1, 3);
 	if(ADAPTATIVE_N != METHOD)
 	{
-		int i;
-		for(i=1; i < base->lines; i++)
+		int i, j;
+		for(i=0; i < base->lines; i++)
 		{
-			/* bla*/
+			for(j=0; j , base->lines; j++)
+			{
+				if(distanceInKm)
+				{
+					dif= DistanceBetweenPoints(
+								DoubleMatrixGetElement(data, i, ?),
+								DoubleMatrixGetElement(data, ?, ?),
+								DoubleMatrixGetElement(data, j, ?),
+								DoubleMatrixGetElement(data, ?, ?),
+					);
+					double raio= raio=arcos(-1)/180;
+					double argument=sin(COORD[i,2]*raio)*sin(COORD[j,2]*raio)+cos(COORD[i,2]*raio)*cos(COORD[j,2]*raio)*cos(dif*raio);
+					if(1 <= argument)
+					{
+						double arco=0;
+					}
+				}
+				else
+				{
+					//law of cosines
+				}
+			}
 		}
 	}
 }
 
-*/
+//*/
 
 #endif
