@@ -8,6 +8,7 @@ Núcleo de processamento do programa feito em C, interface gráfica feita em C++
 The main.cpp and GuiInterface.hpp should main.c and GuiInterface.h; but if I do this the Qt can't compile
 
 Descrição das pastas:
+
 	Core: Contém código C com funcionalidades cetrais
 
 	DoubleMatrixLib: Biblioteca de matrizes de elementos do tipo double
