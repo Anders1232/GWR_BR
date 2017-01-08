@@ -19,6 +19,7 @@ CONFIG+= static
 RESOURCES     = resources.qrc
 
 QMAKE_CXXFLAGS += -finline-functions -Wall -pedantic -std=c++11
+QMAKE_CFLAGS += -finline-functions -Wall -pedantic
 
 SOURCES +=\
         Qt/mainwindow.cpp \

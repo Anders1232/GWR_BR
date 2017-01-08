@@ -19,6 +19,6 @@ Descrição das pastas:
 
 	NamedColumnDoubleTable: Contém uma extensão do DoubleMatrix capaz de nomear as colunas
 
-	Qt: Arquivos específicos da interface gráfica Qt
+	Qt: Arquivos específicos da interface gráfica Qt. É a única parte do programa que deve ter código C++.
 
 	SampleData: dados de teste

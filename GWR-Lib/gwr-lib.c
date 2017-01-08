@@ -64,7 +64,7 @@ unsigned long int BinomialCoefficient(unsigned long int n, unsigned long int k)
 
 }
 
-//#ifdef GOLDEN_PRONTO
+#ifdef GOLDEN_PRONTO
 //double** Generate
 
 DoubleMatrix* Golden(DoubleMatrix* base, int yVarColumn, int xVarColumn, int x_dCoord, int *y_dCoord, Method method, bool distanceInKM)
