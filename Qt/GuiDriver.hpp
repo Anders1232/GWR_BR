@@ -8,6 +8,7 @@
 #define MODE_LAT_PLUS_LON (1)
 #define MODE_DEPENDENT_TIMES_OFFSET (2)
 #define MODE_DISTANCE_TO_ORIGIN (3)
+#define MODE_DISTANCE_BETWEEN_POITS (4)
 
 extern "C"
 {

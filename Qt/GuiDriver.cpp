@@ -114,7 +114,7 @@ QString GuiDriver::Calculate(
 		int column1= NamedColumnDoubleTable_GetColumnIndex(table, latitude.c_str());
 		int column2= NamedColumnDoubleTable_GetColumnIndex(table, longitude.c_str());
 		DoubleMatrix *result= DistanceToOrigin(table->matrix, column1, column2);
-		FILE *temp= tmpfile();
+		FILE *temp= fopen(outputFileName.c_str(), "w+");;
 		fprintf(temp, "GWR BR" NEW_LINE);
 		fprintf(temp, "File: %s\t\t\tDelimiter: %c(%d)" NEW_LINE, fileName.c_str(), separator, separator);
 		fprintf(temp, "Operation: Distance to origin from (Longitude, Latitude)" NEW_LINE);
@@ -123,6 +123,30 @@ QString GuiDriver::Calculate(
 		fprintf(temp, "Result:" NEW_LINE NEW_LINE);
 		DoubleMatrixPrint(result, temp, "\t%lf", NEW_LINE);
 		QString ret= "";
+	}
+	else if(MODE_DISTANCE_BETWEEN_POITS == modelType)
+	{
+		double min, med, max;
+		int column1= NamedColumnDoubleTable_GetColumnIndex(table, latitude.c_str());
+		int column2= NamedColumnDoubleTable_GetColumnIndex(table, longitude.c_str());
+		double **result= DistanceBetweenAllPoints(table->matrix, column1, column2, &min, &max);
+		med= min+max/2;
+		FILE *temp= fopen(outputFileName.c_str(), "w+");;
+		fprintf(temp, "GWR BR" NEW_LINE);
+		fprintf(temp, "File: %s\t\t\tDelimiter: %c(%d)" NEW_LINE, fileName.c_str(), separator, separator);
+		fprintf(temp, "Operation: BetweenPoints (Longitude, Latitude)" NEW_LINE);
+		fprintf(temp, "Latitude column: %s" NEW_LINE, latitude.c_str());
+		fprintf(temp, "Longitude column: %s" NEW_LINE, longitude.c_str());
+		fprintf(temp, "Result:" NEW_LINE NEW_LINE);
+		for(int count=0; count < table->matrix->lines; count++)
+		{
+			for(int count2= 0; count2<= count; count2++)
+			{
+				fprintf(temp, "\t%lf", result[count][count2]);
+			}
+			fprintf(temp, NEW_LINE);
+		}
+		QString ret= "";
 		rewind(temp);
 		char aux;
 		while(EOF != (aux= getc(temp)))
@@ -130,8 +154,14 @@ QString GuiDriver::Calculate(
 			ret+= aux;
 		}
 		fclose(temp);
-		DeleteDoubleMatrix(result);
+		for(int count=0; count < table->matrix->lines; count++ )
+		{
+			free(result[count]);
+		}
+		free(result);
 		return(ret);
+
+
 	}
 	return QString("");
 }

@@ -1,6 +1,13 @@
 #include "gwr-lib.h"
 #include <math.h>
 
+#define ASSERT(X)\
+	if( !(X) )\
+	{\
+		printf("Failed Assertion at %s:%d", __FILE__, __LINE__);\
+		exit(1);\
+	}
+
 static double Pythagoras(double x, double y)
 {
 	return sqrt(x*x+y*y);
@@ -61,12 +68,73 @@ unsigned long int BinomialCoefficient(unsigned long int n, unsigned long int k)
 		res+= (n+1-i)/i;
 	}
 	return res;
+}
 
+
+double** DistanceBetweenAllPoints(DoubleMatrix* base, int yVarColumn, int xVarColumn, double* minDistOut, double *maxDistOut)
+{
+	double **distances= malloc(base->lines * sizeof(double*));
+	ASSERT(NULL != distances);
+	int count, count2;
+	for(count=0; count < base->lines; count++)
+	{
+		distances[count]= malloc( (count+1) *sizeof(double));
+		ASSERT(NULL != distances[count]);
+	}
+	//otimizar isso aq
+	//Calcular aq a distância mínima, média e máxima
+	double temp= DistanceBetweenPoints(
+				DoubleMatrixGetElement(base, 0, xVarColumn),
+				DoubleMatrixGetElement(base, 0, yVarColumn),
+				DoubleMatrixGetElement(base, 1, xVarColumn),
+				DoubleMatrixGetElement(base, 1, yVarColumn)
+				);
+	if(NULL != minDistOut)
+	{
+		*minDistOut= temp;
+	}
+	if(NULL != maxDistOut)
+	{
+		*maxDistOut= temp;
+	}
+	for(count=0; count < base->lines; count++)
+	{
+		for(count2= 0; count2<= count; count2++)
+		{
+			if(count2 == count)
+			{
+				distances[count][count]= 0;
+			}
+			else
+			{
+				distances[count][count2]= DistanceBetweenPoints(
+							DoubleMatrixGetElement(base, count, xVarColumn),
+							DoubleMatrixGetElement(base, count, yVarColumn),
+							DoubleMatrixGetElement(base, count2, xVarColumn),
+							DoubleMatrixGetElement(base, count2, yVarColumn)
+							);
+				if(NULL != minDistOut)
+				{
+					if(temp < *minDistOut)
+					{
+						*minDistOut= temp;
+					}
+
+				}
+				if(NULL != maxDistOut)
+				{
+					if(temp > *maxDistOut)
+					{
+						*maxDistOut= temp;
+					}
+				}
+			}
+		}
+	}
+	return distances;
 }
 
 #ifdef GOLDEN_PRONTO
-//double** Generate
-
 DoubleMatrix* Golden(DoubleMatrix* base, int yVarColumn, int xVarColumn, int x_dCoord, int *y_dCoord, Method method, bool distanceInKM)
 {
 	DoubleMatrix *ret= NewDoubleMatrix(matrixA->columns, matrixA->lines);
@@ -75,49 +143,8 @@ DoubleMatrix* Golden(DoubleMatrix* base, int yVarColumn, int xVarColumn, int x_d
 		return NULL;
 	}
 	//calculando matriz de distâncias
-	double **distances= malloc(base->lines * sizeof(double*));
-	int count, count2;
-	for(count=0; count < base->lines; count++)
-	{
-		distances[count]= malloc( (count+1) *sizeof(double));
-	}
-	//otimizar isso aq
-	//Calcular aq a distância mínima, média e máxima
 	double minDist, medDist, maxDist;
-	double temp= DistanceBetweenPoints(
-				DoubleMatrixGetElement(base, 0, xVarColumn),
-				DoubleMatrixGetElement(base, 0, yVarColumn),
-				DoubleMatrixGetElement(base, 1, xVarColumn),
-				DoubleMatrixGetElement(base, 1, yVarColumn),
-				);
-	minDist= maxDist = temp;
-	for(count=0; count < base->lines-1; count++)
-	{
-		for(count2= count+1; count2< base->lines; count2++)
-		{
-			if(count2 == count)
-			{
-				distances[count][count]= 0;
-			}
-			else
-			{
-				distances[count2][count]= DistanceBetweenPoints(
-							DoubleMatrixGetElement(base, count, xVarColumn),
-							DoubleMatrixGetElement(base, count, yVarColumn),
-							DoubleMatrixGetElement(base, count2, xVarColumn),
-							DoubleMatrixGetElement(base, count2, yVarColumn),
-							);
-			}
-			if(temp > maxDist)
-			{
-				maxDist= temp;
-			}
-			if(temp < minDist)
-			{
-				minDist= temp;
-			}
-		}
-	}
+
 	medDist=(maxDist + minDist)/2;
 
 
@@ -192,6 +219,7 @@ DoubleMatrix* Golden(DoubleMatrix* base, int yVarColumn, int xVarColumn, int x_d
 				else
 				{
 					//law of cosines
+					double arco =
 				}
 			}
 		}

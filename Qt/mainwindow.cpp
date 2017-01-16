@@ -825,3 +825,8 @@ void MainWindow::on_actionAbout_triggered()
 {
 	tabWidget->setCurrentIndex(6);
 }
+
+void MainWindow::on_distanceBetweenPointsOperation_clicked()
+{
+	modelType= MODE_DISTANCE_BETWEEN_POITS;
+}

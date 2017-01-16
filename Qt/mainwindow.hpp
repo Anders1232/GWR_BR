@@ -139,6 +139,8 @@ class MainWindow : public QMainWindow
 
 		void on_actionAbout_triggered();
 
+		void on_distanceBetweenPointsOperation_clicked();
+
 	private:
 		Ui::MainWindow *ui;
 		GuiDriver driver;
