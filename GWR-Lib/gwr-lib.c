@@ -134,10 +134,11 @@ double** DistanceBetweenAllPoints(DoubleMatrix* base, int yVarColumn, int xVarCo
 	return distances;
 }
 
+//#define GOLDEN_PRONTO
 #ifdef GOLDEN_PRONTO
-DoubleMatrix* Golden(DoubleMatrix* base, int yVarColumn, int xVarColumn, int x_dCoord, int *y_dCoord, Method method, bool distanceInKM)
+DoubleMatrix* Golden(DoubleMatrix* base, int yVarColumn, int xVarColumn, int x_dCoord, int *y_dCoord, KernelType method, bool distanceInKM)
 {
-	DoubleMatrix *ret= NewDoubleMatrix(matrixA->columns, matrixA->lines);
+	DoubleMatrix *ret= NewDoubleMatrix(base->columns, base->lines);
 	if(NULL == ret)
 	{
 		return NULL;
@@ -147,14 +148,12 @@ DoubleMatrix* Golden(DoubleMatrix* base, int yVarColumn, int xVarColumn, int x_d
 
 	medDist=(maxDist + minDist)/2;
 
-
-
 	DoubleMatrix *x= NewDoubleMatrix(base->lines, 1);/**/
 	DoubleMatrix *yhat= NewDoubleMatrix(base->lines, 1);
 	if(ADAPTIVE_N == method)
 	{
-//		hv= NewDoubleMatrix(1, 1);
-		yhat= NewDoubleMatrix(1, 1);
+		double hv= 0;// como hv é uma matriz de 1x1, vou tratar como um double
+//		yhat= NewDoubleMatrix(1, 1);	// o yhat é declarado na linha 47 como uma matrix coluna de n linhas e depois de declarado como uma matriz 1x1 de valor zero na linha 50 e depois não é mais usado
 		for(int i =1; i < base->lines; i++)
 		{
 //			func1();
@@ -164,13 +163,100 @@ DoubleMatrix* Golden(DoubleMatrix* base, int yVarColumn, int xVarColumn, int x_d
 	{
 //		func1();
 	}
+	double cv1= CV1();
+	double cv2= CV2();
+
+	if(ADAPTIVE_N != method)
+	{
+		//Essa função deve retornar(não nesse momento, mas quando ela retornar) h1, cv1, h2, cv2
+	}
+	do
+	{
+		if(cv2< cv1)
+		{
+			h0= h1;
+			h1= h2;
+			h2= r*h1 + c*h3;
+			cv1=cv2;
+			cv2=CV2();
+		}
+		else
+		{
+			h3= h2;
+			h2- h1;
+			h1= r*h2 + c*h0;
+			cv2=cv1;
+			cv1= CV1();
+		}
+		if(ADAPTIVE_N != method)
+		{
+			//aqui tem o comando append, perguntar o que isso faz
+		}
+	}
+	while(abs(h3-h0) > tol*(abs(h1)+abs(h2)));
+	if(cv1 < cv2)
+	{
+		golden = cv1;
+		xmin= h1;
+		if(ADAPTIVE_BSQ == method)
+		{
+			xmin= floor(h1);//a função floor existe em math.h
+		}
+	}
+	else
+	{
+		golden = cv2;
+		xmin= h2;
+		if(ADAPTIVE_BSQ == method)
+		{
+			xmin= floor(h2);//a função floor existe em math.h
+		}
+	}
+	if(ADAPTIVE_N != method)
+	{
+		//no arquivo SAS está escrito "print golden xmin", deve-se colocar apenas um printf aqui??
+		//Suponho que seja na verdade para que esse valor seja retornado quando essa função retornar
+	}
+	else if(ADAPTIVE_N == method)
+	{
+		hv= xmin;
+		//aqui tem o comando "append from hv", perguntar o que isso faz
+	}
+	//aqui tem o comando quit, o que ele deve fazer??
+
+	if(FIXED_G == method || FIXED_BSQ == method)
+	{
+		/*
+			Aqui tem:
+				%global _h_;
+				data _null_;
+				set &OUTPUT;
+			Perguntar o que esses comandos fazem e como interferirião no C
+		*/
+		if(cv1<cv2)
+		{
+			//perguntar o que o "call symput('_h_',h1);" faz
+		}
+		else
+		{
+			//perguntar o que o "call symput('_h_',h2);" faz
+		}
+		/*
+			Aqui tem:
+				run;
+				%put h=&_h_;
+			Perguntar o que esses comandos fazem e como interferirião no C
+		*/
+	}
+	return /* enfim chegamos no final da função, ver o que deve ser retornado*/;
 }
-///*
-? func1(double min, double mid, double max)
+#endif
+#ifdef F1_PRONTO
+? func1(double min, double max)
 {
 	double ax, bx, cx, r, tol, c, h0, h3;
 	ax= min;
-	bx= mid;
+	bx= (min+max)/2;
 	cx= max;
 	r = 0.61803399;
 	tol = 0.001;
@@ -181,7 +267,7 @@ DoubleMatrix* Golden(DoubleMatrix* base, int yVarColumn, int xVarColumn, int x_d
 	if(abs(cx-bx) > abs(bx-ax))
 	{
 		h1= bx;
-		h2= bx - c (bx - ax);
+		h2= bx-c*(bx-ax);
 	}
 	else
 	{

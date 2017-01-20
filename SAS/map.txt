@@ -1,0 +1,33 @@
+/*****************************************************************************************/
+/* Macro to separe the datasets of GWR Grid Estimates*/
+/* REQUIRED PARAMETERS
+/*     PAR = the number of explicative variables without considers the intercept
+/*****************************************************************************************/
+
+%macro MAP(PAR=);
+proc iml;
+use _parameters_;
+read all into p[colname=names];
+var=1+&par;
+n=nrow(p)/2;
+nvar=ncol(p);
+_beta_=shape(p,n);
+label=names;
+do i=1 to var;
+seq1=(i-1)*nvar+1;
+seq2=seq1+(nvar-1);
+name="B0":"B&par";
+_betas_=_beta_[,seq1:seq2];
+create b from _betas_[colname=label];
+append from _betas_;
+close b;
+sastables=datasets("work");
+do j=1 to nrow(sastables);
+if sastables[j]=name[i] then
+call delete(name[i]);
+end;
+call rename(b,name[i]);
+end;
+quit;
+%mend MAP;
+

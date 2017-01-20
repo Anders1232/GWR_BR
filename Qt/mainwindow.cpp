@@ -699,7 +699,7 @@ void MainWindow::on_kernelAdaptativeGausButton_clicked()
 
 void MainWindow::on_kernelFixedBiSquaButton_clicked()
 {
-	kernelType= FIXES_BSQ;
+	kernelType= FIXED_BSQ;
 }
 
 void MainWindow::on_kernelAdapatativeBiSquaButton_clicked()

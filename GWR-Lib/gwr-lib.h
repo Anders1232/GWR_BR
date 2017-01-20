@@ -3,13 +3,14 @@
 
 #include "DoubleMatrixLib.h"
 
-enum KernelType
+enum kernelType
 {
 	FIXED_G,
-	FIXES_BSQ,
+	FIXED_BSQ,
 	ADAPTIVE_N,
 	ADAPTIVE_BSQ
 };
+typedef enum kernelType KernelType;
 
 enum SelectionCriteria
 {

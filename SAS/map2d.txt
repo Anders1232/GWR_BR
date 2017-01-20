@@ -1,0 +1,186 @@
+/*****************************************************************************************/
+/* Macro for Drawing the Maps in 2D */
+/* REQUIRED PARAMETERS
+/*  TABLE = the name of the SAS data set to be used
+/*    VAR = the name of the variable to be plotted
+/*    MAP = the name of the SAS data set with the geographic coordinates
+/*  SAMPLEDATA = the name of the SAS data set with the geographic coordinates of the sample
+/*	       data
+/* METHOD = there are two choices to define the classes:
+/*	  EQUAL: using the same rule of histograms (the number of classes is defined by
+		   Sturges's ruke)
+/*	    STD: using the standard deviation for creating 6 classes: media-3std;
+/*		 media-2std;media-1std;media+1std;media+2std;media+3std;
+/*  WHERE = using a conditional to draw the maps (for example, plot only the parameters that
+/*	  are significant at 5% level)
+/*****************************************************************************************/
+
+
+%macro map2d(table=,var=,map=,sampledata=,method=EQUAL,where=);
+data anno&table;set &table;
+length function style $10. color $8.;
+retain line 1 xsys ysys '2' hsys '3' color 'red';
+function='label';text='U';position='5';style='marker';size=2;
+&where;
+run;
+proc sql noprint;
+select count(*) into:np from anno&table where &var>=0;
+select count(*) into:nn from anno&table where &var<0;
+select min(&var) into:minp from anno&table where &var>=0;
+select max(&var) into:maxp from anno&table where &var>=0;
+select min(&var) into:minn from anno&table where &var<0;
+select max(&var) into:maxn from anno&table where &var<0;
+quit;
+%put &np &nn;
+%if &np >0 and &nn = 0 %then %do;
+data _null_;
+np=floor(1+3.3*log10(&np))-1;
+call symput('np',np);
+run;
+%put &np;
+%if %upcase(&method)=EQUAL %then %do;
+%put &np &minp &maxp %sysevalf((&maxp-&minp)/&np);
+%colorscale(FFFFFF,,FF3333,&np,clist,no);%patt;
+data _null_;set clist;
+call symput('color'||trim(left(_n_)),'cx'||rgb);
+run;
+%macro cl;
+data anno&table;set anno&table;
+if round(&var,0.01)<=round(&minp+(&maxp-&minp)/&np,0.01) then color="&color1";
+%do i=2 %to &np;
+else if round(&var,0.01)<=&minp+round(&i*(&maxp-&minp)/&np,0.01) then color="&&color&i";
+%end;
+run;
+%mend cl;
+%cl;
+%end;
+%else %if %upcase(&method)=STD %then %do;
+data _null_;
+np=6;
+call symput('np',np);
+run;
+proc sql noprint;
+select mean(&var) into:meanp from anno&table where &var>=0;
+select std(&var) into:stdp from anno&table where &var>=0;
+quit;
+%put &meanp &stdp;
+%colorscale(FFFFFF,,FF3333,&np,clist,no);%patt;
+data _null_;set clist;
+call symput('color'||trim(left(_n_)),'cx'||rgb);
+run;
+%macro cl;
+data anno&table;set anno&table;
+if round(&var,0.01)<=round(&minp+(&meanp-3*&stdp),0.01) then color="&color1";
+else if round(&var,0.01)<=&minp+round(&meanp-2*&stdp,0.01) then color="&color2";
+else if round(&var,0.01)<=&minp+round(&meanp-&stdp,0.01) then color="&color3";
+else if round(&var,0.01)<=&minp+round(&meanp+&stdp,0.01) then color="&color4";
+else if round(&var,0.01)<=&minp+round(&meanp+2*&stdp,0.01) then color="&color5";
+else color="&color6";
+run;
+%mend cl;
+%cl;
+%end;
+data _null_;
+min=left(trim(putn(round(&minp,0.1),'commax10.')));
+max=left(trim(putn(round(&maxp,0.1),'commax10.')));
+call symput('min',min);
+call symput('max',max);
+run;
+%put &min &max;
+%bar(FF3333,FFFFFF,&minp,&maxp,vertical,y_i=30,x_i=90);
+%end;
+%else %if &nn > 0 and &np = 0 %then %do;
+data _null_;
+nn=floor(1+3.3*log10(&nn))-1;
+call symput('nn',nn);
+run;
+%put &nn;
+%put &nn &minn &maxn %sysevalf((&maxn-&minn)/&nn);
+%colorscale(FFFFFF,,3333FF,&nn,clist,no);%patt;
+data _null_;set clist;
+call symput('color'||trim(left(_n_)),'cx'||rgb);
+run;
+%macro cl;
+data anno&table;set anno&table;
+if round(&var,0.01)<=round(&minn+(&maxn-&minn)/&nn,0.01) then color="&color1";
+%do i=2 %to &nn;
+else if round(&var,0.01)<=&minn+round(&i*(&maxn-&minn)/&nn,0.01) then color="&&color&i";
+%end;
+run;
+%mend cl;
+%cl;
+data _null_;
+min=left(trim(putn(round(&minn,0.1),'commax10.')));
+max=left(trim(putn(round(&maxn,0.1),'commax10.')));
+call symput('min',min);
+call symput('max',max);
+run;
+%put &min &max;
+%bar(FF3333,3333FF,&minn,&maxn,vertical,y_i=30,x_i=90);
+%end;
+%else %do;
+data _null_;
+np=floor(1+3.3*log10(&np))-1;
+nn=floor(1+3.3*log10(&nn))-1;
+call symput('np',np);
+call symput('nn',nn);
+run;
+%put &np &nn;
+%put &np &minp &maxp %sysevalf((&maxp-&minp)/&np);
+%put &nn &minn &maxn %sysevalf((&maxn-&minn)/&nn);
+%colorscale(FFFFFF,,FF3333,&np,clist,no);%patt;
+data _null_;set clist;
+call symput('color'||trim(left(_n_)),'cx'||rgb);
+run;
+%macro cl;
+data anno&table.p;set anno&table(where=(&var>=0));
+if round(&var,0.01)<=round(&minp+(&maxp-&minp)/&np,0.01) then color="&color1";
+%do i=2 %to &np;
+else if round(&var,0.01)<=&minp+round(&i*(&maxp-&minp)/&np,0.01) then color="&&color&i";
+%end;
+run;
+%mend cl;
+%cl;
+%colorscale(3333FF,,FFFFFF,&nn,clist,no);%patt;
+data _null_;set clist;
+call symput('color'||trim(left(_n_)),'cx'||rgb);
+run;
+%macro cl;
+data anno&table.n;set anno&table(where=(&var<0));
+if round(&var,0.01)<=round(&minn+(&maxn-&minn)/&nn,0.01) then color="&color1";
+%do i=2 %to &nn;
+else if round(&var,0.01)<=&minn+round(&i*(&maxn-&minn)/&nn,0.01) then color="&&color&i";
+%end;
+run;
+%mend cl;
+%cl;
+data anno&table;set anno&table.p anno&table.n;run;
+data _null_;
+min=left(trim(putn(round(&minn,0.1),'commax10.')));
+max=left(trim(putn(round(&maxp,0.1),'commax10.')));
+call symput('min',min);
+call symput('max',max);
+run;
+%put &min &max;
+%bar(FF3333,FFFFFF,0,&maxp,vertical,y_i=50,x_i=90);
+data anno&table;set _a_ anno&table;run;
+%bar(FFFFFF,3333FF,&minn,0,vertical,y_i=16,x_i=90);
+%end;
+data anno&table;set _a_ anno&table;run;
+data a;id=0;v=2;run;
+
+%if &sampledata ne %then %do;
+data annodata;set &sampledata;
+length function style $10. color $8.;
+retain line 1 xsys ysys '2' hsys '3' color 'black' when 'a';
+function='label';text='J';position='5';style='special';size=2;
+run;
+%end;
+*goptions reset=all reset=global;
+proc gmap data=a map=&map all %if &sampledata ne %then %do;anno=annodata%end;;
+id id;
+choro v / anno=anno&table nolegend;
+run;
+quit;
+%mend map2d;
+
