@@ -36,5 +36,8 @@
 *.user
 *.user*
 
+#autosaves
+*.autosave
+
 #executável
 GWR_BR

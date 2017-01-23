@@ -134,7 +134,7 @@ double** DistanceBetweenAllPoints(DoubleMatrix* base, int yVarColumn, int xVarCo
 	return distances;
 }
 
-//#define GOLDEN_PRONTO
+#define GOLDEN_PRONTO
 #ifdef GOLDEN_PRONTO
 DoubleMatrix* Golden(DoubleMatrix* base, int yVarColumn, int xVarColumn, int x_dCoord, int *y_dCoord, KernelType method, bool distanceInKM)
 {
@@ -148,12 +148,15 @@ DoubleMatrix* Golden(DoubleMatrix* base, int yVarColumn, int xVarColumn, int x_d
 
 	medDist=(maxDist + minDist)/2;
 
+	double h0, h1, h2, h3;
+
 	DoubleMatrix *x= NewDoubleMatrix(base->lines, 1);/**/
 	DoubleMatrix *yhat= NewDoubleMatrix(base->lines, 1);
 	if(ADAPTIVE_N == method)
 	{
 		double hv= 0;// como hv é uma matriz de 1x1, vou tratar como um double
 //		yhat= NewDoubleMatrix(1, 1);	// o yhat é declarado na linha 47 como uma matrix coluna de n linhas e depois de declarado como uma matriz 1x1 de valor zero na linha 50 e depois não é mais usado
+//aparentemente é usado nos CVs
 		for(int i =1; i < base->lines; i++)
 		{
 //			func1();
@@ -251,8 +254,9 @@ DoubleMatrix* Golden(DoubleMatrix* base, int yVarColumn, int xVarColumn, int x_d
 	return /* enfim chegamos no final da função, ver o que deve ser retornado*/;
 }
 #endif
+#define F1_PRONTO
 #ifdef F1_PRONTO
-? func1(double min, double max)
+void func1(double min, double max)
 {
 	double ax, bx, cx, r, tol, c, h0, h3;
 	ax= min;

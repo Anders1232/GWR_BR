@@ -88,4 +88,3 @@ CV1=((y-yhat)#wt)`*(y-yhat);
 %END;
 free dist w;
 finish cv1;
-
