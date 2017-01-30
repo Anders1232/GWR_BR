@@ -1,6 +1,8 @@
 #include "gwr-lib.h"
 #include <math.h>
 
+#define APPROX_EARTH_RADIUS (6371)
+
 #define ASSERT(X)\
 	if( !(X) )\
 	{\
@@ -71,15 +73,18 @@ unsigned long int BinomialCoefficient(unsigned long int n, unsigned long int k)
 }
 
 
-double** DistanceBetweenAllPoints(DoubleMatrix* base, int yVarColumn, int xVarColumn, double* minDistOut, double *maxDistOut)
+double** DistanceBetweenAllPoints(DoubleMatrix* base, int yVarColumn, int xVarColumn, double* minDistOut, double *maxDistOut, bool returnOnlyMinAndMax)
 {
-	double **distances= malloc(base->lines * sizeof(double*));
-	ASSERT(NULL != distances);
-	int count, count2;
-	for(count=0; count < base->lines; count++)
+	if(!returnOnlyMinAndMax)
 	{
-		distances[count]= malloc( (count+1) *sizeof(double));
-		ASSERT(NULL != distances[count]);
+		double **distances= malloc(base->lines * sizeof(double*));
+		ASSERT(NULL != distances);
+		int count, count2;
+		for(count=0; count < base->lines; count++)
+		{
+			distances[count]= malloc( (count+1) *sizeof(double));
+			ASSERT(NULL != distances[count]);
+		}
 	}
 	//otimizar isso aq
 	//Calcular aq a distância mínima, média e máxima
@@ -103,16 +108,23 @@ double** DistanceBetweenAllPoints(DoubleMatrix* base, int yVarColumn, int xVarCo
 		{
 			if(count2 == count)
 			{
-				distances[count][count]= 0;
+				if(!returnOnlyMinAndMax)
+				{
+					distances[count][count]= 0;
+				}
 			}
 			else
 			{
-				distances[count][count2]= DistanceBetweenPoints(
+				temp= DistanceBetweenPoints(
 							DoubleMatrixGetElement(base, count, xVarColumn),
 							DoubleMatrixGetElement(base, count, yVarColumn),
 							DoubleMatrixGetElement(base, count2, xVarColumn),
 							DoubleMatrixGetElement(base, count2, yVarColumn)
 							);
+				if(!returnOnlyMinAndMax)
+				{
+					distances[count][count2]=temp;
+				}
 				if(NULL != minDistOut)
 				{
 					if(temp < *minDistOut)
@@ -131,7 +143,14 @@ double** DistanceBetweenAllPoints(DoubleMatrix* base, int yVarColumn, int xVarCo
 			}
 		}
 	}
-	return distances;
+	if(!returnOnlyMinAndMax)
+	{
+		return distances;
+	}
+	else
+	{
+		return NULL;
+	}
 }
 
 #define GOLDEN_PRONTO
@@ -143,10 +162,10 @@ DoubleMatrix* Golden(DoubleMatrix* base, int yVarColumn, int xVarColumn, int x_d
 	{
 		return NULL;
 	}
-	//calculando matriz de distâncias
-	double minDist, medDist, maxDist;
-
-	medDist=(maxDist + minDist)/2;
+	//calculando matriz de distâncias para apenas pegar a menor e a maior distância
+	double minDist/*, medDist*/, maxDist;
+	DistanceBetweenAllPoints(base, yVarColumn, xVarColumn, &minDist, &maxDist, true);
+//	medDist=(maxDist + minDist)/2;
 
 	double h0, h1, h2, h3;
 
@@ -159,12 +178,12 @@ DoubleMatrix* Golden(DoubleMatrix* base, int yVarColumn, int xVarColumn, int x_d
 //aparentemente é usado nos CVs
 		for(int i =1; i < base->lines; i++)
 		{
-//			func1();
+			func1(minDist, maxDist, &h0, &h1, &h2, &h3);
 		}
 	}
 	else
 	{
-//		func1();
+		func1(minDist, maxDist, &h0, &h1, &h2, &h3);
 	}
 	double cv1= CV1();
 	double cv2= CV2();
@@ -190,10 +209,6 @@ DoubleMatrix* Golden(DoubleMatrix* base, int yVarColumn, int xVarColumn, int x_d
 			h1= r*h2 + c*h0;
 			cv2=cv1;
 			cv1= CV1();
-		}
-		if(ADAPTIVE_N != method)
-		{
-			//aqui tem o comando append, perguntar o que isso faz
 		}
 	}
 	while(abs(h3-h0) > tol*(abs(h1)+abs(h2)));
@@ -226,96 +241,133 @@ DoubleMatrix* Golden(DoubleMatrix* base, int yVarColumn, int xVarColumn, int x_d
 		//aqui tem o comando "append from hv", perguntar o que isso faz
 	}
 	//aqui tem o comando quit, o que ele deve fazer??
-
-	if(FIXED_G == method || FIXED_BSQ == method)
-	{
-		/*
-			Aqui tem:
-				%global _h_;
-				data _null_;
-				set &OUTPUT;
-			Perguntar o que esses comandos fazem e como interferirião no C
-		*/
-		if(cv1<cv2)
-		{
-			//perguntar o que o "call symput('_h_',h1);" faz
-		}
-		else
-		{
-			//perguntar o que o "call symput('_h_',h2);" faz
-		}
-		/*
-			Aqui tem:
-				run;
-				%put h=&_h_;
-			Perguntar o que esses comandos fazem e como interferirião no C
-		*/
-	}
 	return /* enfim chegamos no final da função, ver o que deve ser retornado*/;
 }
 #endif
 #define F1_PRONTO
 #ifdef F1_PRONTO
-void func1(double min, double max)
+void func1(double min, double max, double *h0, double *h1, double *h2, double *h3)
 {
-	double ax, bx, cx, r, tol, c, h0, h3;
+	//dúvida: aparentenmente fazer isso em loop é inútil
+	double ax, bx, cx, r, tol, c;
 	ax= min;
 	bx= (min+max)/2;
 	cx= max;
 	r = 0.61803399;
 	tol = 0.001;
 	c = 1-r;
-	h0= ax;
-	h3= cx;
+	*h0= ax;
+	*h3= cx;
 	bx= c * (cx-ax);
 	if(abs(cx-bx) > abs(bx-ax))
 	{
-		h1= bx;
-		h2= bx-c*(bx-ax);
+		*h1= bx;
+		*h2= bx-c*(bx-ax);
 	}
 	else
 	{
-		h2=bx;
-		h1=bx-c*(bx-ax);
+		*h2=bx;
+		*h1=bx-c*(bx-ax);
 	}
 }
-//*/
-///*
-? cv(?, DoubleMatrix *data, bool distanceInKm)
+#endif
+
+#define CV_PRONTO
+#ifdef CV_PRONTO
+
+? cv(?, DoubleMatrix *data, bool distanceInKm, kernelType method)
 {
 	DoubleMatrix *d= NewDoubleMatrix(1, 3);
 	if(ADAPTATIVE_N != METHOD)
 	{
 		int i, j;
-		for(i=0; i < base->lines; i++)
-		{
-			for(j=0; j , base->lines; j++)
+		for(i=0; i < data->lines; i++)
+		{//isolar em uma funçao 01
+			for(j=0; j , data->lines; j++)
 			{
 				if(distanceInKm)
 				{
-					dif= DistanceBetweenPoints(
-								DoubleMatrixGetElement(data, i, ?),
-								DoubleMatrixGetElement(data, ?, ?),
-								DoubleMatrixGetElement(data, j, ?),
-								DoubleMatrixGetElement(data, ?, ?),
-					);
-					double raio= raio=arcos(-1)/180;
-					double argument=sin(COORD[i,2]*raio)*sin(COORD[j,2]*raio)+cos(COORD[i,2]*raio)*cos(COORD[j,2]*raio)*cos(dif*raio);
+					dif= abs(DoubleMatrixGetElement(data, i, 1) - DoubleMatrixGetElement(data, j, 1) );
+					raio= raio=arcos(-1)/180;
+					argument=
+							sin(DoubleMatrixGetElement(data, i, 2)*raio)
+							*sin(DoubleMatrixGetElement(data, j,2)*raio)
+							+cos(DoubleMatrixGetElement(data, i,2)*raio)
+							*cos(COORD[j,2]*raio)*cos(dif*raio);
 					if(1 <= argument)
 					{
-						double arco=0;
+						arco=0;
+					}
+					else//dúvida: onde realmente termina esse else? Estou supondo que na linha seguinte
+					{
+						//law of cosines
+						arco =
+								arcos(
+									sin(DoubleMatrixGetElement(data, i,2)*raio)
+									*sin(DoubleMatrixGetElement(data, j,2)*raio)
+									+cos(DoubleMatrixGetElement(data, i,2)*raio)
+									*cos(DoubleMatrixGetElement(data, j,2)*raio)
+									*cos(dif*raio)
+								);
+					}
+					dl= arco *APPROX_EARTH_RADIUS;
+					if(0.001 >= dl)
+					{
+						dl=0;
 					}
 				}
 				else
 				{
-					//law of cosines
-					double arco =
+					dl= sqrt(//isolar em uma função 01
+								pow(
+									DoubleMatrixGetElement(data, i,1)
+									-DoubleMatrixGetElement(data, j,1)
+									,2)
+								+pow(
+									DoubleMatrixGetElement(data,i,2)
+									-DoubleMatrixGetElement(data,j,2)
+									,2)
+							);
 				}
+				if(
+						(FIXED_G == method /* && d1 ^=0 */)
+						|| ((FIXED_BSQ == method || ADAPTIVE_N == method) && d1 <= h1 * && d1 ^=0 */)
+						||(ADAPTIVE_BSQ == method /* && d1 ^=0 */)
+					)// perguntar o que é o "^="
+				{
+					cvAux2();
+				}
+				u= data->lines;
+				DoubleMatrix* w= NewDoubleMatrix(u, 1);
+
 			}
 		}
 	}
 }
 
-//*/
+? cvAux2(bool distanceInKm)
+{
+	d[1]= i;
+	d[2]= j;
+	if(!distanceInKm)
+	{
+		d[3]= sqrt(//isolar em uma função 01
+					pow(
+						DoubleMatrixGetElement(data, i,1)
+						-DoubleMatrixGetElement(data, j,1)
+						,2)
+					+pow(
+						DoubleMatrixGetElement(data,i,2)
+						-DoubleMatrixGetElement(data,j,2)
+						,2);
+				);
+	}
+	else
+	{
+		d[3]=arco*APPROX_EARTH_RADIUS;
+	}
+	//ver como fazer aqui, o código SAS aqui é "dist=dist//d;"
+	// o "//" adiciona linha na tabela
+}
 
 #endif
