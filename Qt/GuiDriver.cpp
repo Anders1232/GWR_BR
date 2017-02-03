@@ -129,7 +129,7 @@ QString GuiDriver::Calculate(
 		double min, med, max;
 		int column1= NamedColumnDoubleTable_GetColumnIndex(table, latitude.c_str());
 		int column2= NamedColumnDoubleTable_GetColumnIndex(table, longitude.c_str());
-		double **result= DistanceBetweenAllPoints(table->matrix, column1, column2, &min, &max);
+		double **result= DistanceBetweenAllPoints(table->matrix, column1, column2, &min, &max, false);
 		med= min+max/2;
 		FILE *temp= fopen(outputFileName.c_str(), "w+");;
 		fprintf(temp, "GWR BR" NEW_LINE);

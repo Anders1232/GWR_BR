@@ -75,9 +75,10 @@ unsigned long int BinomialCoefficient(unsigned long int n, unsigned long int k)
 
 double** DistanceBetweenAllPoints(DoubleMatrix* base, int yVarColumn, int xVarColumn, double* minDistOut, double *maxDistOut, bool returnOnlyMinAndMax)
 {
+	double** distances;
 	if(!returnOnlyMinAndMax)
 	{
-		double **distances= malloc(base->lines * sizeof(double*));
+		distances= (double**)malloc(base->lines * sizeof(double*));
 		ASSERT(NULL != distances);
 		int count, count2;
 		for(count=0; count < base->lines; count++)
@@ -102,6 +103,7 @@ double** DistanceBetweenAllPoints(DoubleMatrix* base, int yVarColumn, int xVarCo
 	{
 		*maxDistOut= temp;
 	}
+	int count, count2;
 	for(count=0; count < base->lines; count++)
 	{
 		for(count2= 0; count2<= count; count2++)
@@ -153,7 +155,7 @@ double** DistanceBetweenAllPoints(DoubleMatrix* base, int yVarColumn, int xVarCo
 	}
 }
 
-#define GOLDEN_PRONTO
+//#define GOLDEN_PRONTO
 #ifdef GOLDEN_PRONTO
 DoubleMatrix* Golden(DoubleMatrix* base, int yVarColumn, int xVarColumn, int x_dCoord, int *y_dCoord, KernelType method, bool distanceInKM)
 {
@@ -272,7 +274,7 @@ void func1(double min, double max, double *h0, double *h1, double *h2, double *h
 }
 #endif
 
-#define CV_PRONTO
+//#define CV_PRONTO
 #ifdef CV_PRONTO
 
 ? cv(?, DoubleMatrix *data, bool distanceInKm, kernelType method)
