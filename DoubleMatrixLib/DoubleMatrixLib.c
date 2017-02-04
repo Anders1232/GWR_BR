@@ -287,11 +287,35 @@ void DoubleMatrixAddColumn(DoubleMatrix *matrix)
 		double *v= matrix->elements;
 		for(int count= matrix->lines -1; count>0; count--)
 		{
-			memmove(v[nColumnsAfter*count], v[nColumnsBefore*count], nColumnsBefore*sizeof(double));
+			memmove(&(v[nColumnsAfter*count]), &(v[nColumnsBefore*count]), nColumnsBefore*sizeof(double));
 		}
 	}
 }
-DoubleMatrix* NewLineDoubleMatrixFromMatrix(DoubleMatrix *origin, int lineFromOrigin);
-DoubleMatrix* NewColumnDoubleMatrixFromMatrix(DoubleMatrix *origin, int columnFromOrigin);
+DoubleMatrix* NewLineDoubleMatrixFromMatrix(DoubleMatrix *origin, int lineFromOrigin)
+{
+	DoubleMatrix *ret;
+	ret= NewDoubleMatrix(origin->columns, 1);
+	if(NULL == ret)
+	{
+		return NULL;
+	}
+	memcopy(ret->elements, &(origin->elements[origin->columns * lineFromOrigin]), origin->columns * sizeof(double)));
+	return ret;
+}
+DoubleMatrix* NewColumnDoubleMatrixFromMatrix(DoubleMatrix *origin, int columnFromOrigin)
+{
+	DoubleMatrix *ret;
+	ret= NewDoubleMatrix(origin->columns, 1);
+	if(NULL == ret)
+	{
+		return NULL;
+	}
+	int count;
+	for(count=0; count < origin->lines; count++)
+	{
+		DoubleMatrixSetElement(ret, count, 0, DoubleMatrixGetElement(origin, count, columnFromOrigin));
+	}
+	return ret;
+}
 
 
