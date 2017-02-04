@@ -1,7 +1,7 @@
 #include"NamedColumnDoubleTable.h"
 #include<string.h>
 
-//#define DEBUG_NAMED_COLUMN
+#define DEBUG_NAMED_COLUMN
 
 NamedColumnDoubleTable *NewNamedColumnDoubleTableWithNoMatrix(int numberOfColumns)
 {
@@ -146,7 +146,11 @@ NamedColumnDoubleTable *NewNamedColumnDoubleTableFromFile(char const *fileName, 
 		for(count2 =0; count2 < MAX_NAME_SIZE; count2++)
 		{
 			fscanf(file, "%c", &aux);
-			if(aux != separator && '\n' != aux)
+			if('\r' == aux)
+			{
+				continue;
+			}
+			else if(aux != separator && '\n' != aux)
 			{
 				columnName[count2]= aux;
 			}
@@ -195,9 +199,9 @@ NamedColumnDoubleTable *NewNamedColumnDoubleTableFromFile(char const *fileName, 
 		}
 		fscanf(file, "%*[\n]");
 	}
-	//modificação temporária só para mostrar que leu o arquivo
-//	NamedColumnDoubleTable_PrintAll(returnValue, stdout, "%s\t\t", "%lf\t\t", NEW_LINE);
-	//fim da modificação temporária
+#ifdef DEBUG_NAMED_COLUMN
+	NamedColumnDoubleTable_PrintAll(returnValue, stdout, "%s\t\t", "%lf\t\t", NEW_LINE);
+#endif
 	fclose(file);
 	return returnValue;
 }

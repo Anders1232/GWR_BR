@@ -155,7 +155,7 @@ double** DistanceBetweenAllPoints(DoubleMatrix* base, int yVarColumn, int xVarCo
 	}
 }
 
-//#define GOLDEN_PRONTO
+#define GOLDEN_PRONTO
 #ifdef GOLDEN_PRONTO
 DoubleMatrix* Golden(DoubleMatrix* base, int yVarColumn, int xVarColumn, int x_dCoord, int *y_dCoord, KernelType method, bool distanceInKM)
 {
@@ -186,6 +186,36 @@ DoubleMatrix* Golden(DoubleMatrix* base, int yVarColumn, int xVarColumn, int x_d
 	else
 	{
 		func1(minDist, maxDist, &h0, &h1, &h2, &h3);
+	}
+	//aqui tem o comando quit, o que ele deve fazer??
+	return /* enfim chegamos no final da função, ver o que deve ser retornado*/;
+}
+#endif
+
+#define F1_PRONTO
+#ifdef F1_PRONTO
+void func1(double min, double max, double *h0, double *h1, double *h2, double *h3)
+{
+	//dúvida: aparentenmente fazer isso em loop é inútil
+	double ax, bx, cx, r, tol, c;
+	ax= min;
+	bx= (min+max)/2;
+	cx= max;
+	r = 0.61803399;
+	tol = 0.001;
+	c = 1-r;
+	*h0= ax;
+	*h3= cx;
+	bx= c * (cx-ax);
+	if(abs(cx-bx) > abs(bx-ax))
+	{
+		*h1= bx;
+		*h2= bx-c*(bx-ax);
+	}
+	else
+	{
+		*h2=bx;
+		*h1=bx-c*(bx-ax);
 	}
 	double cv1= CV1();
 	double cv2= CV2();
@@ -242,39 +272,11 @@ DoubleMatrix* Golden(DoubleMatrix* base, int yVarColumn, int xVarColumn, int x_d
 		hv= xmin;
 		//aqui tem o comando "append from hv", perguntar o que isso faz
 	}
-	//aqui tem o comando quit, o que ele deve fazer??
-	return /* enfim chegamos no final da função, ver o que deve ser retornado*/;
-}
-#endif
-#define F1_PRONTO
-#ifdef F1_PRONTO
-void func1(double min, double max, double *h0, double *h1, double *h2, double *h3)
-{
-	//dúvida: aparentenmente fazer isso em loop é inútil
-	double ax, bx, cx, r, tol, c;
-	ax= min;
-	bx= (min+max)/2;
-	cx= max;
-	r = 0.61803399;
-	tol = 0.001;
-	c = 1-r;
-	*h0= ax;
-	*h3= cx;
-	bx= c * (cx-ax);
-	if(abs(cx-bx) > abs(bx-ax))
-	{
-		*h1= bx;
-		*h2= bx-c*(bx-ax);
-	}
-	else
-	{
-		*h2=bx;
-		*h1=bx-c*(bx-ax);
-	}
+
 }
 #endif
 
-//#define CV_PRONTO
+#define CV_PRONTO
 #ifdef CV_PRONTO
 
 ? cv(?, DoubleMatrix *data, bool distanceInKm, kernelType method)

@@ -71,5 +71,9 @@ int DoubleMatrixColumnsNumber(DoubleMatrix*);
 int DoubleMatrixLinesNumber(DoubleMatrix*);
 bool DoubleMatrixHaveSameDimensionsAndSameElementSize(DoubleMatrix*, DoubleMatrix*);	//implemented
 void DoubleMatrixPrint(DoubleMatrix* matrix, FILE *output, char const *doubleFormat, char const *betweenLinesFormat);//implemented
+void DoubleMatrixAddLine(DoubleMatrix *matrix);
+void DoubleMatrixAddColumn(DoubleMatrix *matrix);
+DoubleMatrix* NewLineDoubleMatrixFromMatrix(DoubleMatrix *origin, int lineFromOrigin);
+DoubleMatrix* NewColumnDoubleMatrixFromMatrix(DoubleMatrix *origin, int columnFromOrigin);
 
 #endif

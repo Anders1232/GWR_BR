@@ -257,4 +257,41 @@ DoubleMatrix* DoubleMatrixElementBinaryOperation(DoubleMatrix* matrixA, DoubleMa
 	return ret;
 }
 
+void DoubleMatrixAddLine(DoubleMatrix *matrix)
+{
+	void* result= realloc(matrix->elements, ((matrix->lines)+1)*(matrix->columns)*sizeof(double));
+	if(NULL == result)
+	{
+		fprintf(stderr, "[ERROR] Reallocation error!");
+		exit(-1);
+	}
+	else
+	{
+		matrix->elements= result;
+		matrix->lines= (matrix->lines)+1;
+	}
+}
+void DoubleMatrixAddColumn(DoubleMatrix *matrix)
+{
+	void* result= realloc(matrix->elements, (matrix->lines)*((matrix->columns)+1)*sizeof(double));
+	if(NULL == result)
+	{
+		fprintf(stderr, "[ERROR] Reallocation error!");
+		exit(-1);
+	}
+	else
+	{
+		int count;
+		int nColumnsBefore= matrix->columns;
+		int nColumnsAfter= nColumnsBefore+1;
+		double *v= matrix->elements;
+		for(int count= matrix->lines -1; count>0; count--)
+		{
+			memmove(v[nColumnsAfter*count], v[nColumnsBefore*count], nColumnsBefore*sizeof(double));
+		}
+	}
+}
+DoubleMatrix* NewLineDoubleMatrixFromMatrix(DoubleMatrix *origin, int lineFromOrigin);
+DoubleMatrix* NewColumnDoubleMatrixFromMatrix(DoubleMatrix *origin, int columnFromOrigin);
+
 

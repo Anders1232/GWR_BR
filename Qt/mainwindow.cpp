@@ -106,6 +106,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	separator = '\t';
 	fileName= "";
+
+	/*	QLocale loc = QLocale::system(); // current locale
+	loc.setNumberOptions(QLocale::NumberOption::UnitedStates); // borrow number options from the "C" locale
+	QLocale::setDefault(loc); // set as default
+*/
 }
 
 MainWindow::~MainWindow()
