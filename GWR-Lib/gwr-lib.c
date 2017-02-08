@@ -80,7 +80,7 @@ double** DistanceBetweenAllPoints(DoubleMatrix* base, int yVarColumn, int xVarCo
 	{
 		distances= (double**)malloc(base->lines * sizeof(double*));
 		ASSERT(NULL != distances);
-		int count, count2;
+		int count;
 		for(count=0; count < base->lines; count++)
 		{
 			distances[count]= malloc( (count+1) *sizeof(double));
@@ -155,7 +155,7 @@ double** DistanceBetweenAllPoints(DoubleMatrix* base, int yVarColumn, int xVarCo
 	}
 }
 
-#define GOLDEN_PRONTO
+//#define GOLDEN_PRONTO
 #ifdef GOLDEN_PRONTO
 DoubleMatrix* Golden(DoubleMatrix* base, int yVarColumn, int xVarColumn, int x_dCoord, int *y_dCoord, KernelType method, bool distanceInKM)
 {
@@ -192,7 +192,7 @@ DoubleMatrix* Golden(DoubleMatrix* base, int yVarColumn, int xVarColumn, int x_d
 }
 #endif
 
-#define F1_PRONTO
+//#define F1_PRONTO
 #ifdef F1_PRONTO
 void func1(double min, double max, double *h0, double *h1, double *h2, double *h3)
 {
@@ -276,7 +276,7 @@ void func1(double min, double max, double *h0, double *h1, double *h2, double *h
 }
 #endif
 
-#define CV_PRONTO
+//#define CV_PRONTO
 #ifdef CV_PRONTO
 
 ? cv(?, DoubleMatrix *data, bool distanceInKm, kernelType method)

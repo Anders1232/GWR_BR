@@ -75,5 +75,6 @@ void DoubleMatrixAddLine(DoubleMatrix *matrix);
 void DoubleMatrixAddColumn(DoubleMatrix *matrix);
 DoubleMatrix* NewLineDoubleMatrixFromMatrix(DoubleMatrix *origin, int lineFromOrigin);
 DoubleMatrix* NewColumnDoubleMatrixFromMatrix(DoubleMatrix *origin, int columnFromOrigin);
+double DoubleMatrixDeterminant(DoubleMatrix *mat);
 
 #endif

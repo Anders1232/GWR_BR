@@ -285,7 +285,7 @@ void DoubleMatrixAddColumn(DoubleMatrix *matrix)
 		int nColumnsBefore= matrix->columns;
 		int nColumnsAfter= nColumnsBefore+1;
 		double *v= matrix->elements;
-		for(int count= matrix->lines -1; count>0; count--)
+		for(count= matrix->lines -1; count>0; count--)
 		{
 			memmove(&(v[nColumnsAfter*count]), &(v[nColumnsBefore*count]), nColumnsBefore*sizeof(double));
 		}
@@ -299,7 +299,7 @@ DoubleMatrix* NewLineDoubleMatrixFromMatrix(DoubleMatrix *origin, int lineFromOr
 	{
 		return NULL;
 	}
-	memcopy(ret->elements, &(origin->elements[origin->columns * lineFromOrigin]), origin->columns * sizeof(double)));
+	memcpy(ret->elements, &(origin->elements[origin->columns * lineFromOrigin]), origin->columns * sizeof(double) );
 	return ret;
 }
 DoubleMatrix* NewColumnDoubleMatrixFromMatrix(DoubleMatrix *origin, int columnFromOrigin)
@@ -316,6 +316,31 @@ DoubleMatrix* NewColumnDoubleMatrixFromMatrix(DoubleMatrix *origin, int columnFr
 		DoubleMatrixSetElement(ret, count, 0, DoubleMatrixGetElement(origin, count, columnFromOrigin));
 	}
 	return ret;
+}
+
+double DoubleMatrixDeterminant(DoubleMatrix *mat)
+{
+	if(mat->lines != mat->columns)
+	{
+		fprintf(stderr, "%s:%d\tFunction:%s\t\tError: Not a sqared matrix.\n", __FILE__, __LINE__, __FUNCTION__);
+	}
+	double result=0, temp;
+	int count, count2, aux;
+	for(count=0; count < mat->lines; count++)
+	{
+		temp=1;
+		for(count2=0; count2 < mat->lines; count2++)//diagonal principal
+		{
+			temp*= DoubleMatrixGetElement(mat, count2, (count+count2)%(mat->lines) );
+		}
+		result+=temp;
+		temp=1;
+		for(count2=0; count2 < mat->lines; count2++)//diagonal secundária
+		{
+			temp*= DoubleMatrixGetElement(mat, count2, (count-count2)%(mat->lines) );
+		}
+		result-=temp;
+	}
 }
 
 
