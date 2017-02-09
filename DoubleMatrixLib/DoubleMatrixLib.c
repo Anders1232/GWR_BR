@@ -343,4 +343,58 @@ double DoubleMatrixDeterminant(DoubleMatrix *mat)
 	}
 }
 
-
+DoubleMatrix *DoubleMatrixInverse(DoubleMatrix *matrix)
+{
+	if(matrix->columns != matrix->lines)
+	{
+		fprintf(stderr, "%s:%d\t\tCannot inverve non squared matrix!\n", __FILE__, __LINE__);
+	}
+	DoubleMatrix *ret= NewDoubleMatrix(matrix->columns, matrix->columns);
+	if(NULL == ret)
+	{
+		fprintf(stderr, "%s:%s:%d\t\t Error allocating matrix.\n", __FILE__, __func__, __LINE__);
+		return NULL;
+	}
+	int i, j, n=matrix->columns, k;
+	double ratio, a;
+	for(i = 0; i < n; i++)
+	{
+		for(j = n; j < 2*n; j++)
+		{
+			if(i==(j-n))
+			{
+				DoubleMatrixSetElement(ret, i, j, 1.0);
+			}
+			else
+			{
+				DoubleMatrixSetElement(ret, i, j, 0.0);
+			}
+		}
+	}
+	for(i = 0; i < n; i++)
+	{
+		for(j = 0; j < n; j++)
+		{
+			if(i!=j)
+			{
+				ratio = DoubleMatrixGetElement(ret, j, i)/DoubleMatrixGetElement(ret, i, i);
+				for(k = 0; k < 2*n; k++)
+				{
+//					matrix[j][k] -= ratio * matrix[i][k];
+					DoubleMatrixSetElement(ret, j, k, DoubleMatrixGetElement(ret, j, k)-ratio*DoubleMatrixGetElement(ret, i, k));
+				}
+			}
+		}
+	}
+	for(i = 0; i < n; i++)
+	{
+//		a = matrix[i][i];
+		a= DoubleMatrixGetElement(ret, i, i);
+		for(j = 0; j < 2*n; j++)
+		{
+//			matrix[i][j] /= a;
+			DoubleMatrixSetElement(ret, i, j, DoubleMatrixGetElement(ret, i, j)/a);
+		}
+	}
+	return ret;
+}
