@@ -17,7 +17,8 @@ static double Pythagoras(double x, double y)
 
 static double DistanceBetweenPoints(double x1, double y1, double x2, double y2)
 {
-	return abs( Pythagoras((x2-x1), (y2-y1)) );
+	double result= Pythagoras((x2-x1), (y2-y1));
+	return (result>0)? result: -result;
 }
 
 static double Add(double a, double b)

@@ -508,22 +508,6 @@ void MainWindow::UpdatePreview(void)
 	}
 }
 
-/*void MainWindow::on_previewLines_editingFinished()
-{
-	QSpinBox *linesSpinBox = this->findChild<QSpinBox *>("previewLines");
-	Q_ASSERT(linesSpinBox);
-	this->linesInPreview= linesSpinBox->value();
-	UpdatePreview();
-}*/
-
-/*void MainWindow::on_previewCharsPerLine_editingFinished()
-{
-	QSpinBox *linesSpinBox = this->findChild<QSpinBox *>("previewCharsPerLine");
-	Q_ASSERT(linesSpinBox);
-	this->charsPerLineInPreview= linesSpinBox->value();
-	UpdatePreview();
-}*/
-
 void MainWindow::on_previewLines_valueChanged(int arg1)
 {
 	this->linesInPreview= arg1;
@@ -739,8 +723,9 @@ void MainWindow::on_OutputFileSelectButton_clicked()
 													tr("Text File (*.txt);; Any File(*)"));
 	if(!fileName.endsWith(".txt"))
 	{
-		outputFileLineEdit->setText(fileName + ".txt");
+		fileName  = fileName +".txt";
 	}
+	outputFileLineEdit->setText(fileName);
 	//fazer mais coisas aq
 }
 
