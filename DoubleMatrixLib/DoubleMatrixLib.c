@@ -185,21 +185,30 @@ DoubleMatrix* DoubleMatrixTranspose(DoubleMatrix *matrix, bool resultInTheSameMa
 	int lines, columns, counter;
 	lines= matrix->lines;
 	columns= matrix->columns;
-	double *temp= malloc(lines * columns * sizeof(double));
+	DoubleMatrix *temp= NewDoubleMatrix(columns, lines);
 	counter= 0;
-	int cont1, cont2;
-	for(cont1=0; cont1 < columns; cont1++)
+	int count1, count2;
+	for(count1=0; count1 < columns; count1++)
 	{
-		for(cont2=0; cont2 < lines; cont2++)
+		for(count2=0; count2 < lines; count2++)
 		{
-#ifdef DEBUG
-printf("Inserting element [%d][%d] in position %d\n", cont1, cont2, counter);
-#endif
-			temp[counter++]= DoubleMatrixGetElement(matrix, cont1, cont2);
+			DoubleMatrixSetElement(
+									temp,
+									count2,
+									count1,
+									DoubleMatrixGetElement(
+										matrix,
+										count1,
+										count2
+									)
+								);
 		}
 	}
 	free(ret->elements);
-	ret->elements= temp;
+	ret->elements= temp->elements;
+	free(temp);
+	ret->lines= columns;
+	ret->columns= lines;
 	return ret;
 }
 
@@ -394,6 +403,35 @@ DoubleMatrix *DoubleMatrixInverse(DoubleMatrix *matrix)
 		{
 //			matrix[i][j] /= a;
 			DoubleMatrixSetElement(ret, i, j, DoubleMatrixGetElement(ret, i, j)/a);
+		}
+	}
+	return ret;
+}
+
+DoubleMatrix* DoubleMatrixMultiplication(DoubleMatrix *a, DoubleMatrix *b)
+{
+	DoubleMatrix* ret;
+	if(a->columns != b->lines)
+	{
+		fprintf(stderr, "%s:%s:%d\t\tMatrices not compatible for multiplication.\n", __func__, __FILE__, __LINE__);
+		return NULL;
+	}
+	ret= NewDoubleMatrix(a->lines, b->columns);
+	if(NULL == ret)
+	{
+		return NULL;
+	}
+	int count1, count2, count3;
+	for(count1=0; count1 < ret->lines; count1++)
+	{
+		for(count2=0; count2 < ret->columns; count2++)
+		{
+			double sum=0;
+			for(count3=0; count3 < a->lines; count3++)
+			{
+				sum+= DoubleMatrixGetElement(a, count1, count3)*DoubleMatrixGetElement(b, count3, count2);
+			}
+			DoubleMatrixSetElement(ret, count1, count2, sum);
 		}
 	}
 	return ret;

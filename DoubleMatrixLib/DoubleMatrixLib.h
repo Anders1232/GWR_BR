@@ -57,7 +57,7 @@ DoubleMatrix* DoubleMatrixIdentity(int oneDimensionSize);	//implemented
 DoubleMatrix* DoubleMatrix_Add(DoubleMatrix*, DoubleMatrix*, bool resultInTheFirstMatrix);	//implemented
 DoubleMatrix* DoubleMatrixScalarMultiplication(DoubleMatrix *matrix, double scalar, bool resultInTheSameMatrix);	//implemented
 DoubleMatrix* DoubleMatrixTranspose(DoubleMatrix*, bool resultInTheSameMatrix);	//implemented, need testing
-DoubleMatrix* DoubleMatrixMultiplication(DoubleMatrix*, DoubleMatrix*, bool resultInTheFirstMatrix);
+DoubleMatrix* DoubleMatrixMultiplication(DoubleMatrix*, DoubleMatrix*);
 DoubleMatrix* DoubleMatrixCompare(DoubleMatrix*, DoubleMatrix*, Comparison);
 DoubleMatrix* DoubleMatrixElementBinaryOperation(DoubleMatrix* , DoubleMatrix*, bool resultInTheFirstMatrix, double(*ElementBinFunction)(double element1, double element2));
 DoubleMatrix* DoubleMatrixElementUnaryOperation(DoubleMatrix*, bool resultInTheFirstMatrix, double(*ElementUnaFunction)(double element));

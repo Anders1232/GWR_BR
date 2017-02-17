@@ -5,9 +5,11 @@ extern "C"
 
 #include "GuiInterface.h"
 #include "NamedColumnDoubleTable.h"
+//#include "locale.h"
 
 int main(int argc, char *argv[])
 {
+//	setlocale(LC_ALL, "C");
 	return Gui_Init(argc, argv);
 }
 

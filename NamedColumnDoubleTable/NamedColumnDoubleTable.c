@@ -173,11 +173,21 @@ NamedColumnDoubleTable *NewNamedColumnDoubleTableFromFile(char const *fileName, 
 	{
 		for(count2=0; count2 < numberOfColumns; count2++)
 		{
+//#define GAMBIARRA_LEITURA
+#ifdef GAMBIARRA_LEITURA
+			char numTemp[50];
+			if(0 == fscanf(file, "%[0123456789.]", &numTemp) )
+#else
 			if(0 == fscanf(file, "%lf", &temp) )
+#endif
 			{
 				fprintf(stderr, "File format invalid!"NEW_LINE);
 				exit(-1);
 			}
+#ifdef GAMIBARRA_LEITURA
+			temp= atof(numTemp);
+#endif
+
 #ifdef DEBUG_NAMED_COLUMN
 			printf("Number read: %lf\n", temp);
 #endif
