@@ -104,6 +104,14 @@ MainWindow::MainWindow(QWidget *parent) :
 	Q_ASSERT(lineEdit);
 	lineEdit->setValidator(new QDoubleValidator());
 
+	outputDistancesCheckBox= this->findChild<QCheckBox *>("OutputBetweenPointsFileCheckbox");
+	Q_ASSERT(outputDistancesCheckBox);
+	outputDistancesFileLineEdit= this->findChild<QLineEdit *>("OutputBetweenPointsLineEdit");
+	Q_ASSERT(outputDistancesFileLineEdit);
+	outputDistancesWidget= this->findChild<QWidget *>("OutputDistancesWidget");
+	Q_ASSERT(outputDistancesWidget);
+	outputDistancesWidget->setEnabled(false);
+
 	separator = '\t';
 	fileName= "";
 
@@ -175,6 +183,16 @@ void MainWindow::on_LoadButton_clicked()
 	FILE *tempFile= tmpfile ();
 	Q_ASSERT(tempFile);
 	NamedColumnDoubleTable_PrintAll(loadedTable, tempFile, "%s\t\t", "%lf\t\t", NEW_LINE);
+
+	DoubleMatrix *transpose= DoubleMatrixTranspose(loadedTable->matrix, false);
+	fprintf(tempFile, "\nTranspondo:\n\n");
+	DoubleMatrixPrint(transpose, tempFile, "%lf\t", "\n");
+	DoubleMatrix *squared= DoubleMatrixMultiplication(loadedTable->matrix, transpose);
+	fprintf(tempFile, "produto pela transposta:\n\n");
+	fprintf(tempFile, "\ndeterminante: %lf\n", DoubleMatrixDeterminant(squared));
+	DeleteDoubleMatrix(transpose);
+	DeleteDoubleMatrix(squared);
+
 	rewind(tempFile);
 	QString str= "";
 	char aux;
@@ -197,6 +215,7 @@ void MainWindow::on_LoadButton_clicked()
 
 
 	outputFileLineEdit->setText(QString::fromStdString( RemoveExtension(RemovePath(fileName.toStdString()) ) + "_result.txt") );
+
 
 	tabWidget->setCurrentIndex(2);
 }
@@ -820,4 +839,9 @@ void MainWindow::on_actionAbout_triggered()
 void MainWindow::on_distanceBetweenPointsOperation_clicked()
 {
 	modelType= MODE_DISTANCE_BETWEEN_POITS;
+}
+
+void MainWindow::on_OutputBetweenPointsFileCheckbox_clicked(bool checked)
+{
+	outputDistancesWidget->setEnabled(checked);
 }

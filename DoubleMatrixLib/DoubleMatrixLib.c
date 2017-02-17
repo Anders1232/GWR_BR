@@ -169,7 +169,7 @@ DoubleMatrix* DoubleMatrixTranspose(DoubleMatrix *matrix, bool resultInTheSameMa
 		return NULL;
 	}
 	
-	DoubleMatrix* ret;
+/*	DoubleMatrix* ret;
 	if(resultInTheSameMatrix)
 	{
 		ret= matrix;
@@ -181,7 +181,7 @@ DoubleMatrix* DoubleMatrixTranspose(DoubleMatrix *matrix, bool resultInTheSameMa
 		{
 			return NULL;
 		}
-	}
+	}*/
 	int lines, columns, counter;
 	lines= matrix->lines;
 	columns= matrix->columns;
@@ -194,22 +194,29 @@ DoubleMatrix* DoubleMatrixTranspose(DoubleMatrix *matrix, bool resultInTheSameMa
 		{
 			DoubleMatrixSetElement(
 									temp,
-									count2,
 									count1,
+									count2,
 									DoubleMatrixGetElement(
 										matrix,
-										count1,
-										count2
+										count2,
+										count1
 									)
 								);
 		}
 	}
-	free(ret->elements);
-	ret->elements= temp->elements;
-	free(temp);
-	ret->lines= columns;
-	ret->columns= lines;
-	return ret;
+	if(!resultInTheSameMatrix)
+	{
+		return temp;
+	}
+	else
+	{
+		matrix->lines= columns;
+		matrix->columns= lines;
+		free(matrix->elements);
+		matrix->elements= temp->elements;
+		free(temp);
+		return matrix;
+	}
 }
 
 void DoubleMatrixPrint(DoubleMatrix* matrix, FILE *output, const char *doubleFormat, const char *betweenLinesFormat)
@@ -408,6 +415,8 @@ DoubleMatrix *DoubleMatrixInverse(DoubleMatrix *matrix)
 	return ret;
 }
 
+#define DEBUG_MATRIX_MULT
+
 DoubleMatrix* DoubleMatrixMultiplication(DoubleMatrix *a, DoubleMatrix *b)
 {
 	DoubleMatrix* ret;
@@ -416,21 +425,37 @@ DoubleMatrix* DoubleMatrixMultiplication(DoubleMatrix *a, DoubleMatrix *b)
 		fprintf(stderr, "%s:%s:%d\t\tMatrices not compatible for multiplication.\n", __func__, __FILE__, __LINE__);
 		return NULL;
 	}
+#ifdef DEBUG_MATRIX_MULT
+	printf("'a'' is %dx%d and b is %dx%d\n", a->lines, a->columns, b->lines, b->columns);
+	printf("ret is %dx%d\n", a->lines, b->columns);
+#endif
 	ret= NewDoubleMatrix(a->lines, b->columns);
 	if(NULL == ret)
 	{
+#ifdef DEBUG_MATRIX_MULT
+	printf("Chegou aqui! \t%s:%d\n", __FILE__, __LINE__);
+#endif
 		return NULL;
 	}
+#ifdef DEBUG_MATRIX_MULT
+	printf("Chegou aqui! \t%s:%d\n", __FILE__, __LINE__);
+#endif
 	int count1, count2, count3;
 	for(count1=0; count1 < ret->lines; count1++)
 	{
 		for(count2=0; count2 < ret->columns; count2++)
 		{
 			double sum=0;
-			for(count3=0; count3 < a->lines; count3++)
+			for(count3=0; count3 < a->columns; count3++)
 			{
+#ifdef DEBUG_MATRIX_MULT
+				printf("a[%d][%d]*b[%d][%d]\n", count1, count3, count3, count2);
+#endif
 				sum+= DoubleMatrixGetElement(a, count1, count3)*DoubleMatrixGetElement(b, count3, count2);
 			}
+#ifdef DEBUG_MATRIX_MULT
+			printf("ret[%d][%d]= %d\n", count1, count2, sum);
+#endif
 			DoubleMatrixSetElement(ret, count1, count2, sum);
 		}
 	}

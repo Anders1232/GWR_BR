@@ -4,7 +4,7 @@
 #include<stdbool.h>
 #include<stdlib.h>
 #include <stdio.h>
-
+/*
 enum doubleMatrixType
 {
 	NORMAL_MATRIX,
@@ -12,12 +12,12 @@ enum doubleMatrixType
 	IDENTITY,
 	TRIANGULAR_MATRIX
 };
-
 typedef enum doubleMatrixType DoubleMatrixType;
+*/
 
 struct doubleMatrix
 {
-	DoubleMatrixType type;
+//	DoubleMatrixType type;
 	int lines;
 	int columns;
 	double *elements;

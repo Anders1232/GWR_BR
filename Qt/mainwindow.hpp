@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QListWidget>
 #include <QRadioButton>
+#include <QCheckBox>
 #include "GuiDriver.hpp"
 
 enum CoordsMode
@@ -141,6 +142,8 @@ class MainWindow : public QMainWindow
 
 		void on_distanceBetweenPointsOperation_clicked();
 
+		void on_OutputBetweenPointsFileCheckbox_clicked(bool checked);
+
 	private:
 		Ui::MainWindow *ui;
 		GuiDriver driver;
@@ -159,10 +162,14 @@ class MainWindow : public QMainWindow
 		//commonly used variables, so it is not necessary needed to findChild
 		QTabWidget *tabWidget;
 		QLineEdit *outputFileLineEdit;
+		QCheckBox *outputDistancesCheckBox;
+		QLineEdit *outputDistancesFileLineEdit;
+		QWidget *outputDistancesWidget;
 		//Implementinf myself the radioButton mechanics for radioButton on different QWidgets
 		QRadioButton *goldenRadioButton;
 		QRadioButton *singleRadioButton;
 		QRadioButton *intervalSearchRadioButton;
+
 };
 
 #endif // MAINWINDOW_H

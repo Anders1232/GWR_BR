@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>GWR BR</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QHBoxLayout" name="horizontalLayout_11">
@@ -1183,7 +1183,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QWidget" name="widget_32" native="true">
+            <widget class="QWidget" name="OutputDistancesWidget" native="true">
              <layout class="QHBoxLayout" name="horizontalLayout_25">
               <item>
                <widget class="QLabel" name="OutputBetweenpointsLabel">
