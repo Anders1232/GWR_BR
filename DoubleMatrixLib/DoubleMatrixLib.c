@@ -334,6 +334,8 @@ DoubleMatrix* NewColumnDoubleMatrixFromMatrix(DoubleMatrix *origin, int columnFr
 	return ret;
 }
 
+//#define DEBUG_DETERMINANT
+
 double DoubleMatrixDeterminant(DoubleMatrix *mat)
 {
 	if(mat->lines != mat->columns)
@@ -348,15 +350,33 @@ double DoubleMatrixDeterminant(DoubleMatrix *mat)
 		for(count2=0; count2 < mat->lines; count2++)//diagonal principal
 		{
 			temp*= DoubleMatrixGetElement(mat, count2, (count+count2)%(mat->lines) );
+#ifdef DEBUG_DETERMINANT
+			printf("[incremental]temp *= mat[%d][%d]\n", count2, (count+count2)%(mat->lines));
+#endif
 		}
+#ifdef DEBUG_DETERMINANT
+		printf("temp = %lf\n", temp);
+#endif
 		result+=temp;
 		temp=1;
 		for(count2=0; count2 < mat->lines; count2++)//diagonal secundária
 		{
-			temp*= DoubleMatrixGetElement(mat, count2, (count-count2)%(mat->lines) );
+			aux= (count-count2)%(mat->lines);
+			if(0 > aux)
+			{
+				aux+= mat->lines;
+			}
+			temp*= DoubleMatrixGetElement(mat, count2, aux);
+#ifdef DEBUG_DETERMINANT
+			printf("[decremental]temp *= mat[%d][%d](%lf)\n", count2, aux, DoubleMatrixGetElement(mat, count2, aux));
+#endif
 		}
+#ifdef DEBUG_DETERMINANT
+		printf("temp = %lf\n", temp);
+#endif
 		result-=temp;
 	}
+	return result;
 }
 
 DoubleMatrix *DoubleMatrixInverse(DoubleMatrix *matrix)
@@ -415,7 +435,7 @@ DoubleMatrix *DoubleMatrixInverse(DoubleMatrix *matrix)
 	return ret;
 }
 
-#define DEBUG_MATRIX_MULT
+//#define DEBUG_MATRIX_MULT
 
 DoubleMatrix* DoubleMatrixMultiplication(DoubleMatrix *a, DoubleMatrix *b)
 {
@@ -454,7 +474,7 @@ DoubleMatrix* DoubleMatrixMultiplication(DoubleMatrix *a, DoubleMatrix *b)
 				sum+= DoubleMatrixGetElement(a, count1, count3)*DoubleMatrixGetElement(b, count3, count2);
 			}
 #ifdef DEBUG_MATRIX_MULT
-			printf("ret[%d][%d]= %d\n", count1, count2, sum);
+			printf("ret[%d][%d]= %lf\n", count1, count2, sum);
 #endif
 			DoubleMatrixSetElement(ret, count1, count2, sum);
 		}

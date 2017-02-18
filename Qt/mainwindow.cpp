@@ -189,6 +189,7 @@ void MainWindow::on_LoadButton_clicked()
 	DoubleMatrixPrint(transpose, tempFile, "%lf\t", "\n");
 	DoubleMatrix *squared= DoubleMatrixMultiplication(loadedTable->matrix, transpose);
 	fprintf(tempFile, "produto pela transposta:\n\n");
+	DoubleMatrixPrint(squared, tempFile, "%lf\t", "\n");
 	fprintf(tempFile, "\ndeterminante: %lf\n", DoubleMatrixDeterminant(squared));
 	DeleteDoubleMatrix(transpose);
 	DeleteDoubleMatrix(squared);
