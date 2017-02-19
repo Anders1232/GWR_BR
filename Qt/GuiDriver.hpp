@@ -32,6 +32,7 @@ class GuiDriver
 							std::string fileName,
 							char separator,
 							std::string outputFileName,
+							std::string outputDistanceBetweenPointsFileName,
 							int modelType,
 							std::list<std::string> const &variables,
 							std::string const &identifier,
@@ -44,6 +45,14 @@ class GuiDriver
 						);
 	private:
 		NamedColumnDoubleTable *table;
+		QString CalculateDistanceBetweenPoints(
+				std::string fileName,
+				char separator,
+				std::string outputFileName,
+				const std::string &latitude,
+				const std::string &longitude
+		);
+
 //		int modelType;
 };
 

@@ -144,6 +144,8 @@ class MainWindow : public QMainWindow
 
 		void on_OutputBetweenPointsFileCheckbox_clicked(bool checked);
 
+		void on_OutputBetweenPointsSelectButton_clicked();
+
 	private:
 		Ui::MainWindow *ui;
 		GuiDriver driver;

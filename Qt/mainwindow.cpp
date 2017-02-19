@@ -115,11 +115,6 @@ MainWindow::MainWindow(QWidget *parent) :
 	separator = '\t';
 	fileName= "";
 
-/*	QLocale loc = QLocale::system(); // current locale
-	loc.setNumberOptions(QLocale::RejectGroupSeparator);
-	loc.setNumberOptions(QLocale::NumberOption::UnitedStates); // borrow number options from the "C" locale
-	QLocale::setDefault(QLocale(QLocale::English, QLocale::UnitedStates)); // set as default
-*/
 }
 
 MainWindow::~MainWindow()
@@ -215,8 +210,9 @@ void MainWindow::on_LoadButton_clicked()
 	}
 
 
-	outputFileLineEdit->setText(QString::fromStdString( RemoveExtension(RemovePath(fileName.toStdString()) ) + "_result.txt") );
-
+	QString outputFileName= QString::fromStdString( RemoveExtension(RemovePath(fileName.toStdString()) ) );
+	outputFileLineEdit->setText(outputFileName + "_result.txt");
+	outputDistancesFileLineEdit->setText(outputFileName + "_distances.csv");
 
 	tabWidget->setCurrentIndex(2);
 }
@@ -685,8 +681,17 @@ void MainWindow::on_executeStartComputingButton_clicked()
 	}
 
 	std::string outputfileName= outputFileLineEdit->text().toStdString();
+	std::string outputDistanceBetweenPointsFileName;
+	if(outputDistancesCheckBox->isChecked())
+	{
+		outputDistanceBetweenPointsFileName= outputDistancesFileLineEdit->text().toStdString();
+	}
+	else
+	{
+		outputDistanceBetweenPointsFileName = "";
+	}
 
-	QString result = driver.Calculate(fileName.toStdString(), separator, outputfileName, modelType, *vList, identifer, dependent, latitude, longitude, offset, *lvList, *gvList);
+	QString result = driver.Calculate(fileName.toStdString(), separator, outputfileName, outputDistanceBetweenPointsFileName, modelType, *vList, identifer, dependent, latitude, longitude, offset, *lvList, *gvList);
 //	QString result = driver.Calculate(fileName.toLocal8Bit().toStdString(), separator, modelType, *vList, identifer, dependent, latitude, longitude, offset, *lvList, *gvList);
 
 	QTextEdit *resultArea= this->findChild<QTextEdit*>("OutputTextEdit");
@@ -747,6 +752,7 @@ void MainWindow::on_OutputFileSelectButton_clicked()
 		fileName  = fileName +".txt";
 	}
 	outputFileLineEdit->setText(fileName);
+	outputDistancesFileLineEdit->setText(QString:: fromStdString(RemoveExtension(fileName.toStdString() ) + "_distaces.csv" ) );
 	//fazer mais coisas aq
 }
 
@@ -845,4 +851,16 @@ void MainWindow::on_distanceBetweenPointsOperation_clicked()
 void MainWindow::on_OutputBetweenPointsFileCheckbox_clicked(bool checked)
 {
 	outputDistancesWidget->setEnabled(checked);
+}
+
+void MainWindow::on_OutputBetweenPointsSelectButton_clicked()
+{
+	QString fileName = QFileDialog::getSaveFileName(this, tr("Open File"),
+													"/home",
+													tr("Text File (*.txt)::CSV File (*.csv);; Any File(*)"));
+	if( (!fileName.endsWith(".txt") ) && (!fileName.endsWith(".csv") ) )
+	{
+		fileName  = fileName +".csv";
+	}
+	outputDistancesFileLineEdit->setText(fileName);
 }

@@ -71,6 +71,7 @@ QString GuiDriver::Calculate(
 					std::string fileName,
 					char separator,
 					std::string outputFileName,
+					std::string outputDistanceBetweenPointsFileName,
 					int modelType,
 					std::list<std::string> const &variables,
 					std::string const &identifier,
@@ -103,6 +104,10 @@ QString GuiDriver::Calculate(
 			ret+= aux;
 		}
 		fclose(temp);
+		if("" != outputDistanceBetweenPointsFileName)
+		{
+			CalculateDistanceBetweenPoints(fileName, separator, outputDistanceBetweenPointsFileName, latitude, longitude);
+		}
 		return(ret);
 	}
 	else if (MODE_DEPENDENT_TIMES_OFFSET == modelType)
@@ -123,9 +128,13 @@ QString GuiDriver::Calculate(
 		fprintf(temp, "Result:" NEW_LINE NEW_LINE);
 		DoubleMatrixPrint(result, temp, "\t%lf", NEW_LINE);
 		QString ret= "";
+		if("" != outputDistanceBetweenPointsFileName)
+		{
+			CalculateDistanceBetweenPoints(fileName, separator, outputDistanceBetweenPointsFileName, latitude, longitude);
+		}
 	}
 	else if(MODE_DISTANCE_BETWEEN_POITS == modelType)
-	{
+/*	{
 		double min, med, max;
 		int column1= NamedColumnDoubleTable_GetColumnIndex(table, latitude.c_str());
 		int column2= NamedColumnDoubleTable_GetColumnIndex(table, longitude.c_str());
@@ -163,6 +172,60 @@ QString GuiDriver::Calculate(
 
 
 	}
+	*/
+	{
+		return 	CalculateDistanceBetweenPoints(fileName, separator, outputDistanceBetweenPointsFileName, latitude, longitude);
+
+	}
 	return QString("");
+
 }
 
+QString GuiDriver::CalculateDistanceBetweenPoints
+(
+		std::string fileName,
+		char separator,
+		std::string outputFileName,
+		const std::string &latitude,
+		const std::string &longitude
+)
+{
+	double min, med, max;
+	int column1= NamedColumnDoubleTable_GetColumnIndex(table, latitude.c_str());
+	int column2= NamedColumnDoubleTable_GetColumnIndex(table, longitude.c_str());
+	double **result= DistanceBetweenAllPoints(table->matrix, column1, column2, &min, &max, false);
+	med= min+max/2;
+	FILE *temp= fopen(outputFileName.c_str(), "w+");;
+	fprintf(temp, "GWR BR" NEW_LINE);
+	fprintf(temp, "File: %s\t\t\tDelimiter: %c(%d)" NEW_LINE, fileName.c_str(), separator, separator);
+	fprintf(temp, "Operation: BetweenPoints (Longitude, Latitude)" NEW_LINE);
+	fprintf(temp, "Latitude column: %s" NEW_LINE, latitude.c_str());
+	fprintf(temp, "Longitude column: %s" NEW_LINE, longitude.c_str());
+	fprintf(temp, "Lower distance: %lf" NEW_LINE, min);
+	fprintf(temp, "Biggest distance: %lf" NEW_LINE, max);
+	fprintf(temp, "Result:" NEW_LINE NEW_LINE);
+	for(int count=0; count < table->matrix->lines; count++)
+	{
+		for(int count2= 0; count2<= count-1; count2++)
+		{
+			fprintf(temp, "%lf,", result[count][count2]);
+		}
+		fprintf(temp, "%lf", result[count][count]);
+		fprintf(temp, NEW_LINE);
+	}
+	QString ret= "";
+	rewind(temp);
+	char aux;
+	while(EOF != (aux= getc(temp)))
+	{
+		ret+= aux;
+	}
+	fclose(temp);
+	for(int count=0; count < table->matrix->lines; count++ )
+	{
+		free(result[count]);
+	}
+	free(result);
+	return(ret);
+
+}
