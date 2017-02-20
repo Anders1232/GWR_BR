@@ -182,7 +182,7 @@ void MainWindow::on_LoadButton_clicked()
 	DoubleMatrix *transpose= DoubleMatrixTranspose(loadedTable->matrix, false);
 	fprintf(tempFile, "\nTranspondo:\n\n");
 	DoubleMatrixPrint(transpose, tempFile, "%lf\t", "\n");
-	DoubleMatrix *squared= DoubleMatrixMultiplication(loadedTable->matrix, transpose);
+	DoubleMatrix *squared= DoubleMatrixMultiplication(transpose, loadedTable->matrix);
 	fprintf(tempFile, "produto pela transposta:\n\n");
 	DoubleMatrixPrint(squared, tempFile, "%lf\t", "\n");
 	fprintf(tempFile, "\ndeterminante: %lf\n", DoubleMatrixDeterminant(squared));
@@ -752,7 +752,7 @@ void MainWindow::on_OutputFileSelectButton_clicked()
 		fileName  = fileName +".txt";
 	}
 	outputFileLineEdit->setText(fileName);
-	outputDistancesFileLineEdit->setText(QString:: fromStdString(RemoveExtension(fileName.toStdString() ) + "_distaces.csv" ) );
+	outputDistancesFileLineEdit->setText(QString:: fromStdString(RemoveExtension(fileName.toStdString() ) + "_distances.csv" ) );
 	//fazer mais coisas aq
 }
 
