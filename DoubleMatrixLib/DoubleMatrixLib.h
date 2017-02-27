@@ -77,5 +77,7 @@ DoubleMatrix* NewLineDoubleMatrixFromMatrix(DoubleMatrix *origin, int lineFromOr
 DoubleMatrix* NewColumnDoubleMatrixFromMatrix(DoubleMatrix *origin, int columnFromOrigin);
 double DoubleMatrixDeterminant(DoubleMatrix *mat);
 DoubleMatrix *DoubleMatrixInverse(DoubleMatrix *matrix);
+void DoubleMatrixConcatenateColumn(DoubleMatrix *mainMatrix, DoubleMatrix *matrixWithWantedColumn, int wantedColumn);
+void DoubleMatrixConcatenateLine(DoubleMatrix *mainMatrix, DoubleMatrix *matrixWithWantedLine, int wantedLine);
 
 #endif
