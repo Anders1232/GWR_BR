@@ -296,6 +296,7 @@ void func1(double min, double max, double *h0, double *h1, double *h2, double *h
 	else
 	{
 		CvAux();
+//		cv1= ((y[i]-yhat)#wt)`*(y[i]-yhat);
 	}
 }
 
@@ -396,7 +397,8 @@ void func1(double min, double max, double *h0, double *h1, double *h2, double *h
 		DoubleMatrixConcatenateLine(x1, x, position);
 		DoubleMatrixConcatenateLine(y1, y, position);
 	}
-	if(DoubleMatrixDeterminant())
+//	if(DoubleMatrixDeterminant()) //aqui faz uso do wt1, que a princípio era pra ser ignorado
+	//aqui tem 	yhat[i]=x[i,]*b; aparentemente está sobrescrevendo uma coluna da matriz por outra de outra matriz resultado de uma multiplicação
 }
 
 ? CvAux2(bool distanceInKm)
