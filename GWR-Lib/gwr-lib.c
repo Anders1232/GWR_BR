@@ -156,7 +156,7 @@ double** DistanceBetweenAllPoints(DoubleMatrix* base, int yVarColumn, int xVarCo
 	}
 }
 
-#define GOLDEN_PRONTO
+//#define GOLDEN_PRONTO
 #ifdef GOLDEN_PRONTO
 void Golden(DoubleMatrix* base, int yVarColumn, int xVarColumn, int x_dCoord, int *y_dCoord, KernelType method, bool distanceInKM)
 {
@@ -196,11 +196,10 @@ void Golden(DoubleMatrix* base, int yVarColumn, int xVarColumn, int x_dCoord, in
 }
 #endif
 
-#define F1_PRONTO
+//#define F1_PRONTO
 #ifdef F1_PRONTO
 void func1(double min, double max, double *h0, double *h1, double *h2, double *h3, KernelType method)
 {
-	//dúvida: aparentenmente fazer isso em loop é inútil
 	double ax, bx, cx, r, tol, c;
 	ax= min;
 	bx= (min+max)/2;
@@ -280,8 +279,18 @@ void func1(double min, double max, double *h0, double *h1, double *h2, double *h
 }
 #endif
 
-#define CV_PRONTO
+//#define CV_PRONTO
 #ifdef CV_PRONTO
+
+static double Sub(double a, double b)
+{
+	return a-b;
+}
+
+static double Div(double a, double b)
+{
+	return a/b;
+}
 
 ? cv(?, DoubleMatrix *data, bool distanceInKm, kernelType method)
 {
@@ -289,14 +298,23 @@ void func1(double min, double max, double *h0, double *h1, double *h2, double *h
 	{
 		int i, j;
 		for(i=0; i < data->lines; i++)
-		{//isolar em uma funçao 01
+		{
 			CvAux1();
 		}
 	}
 	else
 	{
 		CvAux();
-//		cv1= ((y[i]-yhat)#wt)`*(y[i]-yhat);
+#ifdef USE_WT
+//		cv1= ((y[i]-yhat)#wt)`*(y[i]-yhat);]
+		DoubleMatrix *temp= NewLineDoubleMatrixFromMatrix(y, i);
+		DoubleMatrixElementBinaryOperation(temp, yhat, true, Sub);//temp = y[i] -yhat
+		DoubleMatrix *temp2= DoubleMatrixElementBinaryOperation(temp, wt, false, Div);
+		DoubleMatrixTranspose(temp2, true);
+		cv1= DoubleMatrixMultiplication(temp2, temp);
+		DeleteDoubleMatrix(temp);
+		DeleteDoubleMatrix(temp2);
+#endif
 	}
 }
 
@@ -399,6 +417,12 @@ void func1(double min, double max, double *h0, double *h1, double *h2, double *h
 	}
 //	if(DoubleMatrixDeterminant()) //aqui faz uso do wt1, que a princípio era pra ser ignorado
 	//aqui tem 	yhat[i]=x[i,]*b; aparentemente está sobrescrevendo uma coluna da matriz por outra de outra matriz resultado de uma multiplicação
+	DoubleMatrix *temp= NewLineDoubleMatrixFromMatrix(x, i);
+	DoubleMatrix *temp2 = DoubleMatrixMultiplication(temp, b);
+	for(count =0; count < yhat->columns, count++)
+	{
+		DoubleMatrixSetElement(yhat, i, count, DoubleMatrixGetElement(temp2, i, count));
+	}
 }
 
 ? CvAux2(bool distanceInKm)
