@@ -1,5 +1,6 @@
 #include "gwr-lib.h"
 #include <math.h>
+#include "string.h"
 
 #define APPROX_EARTH_RADIUS (6371)
 
@@ -156,7 +157,7 @@ double** DistanceBetweenAllPoints(DoubleMatrix* base, int yVarColumn, int xVarCo
 	}
 }
 
-//#define GOLDEN_PRONTO
+#define GOLDEN_PRONTO
 #ifdef GOLDEN_PRONTO
 void Golden(DoubleMatrix* base, int yVarColumn, int xVarColumn, int x_dCoord, int *y_dCoord, KernelType method, bool distanceInKM)
 {
@@ -173,7 +174,7 @@ void Golden(DoubleMatrix* base, int yVarColumn, int xVarColumn, int x_dCoord, in
 
 	double h0, h1, h2, h3;
 
-	DoubleMatrix *x= NewDoubleMatrix(base->lines, 1);/**/
+	DoubleMatrix *x= NewDoubleMatrix(base->lines, 1);/*inicializar?*/
 	DoubleMatrix *yhat;
 	if(ADAPTIVE_N == method)
 	{
@@ -196,7 +197,7 @@ void Golden(DoubleMatrix* base, int yVarColumn, int xVarColumn, int x_dCoord, in
 }
 #endif
 
-//#define F1_PRONTO
+#define F1_PRONTO
 #ifdef F1_PRONTO
 void func1(double min, double max, double *h0, double *h1, double *h2, double *h3, KernelType method)
 {
@@ -279,7 +280,7 @@ void func1(double min, double max, double *h0, double *h1, double *h2, double *h
 }
 #endif
 
-//#define CV_PRONTO
+#define CV_PRONTO
 #ifdef CV_PRONTO
 
 static double Sub(double a, double b)
@@ -292,7 +293,7 @@ static double Div(double a, double b)
 	return a/b;
 }
 
-? cv(?, DoubleMatrix *data, bool distanceInKm, kernelType method)
+? CV(?, DoubleMatrix *data, int oneOrTwo, bool distanceInKm, kernelType method)
 {
 	if(ADAPTATIVE_N != METHOD)
 	{
@@ -368,7 +369,8 @@ static double Div(double a, double b)
 					);
 		}
 		if(
-				(FIXED_G == method  && d1 !=0 )
+				((FIXED_G == method  && d1 !=0) && oneOrTwo == 1)//aqui é a única diferença entre o cv1 e o cv2
+				|| (FIXED_G == method && (d1<=MAXV*1 && d1 !=0) && oneOrTwo ==2)
 				|| ((FIXED_BSQ == method || ADAPTIVE_N == method) && d1 <= h1 * && d1 !=0 )
 				||(ADAPTIVE_BSQ == method && d1 !=0 )
 			)
@@ -396,6 +398,14 @@ static double Div(double a, double b)
 		y1= NewLineDoubleMatrixFromMatrix(y, i);//desalocar matriz anterior
 		//algo é ordenado aqui
 		DoubleMatrixConcatenateColumn(dist, ?);//Ver que operação dos ":" faz, pois aqui está 1:nrow(dist)
+		//se eu entendi certo o objeivo é contatenar a transposta de dist a dist
+		for(int count=0; count < dist->lines; count++)
+		{
+			DoubleMatrix *temp= NewLineDoubleMatrixFromMatrix(dist, count);
+			DoubleMatrixTranspose(temp, true);
+			DoubleMatrixConcatenateColumn(dist, temp, 0);
+			DeleteDoubleMatrix(temp);
+		}
 		w=NewDoubleMatrix(n, 2);//verificar se precisa desalocar antes
 		double hn= DoubleMatrixGetElement(dist, *h1, 3);
 		for(int jj=2; jj < n; jj++)
@@ -410,8 +420,20 @@ static double Div(double a, double b)
 			}
 			DoubleMatrixSetElement(w, jj, 2, DoubleMatrixGetElement(dist, jj, 2));
 		}
-		position =;//whot?? w[loc(w[,1]>0),2];
+		//whot??position= w[loc(w[,1]>0),2];
+		for(int count=0; count < w->lines; count++)
+		{
+			if(DoubleMatrixGetElement(w, count, 1) > 0)
+			{
+				position= DoubleMatrixGetElement(w, count, 2);
+			}
+		}
 		//whot?  w={0}//w[position,1];
+		//supondo que essa chaves atribua zero a todos os elementos de w, pergunta se é isso mesmo
+		memset(w->elements, 0, w->lines*w->columns);
+//		DoubleMatrixConcatenateLine(w, w, position, 1);
+		//whot? 	w={0}//w[position,1];//está concatenando um elemento numa linha
+
 		DoubleMatrixConcatenateLine(x1, x, position);
 		DoubleMatrixConcatenateLine(y1, y, position);
 	}

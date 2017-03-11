@@ -5,10 +5,10 @@ start cv2;
 %END;
 		d=j(1,3,0);
 		dist=d;
-	do j=1 to n;															 
+	do j=1 to n;
 		%IF %UPCASE(&DISTANCEKM)=YES %THEN %DO;
-		dif=abs(COORD[i,1]-COORD[j,1]);   
-		raio=arcos(-1)/180;   
+		dif=abs(COORD[i,1]-COORD[j,1]);
+		raio=arcos(-1)/180;
 		argument=sin(COORD[i,2]*raio)*sin(COORD[j,2]*raio)+cos(COORD[i,2]*raio)*cos(COORD[j,2]*raio)*cos(dif*raio);
 		if argument>=1 then arco=0;
 		else
