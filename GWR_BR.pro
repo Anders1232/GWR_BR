@@ -11,7 +11,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 INCLUDEPATH += $$PWD/DoubleMatrixLib \
             $$PWD/Core \
             $$PWD/NamedColumnDoubleTable\
-            $$PWD/GWR-Lib
+	    $$PWD/GWR-Lib\
+	    $$PWD/FowardList
 
 TARGET = GWR_BR
 TEMPLATE = app
@@ -32,6 +33,7 @@ SOURCES +=\
     Qt/GuiDriver.cpp \
     Core/main.cpp \
     GWR-Lib/gwr-lib.c \
+    FowardList/FowardList.c
 
 HEADERS  += \
     DoubleMatrixLib/DoubleMatrixLib.h \
@@ -39,7 +41,9 @@ HEADERS  += \
     Qt/GuiDriver.hpp \
     Core/GuiInterface.h \
     Qt/mainwindow.hpp \
-    GWR-Lib/gwr-lib.h
+    GWR-Lib/gwr-lib.h \
+    FowardList/FowardList.h
 
 FORMS    += Qt/mainwindow.ui
 
+LIBS += -lpthread

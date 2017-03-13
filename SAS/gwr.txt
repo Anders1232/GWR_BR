@@ -64,7 +64,7 @@ ni=ncol(unique(ci));
 nh=ncol(unique(sh));
 
 %IF %UPCASE(&METHOD)=ADAPTIVEN %THEN %DO;
-	use &DHV;read all into hv;
+	use &DHV;read all into hv;// *ver isso aqui, pois até o momento foi ignorado
 %END;
 x=j(n,1,1)||x;
 yhat=j(n,1,0);

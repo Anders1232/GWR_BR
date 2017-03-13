@@ -159,7 +159,7 @@ double** DistanceBetweenAllPoints(DoubleMatrix* base, int yVarColumn, int xVarCo
 
 #define GOLDEN_PRONTO
 #ifdef GOLDEN_PRONTO
-void Golden(DoubleMatrix* base, int yVarColumn, int xVarColumn, int x_dCoord, int *y_dCoord, KernelType method, bool distanceInKM)
+void** Golden(GoldenArguments* args)//vai retornar a matriz de distâncias se for pedido, caso contrário retorna NULL
 {
 /*	DoubleMatrix *ret= NewDoubleMatrix(base->columns, base->lines);
 	if(NULL == ret)
@@ -169,12 +169,13 @@ void Golden(DoubleMatrix* base, int yVarColumn, int xVarColumn, int x_dCoord, in
 */
 	//calculando matriz de distâncias para apenas pegar a menor e a maior distância
 	double minDist/*, medDist*/, maxDist;
-	DistanceBetweenAllPoints(base, yVarColumn, xVarColumn, &minDist, &maxDist, true);
+	double **distances= DistanceBetweenAllPoints(base, yVarColumn, xVarColumn, &minDist, &maxDist, true);
 //	medDist=(maxDist + minDist)/2;
 
 	double h0, h1, h2, h3;
 
-	DoubleMatrix *x= NewDoubleMatrix(base->lines, 1);/*inicializar?*/
+	DoubleMatrix *x= NewColumnDoubleMatrixFromMatrix(args->data, args->xVarColumn_independentVariable);
+	DoubleMatrix *y= NewColumnDoubleMatrixFromMatrix(args->data, args->yVarColumn_dependentLocalVariables);
 	DoubleMatrix *yhat;
 	if(ADAPTIVE_N == method)
 	{
@@ -182,6 +183,7 @@ void Golden(DoubleMatrix* base, int yVarColumn, int xVarColumn, int x_dCoord, in
 //		yhat= NewDoubleMatrix(1, 1);	// o yhat é declarado na linha 47 como uma matrix coluna de n linhas e depois de declarado como uma matriz 1x1 de valor zero na linha 50 e depois não é mais usado
 //aparentemente é usado nos CVs
 		yhat= NewDoubleMatrix(1, 1);
+		yhat->elements[0]=0;
 		for(int i =1; i < base->lines; i++)
 		{
 			func1(minDist, maxDist, &h0, &h1, &h2, &h3);
@@ -190,16 +192,25 @@ void Golden(DoubleMatrix* base, int yVarColumn, int xVarColumn, int x_dCoord, in
 	else
 	{
 		yhat= NewDoubleMatrix(base->lines, 1);
+		memset(yhat->elements, 0, sizeof(double)*yhat->lines);
 		func1(minDist, maxDist, &h0, &h1, &h2, &h3);
 	}
 	//aqui tem o comando quit, o que ele deve fazer??
-	return /* enfim chegamos no final da função, ver o que deve ser retornado*/;
+	if(args->returnDistancesMatrix)
+	{
+		return distances;
+	}
+	else
+	{
+		free(distances);
+		return NULL;
+	}
 }
 #endif
 
 #define F1_PRONTO
 #ifdef F1_PRONTO
-void func1(double min, double max, double *h0, double *h1, double *h2, double *h3, KernelType method)
+void func1(double min, double max, double *h0, double *h1, double *h2, double *h3, GoldenArguments *args, double *outGolden, dobule *outXMin)//de acordo com o código SAS o outGolden e outXMin só são retornados(printados) caso o método não seja adaptive N, mas como em todos os casos essas variáveis existem, estou retornando-as
 {
 	double ax, bx, cx, r, tol, c;
 	ax= min;
@@ -221,12 +232,19 @@ void func1(double min, double max, double *h0, double *h1, double *h2, double *h
 		*h2=bx;
 		*h1=bx-c*(bx-ax);
 	}
-	double cv1= CV1();
-	double cv2= CV2();
+	double cv1= CrossValidation();
+	double cv2= CrossValidation();
 
 	if(ADAPTIVE_N != method)
 	{
 		//Essa função deve retornar(não nesse momento, mas quando ela retornar) h1, cv1, h2, cv2
+		GoldenDataIfNotAdpN *dataToReturn= malloc(sizeof(GoldenDataIfNotAdpN));//isolar numa função 3
+		ASSERT(dataToReturn);
+		dataToReturn->cv1= cv1;
+		dataToReturn->cv2= cv2;
+		dataToReturn-> h1= h1;
+		dataToReturn->h2= h2;
+		FowardListAddElement(args->communication, dataToReturn);
 	}
 	do
 	{
@@ -246,12 +264,22 @@ void func1(double min, double max, double *h0, double *h1, double *h2, double *h
 			cv2=cv1;
 			cv1= CV1();
 		}
+		if(ADAPTIVE_N != method)
+		{
+			GoldenDataIfNotAdpN *dataToReturn= malloc(sizeof(GoldenDataIfNotAdpN));//isolar numa função 3
+			ASSERT(dataToReturn);
+			dataToReturn->cv1= cv1;
+			dataToReturn->cv2= cv2;
+			dataToReturn-> h1= h1;
+			dataToReturn->h2= h2;
+			FowardListAddElement(args->communication, dataToReturn);
+		}
 	}
 	while(abs(*h3-*h0) > tol*(abs(*h1)+abs(*h2)));
 	if(cv1 < cv2)
 	{
-		golden = cv1;
-		xmin= *h1;
+		*outGolden = cv1;
+		*outXMin= *h1;
 		if(ADAPTIVE_BSQ == method)
 		{
 			xmin= floor(*h1);//a função floor existe em math.h
@@ -259,24 +287,22 @@ void func1(double min, double max, double *h0, double *h1, double *h2, double *h
 	}
 	else
 	{
-		golden = cv2;
-		xmin= *h2;
+		*outGolden = cv2;
+		*outXMin= *h2;
 		if(ADAPTIVE_BSQ == method)
 		{
-			xmin= floor(*h2);//a função floor existe em math.h
+			*outXMin= floor(*h2);//a função floor existe em math.h
 		}
 	}
-	if(ADAPTIVE_N != method)
+	if(ADAPTIVE_N == method)//tinha o caso de ser diferente mas só printava golden e xmin, que serão retornados
 	{
-		//no arquivo SAS está escrito "print golden xmin", deve-se colocar apenas um printf aqui??
-		//Suponho que seja na verdade para que esse valor seja retornado quando essa função retornar
-	}
-	else if(ADAPTIVE_N == method)
-	{
-		hv= xmin;
+		hv[1]= xmin;
+		GoldenDataIfAdpN *dataToReturn= malloc(sizeof(GoldenDataIfAdpN));
+		ASSERT(dataToReturn);
+		dataToReturn->xMin= *outXMin;
+		FowardListAddElement(dataToReturn);//supondo que esse apend está querendo retornar o xmin
 		//aqui tem o comando "append from hv", perguntar o que isso faz
 	}
-
 }
 #endif
 
@@ -293,11 +319,11 @@ static double Div(double a, double b)
 	return a/b;
 }
 
-? CV(?, DoubleMatrix *data, int oneOrTwo, bool distanceInKm, kernelType method)
+double CrossValidation(?, DoubleMatrix *data, int oneOrTwo, bool distanceInKm, kernelType method)//aqui temos um problema, estava supondo que era pra ignorar o wt, mas ele é necessariamente utilizado no cálculo do cv.
 {
 	if(ADAPTATIVE_N != METHOD)
 	{
-		int i, j;
+		int i;
 		for(i=0; i < data->lines; i++)
 		{
 			CvAux1();
@@ -305,7 +331,7 @@ static double Div(double a, double b)
 	}
 	else
 	{
-		CvAux();
+		CvAux1();
 #ifdef USE_WT
 //		cv1= ((y[i]-yhat)#wt)`*(y[i]-yhat);]
 		DoubleMatrix *temp= NewLineDoubleMatrixFromMatrix(y, i);
@@ -321,7 +347,8 @@ static double Div(double a, double b)
 
 ?CvAux1(?)
 {
-	DoubleMatrix *d= NewDoubleMatrix(1, 3);
+	DoubleMatrix *d= NewDoubleMatrixAndInitializeElements(1, 3, 0.0);
+	DoubleMatrix *dist= NewDoubleMatrixAndInitializeElements(1, 3, 0.0);
 	for(j=0; j , data->lines; j++)
 	{
 		if(distanceInKm)
