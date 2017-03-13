@@ -169,7 +169,7 @@ void** Golden(GoldenArguments* args)//vai retornar a matriz de distâncias se fo
 */
 	//calculando matriz de distâncias para apenas pegar a menor e a maior distância
 	double minDist/*, medDist*/, maxDist;
-	double **distances= DistanceBetweenAllPoints(base, yVarColumn, xVarColumn, &minDist, &maxDist, true);
+	double **distances= DistanceBetweenAllPoints(args->data, args->x_dCoord, args->y_dCoord, &minDist, &maxDist, true);
 //	medDist=(maxDist + minDist)/2;
 
 	double h0, h1, h2, h3;
@@ -177,25 +177,28 @@ void** Golden(GoldenArguments* args)//vai retornar a matriz de distâncias se fo
 	DoubleMatrix *x= NewColumnDoubleMatrixFromMatrix(args->data, args->xVarColumn_independentVariable);
 	DoubleMatrix *y= NewColumnDoubleMatrixFromMatrix(args->data, args->yVarColumn_dependentLocalVariables);
 	DoubleMatrix *yhat;
-	if(ADAPTIVE_N == method)
+	if(ADAPTIVE_N == args->method)
 	{
 		double hv= 0;// como hv é uma matriz de 1x1, vou tratar como um double
 //		yhat= NewDoubleMatrix(1, 1);	// o yhat é declarado na linha 47 como uma matrix coluna de n linhas e depois de declarado como uma matriz 1x1 de valor zero na linha 50 e depois não é mais usado
 //aparentemente é usado nos CVs
 		yhat= NewDoubleMatrix(1, 1);
 		yhat->elements[0]=0;
-		for(int i =1; i < base->lines; i++)
+		for(int i =1; i < args->data->lines; i++)
 		{
-			func1(minDist, maxDist, &h0, &h1, &h2, &h3);
+			func1(minDist, maxDist, &h0, &h1, &h2, &h3, x, y);
 		}
 	}
 	else
 	{
-		yhat= NewDoubleMatrix(base->lines, 1);
+		yhat= NewDoubleMatrix(args->data->lines, 1);
 		memset(yhat->elements, 0, sizeof(double)*yhat->lines);
 		func1(minDist, maxDist, &h0, &h1, &h2, &h3);
 	}
 	//aqui tem o comando quit, o que ele deve fazer??
+	DeleteDoubleMatrix(x);
+	DeleteDoubleMatrix(y);
+	DeleteDoubleMatrix(yhat);
 	if(args->returnDistancesMatrix)
 	{
 		return distances;
@@ -210,7 +213,7 @@ void** Golden(GoldenArguments* args)//vai retornar a matriz de distâncias se fo
 
 #define F1_PRONTO
 #ifdef F1_PRONTO
-void func1(double min, double max, double *h0, double *h1, double *h2, double *h3, GoldenArguments *args, double *outGolden, dobule *outXMin)//de acordo com o código SAS o outGolden e outXMin só são retornados(printados) caso o método não seja adaptive N, mas como em todos os casos essas variáveis existem, estou retornando-as
+void func1(double min, double max, double *h0, double *h1, double *h2, double *h3, GoldenArguments *args, DoubleMatrix *x, DoubleMatrix *y, double *outGolden, double *outXMin)//de acordo com o código SAS o outGolden e outXMin só são retornados(printados) caso o método não seja adaptive N, mas como em todos os casos essas variáveis existem, estou retornando-as
 {
 	double ax, bx, cx, r, tol, c;
 	ax= min;
@@ -235,7 +238,7 @@ void func1(double min, double max, double *h0, double *h1, double *h2, double *h
 	double cv1= CrossValidation();
 	double cv2= CrossValidation();
 
-	if(ADAPTIVE_N != method)
+	if(ADAPTIVE_N != args->method)
 	{
 		//Essa função deve retornar(não nesse momento, mas quando ela retornar) h1, cv1, h2, cv2
 		GoldenDataIfNotAdpN *dataToReturn= malloc(sizeof(GoldenDataIfNotAdpN));//isolar numa função 3
@@ -264,14 +267,14 @@ void func1(double min, double max, double *h0, double *h1, double *h2, double *h
 			cv2=cv1;
 			cv1= CV1();
 		}
-		if(ADAPTIVE_N != method)
+		if(ADAPTIVE_N != args->method)
 		{
 			GoldenDataIfNotAdpN *dataToReturn= malloc(sizeof(GoldenDataIfNotAdpN));//isolar numa função 3
 			ASSERT(dataToReturn);
 			dataToReturn->cv1= cv1;
 			dataToReturn->cv2= cv2;
-			dataToReturn-> h1= h1;
-			dataToReturn->h2= h2;
+			dataToReturn-> h1= *h1;
+			dataToReturn->h2= *h2;
 			FowardListAddElement(args->communication, dataToReturn);
 		}
 	}
@@ -280,7 +283,7 @@ void func1(double min, double max, double *h0, double *h1, double *h2, double *h
 	{
 		*outGolden = cv1;
 		*outXMin= *h1;
-		if(ADAPTIVE_BSQ == method)
+		if(ADAPTIVE_BSQ == args->method)
 		{
 			xmin= floor(*h1);//a função floor existe em math.h
 		}
@@ -289,18 +292,18 @@ void func1(double min, double max, double *h0, double *h1, double *h2, double *h
 	{
 		*outGolden = cv2;
 		*outXMin= *h2;
-		if(ADAPTIVE_BSQ == method)
+		if(ADAPTIVE_BSQ == args->method)
 		{
 			*outXMin= floor(*h2);//a função floor existe em math.h
 		}
 	}
-	if(ADAPTIVE_N == method)//tinha o caso de ser diferente mas só printava golden e xmin, que serão retornados
+	if(ADAPTIVE_N == args->method)//tinha o caso de ser diferente mas só printava golden e xmin, que serão retornados
 	{
 		hv[1]= xmin;
 		GoldenDataIfAdpN *dataToReturn= malloc(sizeof(GoldenDataIfAdpN));
 		ASSERT(dataToReturn);
 		dataToReturn->xMin= *outXMin;
-		FowardListAddElement(dataToReturn);//supondo que esse apend está querendo retornar o xmin
+		FowardListAddElement(args->communication, dataToReturn);//supondo que esse apend está querendo retornar o xmin
 		//aqui tem o comando "append from hv", perguntar o que isso faz
 	}
 }
@@ -326,7 +329,7 @@ double CrossValidation(?, DoubleMatrix *data, int oneOrTwo, bool distanceInKm, k
 		int i;
 		for(i=0; i < data->lines; i++)
 		{
-			CvAux1();
+			CvAux1(DoubleMatrix *data, int xCOORD, yCOORD, oneOrTwo);
 		}
 	}
 	else
@@ -345,21 +348,22 @@ double CrossValidation(?, DoubleMatrix *data, int oneOrTwo, bool distanceInKm, k
 	}
 }
 
-?CvAux1(?)
+?CvAux1(DoubleMatrix *data, int xCOORD, int yCOORD, int oneOrTwo, int i)//[DUVIDA] o estranho é que o i só deveria existir no caso do adaptive n, mas ele é usando em todos os casos
 {
 	DoubleMatrix *d= NewDoubleMatrixAndInitializeElements(1, 3, 0.0);
 	DoubleMatrix *dist= NewDoubleMatrixAndInitializeElements(1, 3, 0.0);
 	for(j=0; j , data->lines; j++)
 	{
+		double arco;
 		if(distanceInKm)
-		{
-			dif= abs(DoubleMatrixGetElement(data, i, 1) - DoubleMatrixGetElement(data, j, 1) );
+		{//o COORD é uma tabela com (variável independente, variável dependente)
+			double dif= abs(DoubleMatrixGetElement(data, i, 1) - DoubleMatrixGetElement(data, j, 1) );
 			raio= raio=arcos(-1)/180;
 			argument=
-					sin(DoubleMatrixGetElement(data, i, 2)*raio)
-					*sin(DoubleMatrixGetElement(data, j,2)*raio)
-					+cos(DoubleMatrixGetElement(data, i,2)*raio)
-					*cos(COORD[j,2]*raio)*cos(dif*raio);
+					sin(DoubleMatrixGetElement(data, i, yCOORD)*raio)
+					*sin(DoubleMatrixGetElement(data, j,yCOORD)*raio)
+					+cos(DoubleMatrixGetElement(data, i,yCOORD)*raio)
+					*cos(DoubleMatrixGetElement(data,j, yCOORD)*raio)*cos(dif*raio);
 			if(1 <= argument)
 			{
 				arco=0;
@@ -369,10 +373,10 @@ double CrossValidation(?, DoubleMatrix *data, int oneOrTwo, bool distanceInKm, k
 				//law of cosines
 				arco =
 						arcos(
-							sin(DoubleMatrixGetElement(data, i,2)*raio)
-							*sin(DoubleMatrixGetElement(data, j,2)*raio)
-							+cos(DoubleMatrixGetElement(data, i,2)*raio)
-							*cos(DoubleMatrixGetElement(data, j,2)*raio)
+							sin(DoubleMatrixGetElement(data, i,yCOORD)*raio)
+							*sin(DoubleMatrixGetElement(data, j,yCOORD)*raio)
+							+cos(DoubleMatrixGetElement(data, i,yCOORD)*raio)
+							*cos(DoubleMatrixGetElement(data, j,yCOORD)*raio)
 							*cos(dif*raio)
 						);
 			}
@@ -386,12 +390,12 @@ double CrossValidation(?, DoubleMatrix *data, int oneOrTwo, bool distanceInKm, k
 		{
 			dl= sqrt(//isolar em uma função 01
 						pow(
-							DoubleMatrixGetElement(data, i,1)
-							-DoubleMatrixGetElement(data, j,1)
+							DoubleMatrixGetElement(data, i,xCOORD)
+							-DoubleMatrixGetElement(data, j,xCOORD)
 							,2)
 						+pow(
-							DoubleMatrixGetElement(data,i,2)
-							-DoubleMatrixGetElement(data,j,2)
+							DoubleMatrixGetElement(data,i,yCOORD)
+							-DoubleMatrixGetElement(data,j,yCOORD)
 							,2)
 					);
 		}
@@ -401,14 +405,33 @@ double CrossValidation(?, DoubleMatrix *data, int oneOrTwo, bool distanceInKm, k
 				|| ((FIXED_BSQ == method || ADAPTIVE_N == method) && d1 <= h1 * && d1 !=0 )
 				||(ADAPTIVE_BSQ == method && d1 !=0 )
 			)
-		{
-			cvAux2();
+		{//foi feito um super if para tratar tantas condições
+			d[1]= i;
+			d[2]= j;
+			if(!distanceInKm)
+			{
+				d[3]= sqrt(//isolar em uma função 01
+							pow(
+								DoubleMatrixGetElement(data, i,xCOORD)
+								-DoubleMatrixGetElement(data, j,xCOORD)
+								,2)
+							+pow(
+								DoubleMatrixGetElement(data,i,yCOORD)
+								-DoubleMatrixGetElement(data,j,yCOORD)
+								,2);
+						);
+			}
+			else
+			{
+				d[3]=arco*APPROX_EARTH_RADIUS;
+			}
+			DoubleMatrixConcatenateLine(dist, d, 0);
 		}
 	}
-	u= data->lines;
-	DoubleMatrix* w= NewDoubleMatrix(u, 1);
-	DoubleMatrix *x1= NewColumnDoubleMatrixFromMatrix(matrix, i);//verificar qual a diferença dessas 2 matrizes
-	DoubleMatrix *y1= NewColumnDoubleMatrixFromMatrix(matrix, i);
+	int u= dist->lines;//[DUVIDA] x1 e y1 começam como matrizes 1x1?
+	DoubleMatrix* w= NewDoubleMatrixAndInitializeElements(u, 1, 0.0);
+	DoubleMatrix *x1= NewLineDoubleMatrixFromMatrix(data, i);//verificar qual a diferença dessas 2 matrizes
+	DoubleMatrix *y1= NewLineDoubleMatrixFromMatrix(data, i);
 	for(int jj =2; jj < u; jj++)s
 	{
 		w[jj]= exp(pow(-(DoubleMatrixGetElement(dist,jj,3)/ (*h1)),2));
@@ -474,29 +497,5 @@ double CrossValidation(?, DoubleMatrix *data, int oneOrTwo, bool distanceInKm, k
 	}
 }
 
-? CvAux2(bool distanceInKm)
-{
-	d[1]= i;
-	d[2]= j;
-	if(!distanceInKm)
-	{
-		d[3]= sqrt(//isolar em uma função 01
-					pow(
-						DoubleMatrixGetElement(data, i,1)
-						-DoubleMatrixGetElement(data, j,1)
-						,2)
-					+pow(
-						DoubleMatrixGetElement(data,i,2)
-						-DoubleMatrixGetElement(data,j,2)
-						,2);
-				);
-	}
-	else
-	{
-		d[3]=arco*APPROX_EARTH_RADIUS;
-	}
-	//ver como fazer aqui, o código SAS aqui é "dist=dist//d;"
-	// o "//" adiciona linha na tabela
-}
 
 #endif
