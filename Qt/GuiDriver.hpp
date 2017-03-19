@@ -18,6 +18,7 @@ extern "C"
 #include "gwr-lib.h"
 //#include
 }
+
 //C++ side
 class GuiDriver
 {
