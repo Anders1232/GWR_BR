@@ -334,7 +334,7 @@ static double Mult(double a, double b)
 	return a*b;
 }
 
-static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleMatrix *yhat,int xCOORD, int yCOORD, int oneOrTwo, int i, bool distanceInKm, KernelType method, double h1, double maxDistanceBetweenPoints)
+static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleMatrix *yhat,int xCOORD, int yCOORD, int oneOrTwo, int i, bool distanceInKm, KernelType method, double h1, double maxDistanceBetweenPoints, DoubleMatrix *outWT1, DoubleMatrix *outW)
 {
 	DoubleMatrix *d= NewDoubleMatrix(1, 3);
 	DoubleMatrix *dist= NewDoubleMatrixAndInitializeElements(1, 3, 0.0);
@@ -420,7 +420,10 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 	DoubleMatrix* w= NewDoubleMatrix(u, 1);
 	DoubleMatrix *x1= NewLineDoubleMatrixFromMatrix(data, i);//verificar qual a diferença dessas 2 matrizes
 	DoubleMatrix *y1= NewLineDoubleMatrixFromMatrix(data, i);
-	for(int jj =1; jj < u; jj++)
+	DoubleMatrix *wt1= NewDoubleMatrix(1, 1);
+	wt1->elements[0]=0.0;
+//	DoubleMatrix *tempWT= NewDoubleMatrixAndInitializeElements(data->lines, 1, 1.0);
+	for(int jj =2-1; jj < u; jj++)
 	{
 		if(FIXED_BSQ == method || ADAPTIVE_N == method)
 		{
@@ -444,11 +447,15 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 		}
 		DoubleMatrixConcatenateLine(x1, x, DoubleMatrixGetElement(dist, jj, 2-1));
 		DoubleMatrixConcatenateLine(y1, y, DoubleMatrixGetElement(dist, jj, 2-1));
+		//wt1=wt1//wt[dist[jj,2],]; wt é uma matriz Nx1 onde todos os elementos são 1.0
+		DoubleMatrixAddLine(wt1);
+		DoubleMatrixSetElement(wt1, wt1->lines-1, 0, 1.0);
+//		DoubleMatrixConcatenateLine(wt1,tempWT, );
 	}
 	if(ADAPTIVE_BSQ== method)
 	{
-		DoubleMatrix *x1= NewLineDoubleMatrixFromMatrix(x, i);
-		DoubleMatrix *y1= NewLineDoubleMatrixFromMatrix(y, i);
+//		DoubleMatrix *x1= NewLineDoubleMatrixFromMatrix(x, i);
+//		DoubleMatrix *y1= NewLineDoubleMatrixFromMatrix(y, i);
 		double position;
 		//algo é ordenado aqui
 //		DoubleMatrixConcatenateColumn(dist, ?);//Ver que operação dos ":" faz, pois aqui está 1:nrow(dist)
@@ -490,18 +497,33 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 
 		DoubleMatrixConcatenateLine(x1, x, position);
 		DoubleMatrixConcatenateLine(y1, y, position);
-		DeleteDoubleMatrix(x1);
-		DeleteDoubleMatrix(y1);
+//		DeleteDoubleMatrix(x1);
+//		DeleteDoubleMatrix(y1);
 	}
+	//det(x1`*(w#x1#wt1))=0 then b=j(ncol(x),1,0);
+	DoubleMatrix *aux= DoubleMatrixElementBinaryOperation(w, x1, false, Mult);//aux= w#x1
+	DoubleMatrix *aux2= DoubleMatrixElementBinaryOperation(aux, wt1, false, Mult);//aux2= w#x1#wt1
+	DeleteDoubleMatrix(aux);
+	aux= DoubleMatrixCopy(x1);
+	DoubleMatrixTranspose(aux, true);//#aux = x1'
+	DoubleMatrix *aux3= DoubleMatrixMultiplication(aux, aux2);//aux3=x1`*(w#x1#wt1)
 	DoubleMatrix *b;
-	if(0 == DoubleMatrixDeterminant())
+	if(0 == DoubleMatrixDeterminant(aux3))
 	{
 		b=NewDoubleMatrixAndInitializeElements(x->columns, 1, 0);
 	}
 	else
 	{
-//		b= //inv(x1`*(w#x1#wt1))*x1`*(w#y1#wt1);
+		//inv(x1`*(w#x1#wt1))*x1`*(w#y1#wt1);
+		b= DoubleMatrixInverse(aux3);
+		DeleteDoubleMatrix(aux3);
+		aux3= DoubleMatrixMultiplication(b, aux);//aux3=inv(x1`*(w#x1#wt1))*x1`
+		DeleteDoubleMatrix(b);
+		b= DoubleMatrixMultiplication(aux3, aux2);
 	}
+	DeleteDoubleMatrix(aux3);
+	DeleteDoubleMatrix(aux2);
+	DeleteDoubleMatrix(aux);
 //	if(DoubleMatrixDeterminant()) //aqui faz uso do wt1, que a princípio era pra ser ignorado
 	//aqui tem 	yhat[i]=x[i,]*b; aparentemente está sobrescrevendo uma coluna da matriz por outra de outra matriz resultado de uma multiplicação
 	DoubleMatrix *temp= NewLineDoubleMatrixFromMatrix(x, i);
@@ -515,23 +537,28 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 	DeleteDoubleMatrix(temp2);
 	DeleteDoubleMatrix(x1);
 	DeleteDoubleMatrix(y1);
+	outWT1= wt1;
+	outW=w;
 }
 
 static double CrossValidation(DoubleMatrix *data, int oneOrTwo, bool distanceInKm, KernelType method, int forCount, int xCoord, int yCoord, DoubleMatrix *x, DoubleMatrix *y, DoubleMatrix *yhat, double h1, double maxDistanceBetweenPoints)
 {
+	DoubleMatrix *wt1= NULL;
+	DoubleMatrix *w= NULL;
 	if(ADAPTIVE_N != method)
 	{
 		int i;
 		for(i=0; i < data->lines; i++)
 		{
-			CvAux1(data, x, y, yhat, xCoord, yCoord, oneOrTwo, i, distanceInKm, method, h1, maxDistanceBetweenPoints);
+			CvAux1(data, x, y, yhat, xCoord, yCoord, oneOrTwo, i, distanceInKm, method, h1, maxDistanceBetweenPoints, wt1, w);
 		}
 	}
 	else
 	{
-		CvAux1(data, x, y, yhat, xCoord, yCoord, oneOrTwo, forCount, distanceInKm, method, h1, maxDistanceBetweenPoints);
+		CvAux1(data, x, y, yhat, xCoord, yCoord, oneOrTwo, forCount, distanceInKm, method, h1, maxDistanceBetweenPoints, wt1, w);
 //		cv1= ((y[i]-yhat)#wt1#w)`*(y[i]-yhat);
 	}
+	DoubleMatrix *cv;
 	if(ADAPTIVE_N != method)
 	{
 		DoubleMatrix *temp= DoubleMatrixCopy(y);
@@ -539,12 +566,9 @@ static double CrossValidation(DoubleMatrix *data, int oneOrTwo, bool distanceInK
 		DoubleMatrix *temp2= DoubleMatrixElementBinaryOperation(temp, wt1, false, Mult);
 		DoubleMatrixElementBinaryOperation(temp, w, true, Mult);
 		DoubleMatrixTranspose(temp2, true);
-		DoubleMatrix *cv= DoubleMatrixMultiplication(temp2, temp);
-		double result= cv->elements[0];
-		DeleteDoubleMatrix(cv);
+		cv= DoubleMatrixMultiplication(temp2, temp);
 		DeleteDoubleMatrix(temp);
 		DeleteDoubleMatrix(temp2);
-		return result;//((y-yhat)#wt1#w)`*(y-yhat);
 	}
 	else
 	{
@@ -556,13 +580,15 @@ static double CrossValidation(DoubleMatrix *data, int oneOrTwo, bool distanceInK
 		DoubleMatrix *temp2= DoubleMatrixElementBinaryOperation(temp, wt1, false, Mult);
 		DoubleMatrixElementBinaryOperation(temp, w, true, Mult);
 		DoubleMatrixTranspose(temp2, true);
-		DoubleMatrix *cv= DoubleMatrixMultiplication(temp2, temp);
-		double result= cv->elements[0];
-		DeleteDoubleMatrix(cv);
+		cv= DoubleMatrixMultiplication(temp2, temp);
 		DeleteDoubleMatrix(temp);
 		DeleteDoubleMatrix(temp2);
-		return result;
 	}
+	double result= cv->elements[0];
+	DeleteDoubleMatrix(cv);
+	DeleteDoubleMatrix(wt1);
+	DeleteDoubleMatrix(w);
+	return result;//((y-yhat)#wt1#w)`*(y-yhat);
 }
 
 

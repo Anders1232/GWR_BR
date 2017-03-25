@@ -481,3 +481,31 @@ DoubleMatrix* DoubleMatrixMultiplication(DoubleMatrix *a, DoubleMatrix *b)
 	}
 	return ret;
 }
+
+void DoubleMatrixConcatenateColumn(DoubleMatrix *mainMatrix, DoubleMatrix *matrixWithWantedColumn, int wantedColumn)
+{
+	if(mainMatrix->lines != matrixWithWantedColumn->lines)
+	{
+		fprintf(stderr, "%s recieved matrices with different lines number, returning NULL", __func__);
+		return NULL;
+	}
+	DoubleMatrixAddColumn(mainMatrix);
+	int count;
+	for(count=0; count < mainMatrix->lines; count++)
+	{
+		DoubleMatrixSetElement(mainMatrix, count, mainMatrix->columns-1,
+								DoubleMatrixGetElement(matrixWithWantedColumn, count, wantedColumn)
+							);
+	}
+}
+void DoubleMatrixConcatenateLine(DoubleMatrix *mainMatrix, DoubleMatrix *matrixWithWantedLine, int wantedLine)
+{
+	if(mainMatrix->columns != matrixWithWantedLine->columns)
+	{
+		fprintf(stderr, "%s recieved matrices with different columns number, returning NULL", __func__);
+		return NULL;
+	}
+	DoubleMatrixAddColumn(mainMatrix);
+	memccpy(&(mainMatrix->elements[mainMatrix->columns*(mainMatrix->lines-1)]), &(matrixWithWantedLine->elements[matrixWithWantedLine->columns*(matrixWithWantedLine->lines-1)]), sizeof(double)*(mainMatrix->columns));
+}
+

@@ -14,6 +14,7 @@ FowardList* NewFowardList(void)
 	sem_init(ret->semaphore, 0, 0);
 	ret->begin= NULL;
 	ret->end = NULL;
+	return ret;
 }
 
 void FowardListAddElement(FowardList*fw, void *element)

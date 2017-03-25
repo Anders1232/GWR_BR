@@ -55,9 +55,9 @@ start cv2;
 				wt1=wt1//wt[dist[jj,2],];
 		end;
 %IF %UPCASE(&METHOD)=ADAPTIVE_BSQ %THEN %DO;
-		x1=x[i,];
-		y1=y[i,];
-		wt1=wt[i,];
+		x1=x[i,];		//linhas repetidas
+		y1=y[i,];		//linhas repetidas
+		wt1=wt[i,];		//linhas repetidas
 		call sort(dist,{3});
 		dist=dist||(1:nrow(dist))`;
 		w=j(n,2,0);

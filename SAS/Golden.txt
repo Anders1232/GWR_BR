@@ -119,7 +119,7 @@ end;
 		hv[1]=xmin;
 		append from hv;
 		end;
-%END;
+%END;wt1
 quit;
 
 %IF %UPCASE(&METHOD)=FIXED_G or %UPCASE(&METHOD)=FIXED_BSQ %THEN %DO;
