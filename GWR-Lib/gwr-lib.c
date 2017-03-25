@@ -157,11 +157,11 @@ double** DistanceBetweenAllPoints(DoubleMatrix* base, int yVarColumn, int xVarCo
 	}
 }
 
-static double CrossValidation(DoubleMatrix *data, int oneOrTwo, bool distanceInKm, KernelType method, int i, int xCoord, int yCoord);//aqui temos um problema, estava supondo que era pra ignorar o wt, mas ele é necessariamente utilizado no cálculo do cv.
+static double CrossValidation(DoubleMatrix *data, int oneOrTwo, bool distanceInKm, KernelType method, int forCount, int xCoord, int yCoord, DoubleMatrix *x, DoubleMatrix *y, DoubleMatrix *yhat, double h1, double maxDistanceBetweenPoints);
 
 #define F1_PRONTO
 #ifdef F1_PRONTO
-static void func1(double min, double max, double *h0, double *h1, double *h2, double *h3, double *hv, DoubleMatrix *yhat, GoldenArguments *args, DoubleMatrix *x, DoubleMatrix *y, double *outGolden, double *outXMin)//de acordo com o código SAS o outGolden e outXMin só são retornados(printados) caso o método não seja adaptive N, mas como em todos os casos essas variáveis existem, estou retornando-as
+static void func1(double min, double max, double *h0, double *h1, double *h2, double *h3,/* double *hv,*/ DoubleMatrix *yhat, GoldenArguments *args, DoubleMatrix *x, DoubleMatrix *y, double *outGolden, double *outXMin, int forCounter)//de acordo com o código SAS o outGolden e outXMin só são retornados(printados) caso o método não seja adaptive N, mas como em todos os casos essas variáveis existem, estou retornando-as
 {
 	double ax, bx, cx, r, tol, c;
 	ax= min;
@@ -183,8 +183,8 @@ static void func1(double min, double max, double *h0, double *h1, double *h2, do
 		*h2=bx;
 		*h1=bx-c*(bx-ax);
 	}
-	double cv1= CrossValidation();
-	double cv2= CrossValidation();
+	double cv1= CrossValidation(args->data, 1, args->distanceInKM, args->method, forCounter, args->x_dCoord, args->y_dCoord, x, y, yhat, *h1, max);
+	double cv2= CrossValidation(args->data, 2, args->distanceInKM, args->method, forCounter, args->x_dCoord, args->y_dCoord, x, y, yhat, *h1, max);
 
 	if(ADAPTIVE_N != args->method)
 	{
@@ -204,16 +204,16 @@ static void func1(double min, double max, double *h0, double *h1, double *h2, do
 			*h0= *h1;
 			*h1= *h2;
 			*h2= r*(*h1) + c*(*h3);
-			cv1= CrossValidation();
-			cv2= CrossValidation();
+			cv1= CrossValidation(args->data, 1, args->distanceInKM, args->method, forCounter, args->x_dCoord, args->y_dCoord, x, y, yhat, *h1, max);
+			cv2= CrossValidation(args->data, 2, args->distanceInKM, args->method, forCounter, args->x_dCoord, args->y_dCoord, x, y, yhat, *h1, max);
 		}
 		else
 		{
 			*h3= *h2;
 			*h2= *h1;
 			*h1= r*(*h2) + c*(*h0);
-			cv2= CrossValidation();
-			cv1= CrossValidation();
+			cv1= CrossValidation(args->data, 1, args->distanceInKM, args->method, forCounter, args->x_dCoord, args->y_dCoord, x, y, yhat, *h1, max);
+			cv2= CrossValidation(args->data, 2, args->distanceInKM, args->method, forCounter, args->x_dCoord, args->y_dCoord, x, y, yhat, *h1, max);
 		}
 		if(ADAPTIVE_N != args->method)
 		{
@@ -229,30 +229,29 @@ static void func1(double min, double max, double *h0, double *h1, double *h2, do
 	while(abs(*h3-*h0) > tol*(abs(*h1)+abs(*h2)));
 	if(cv1 < cv2)
 	{
-		*outGolden = cv1;
-		*outXMin= *h1;
+		outGolden[forCounter] = cv1;
+		outXMin[forCounter]= *h1;
 		if(ADAPTIVE_BSQ == args->method)
 		{
-			*outXMin= floor(*h1);//a função floor existe em math.h
+			outXMin[forCounter]= floor(*h1);//a função floor existe em math.h
 		}
 	}
 	else
 	{
-		*outGolden = cv2;
-		*outXMin= *h2;
+		outGolden[forCounter] = cv2;
+		outXMin[forCounter]= *h2;
 		if(ADAPTIVE_BSQ == args->method)
 		{
-			*outXMin= floor(*h2);//a função floor existe em math.h
+			outXMin[forCounter]= floor(*h2);//a função floor existe em math.h
 		}
 	}
 	if(ADAPTIVE_N == args->method)//tinha o caso de ser diferente mas só printava golden e xmin, que serão retornados
 	{
-		*hv= *outXMin;
+//		*hv= outXMin[forCounter];
 		GoldenDataIfAdpN *dataToReturn= malloc(sizeof(GoldenDataIfAdpN));
 		ASSERT(dataToReturn);
-		dataToReturn->xMin= *outXMin;
+		dataToReturn->xMin= outXMin[forCounter];
 		FowardListAddElement(args->communication, dataToReturn);//supondo que esse apend está querendo retornar o xmin
-		//aqui tem o comando "append from hv", perguntar o que isso faz
 	}
 }
 #endif
@@ -279,21 +278,25 @@ void** Golden(GoldenArguments* args)//vai retornar a matriz de distâncias se fo
 	DoubleMatrix *yhat;
 	if(ADAPTIVE_N == args->method)
 	{
-		double hv;// como hv é uma matriz de 1x1, vou tratar como um double
+//		double hv;// como hv é uma matriz de 1x1, vou tratar como um double
 //		yhat= NewDoubleMatrix(1, 1);	// o yhat é declarado na linha 47 como uma matrix coluna de n linhas e depois de declarado como uma matriz 1x1 de valor zero na linha 50 e depois não é mais usado
 //aparentemente é usado nos CVs
 		yhat= NewDoubleMatrix(1, 1);
 		yhat->elements[0]=0;
+		double golden[args->data->lines];
+		double xMin[args->data->lines];
 		for(int i =1; i < args->data->lines; i++)
 		{
-			func1(minDist, maxDist, &h0, &h1, &h2, &h3, x, y, &hv);
+			func1(minDist, maxDist, &h0, &h1, &h2, &h3/*, &hv*/, yhat, args, x, y, golden, xMin, i);
 		}
 	}
 	else
 	{
 		yhat= NewDoubleMatrix(args->data->lines, 1);
 //		memset(yhat->elements, 0, sizeof(double)*yhat->lines);
-		func1(minDist, maxDist, &h0, &h1, &h2, &h3);
+		double golden;
+		double xMin;
+		func1(minDist, maxDist, &h0, &h1, &h2, &h3,/* &hv,*/ yhat, args, x, y, &golden, &xMin, -1);
 	}
 	//aqui tem o comando quit, o que ele deve fazer??
 	DeleteDoubleMatrix(x);
@@ -331,7 +334,7 @@ static double Mult(double a, double b)
 	return a*b;
 }
 
-static void CvAux1(DoubleMatrix *data, int xCOORD, int yCOORD, int oneOrTwo, int i, bool distanceInKm, KernelType method, double h1, double maxDistanceBetweenPoints)//[DUVIDA] o estranho é que o i só deveria existir no caso do adaptive n, mas ele é usando em todos os casos
+static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleMatrix *yhat,int xCOORD, int yCOORD, int oneOrTwo, int i, bool distanceInKm, KernelType method, double h1, double maxDistanceBetweenPoints)
 {
 	DoubleMatrix *d= NewDoubleMatrix(1, 3);
 	DoubleMatrix *dist= NewDoubleMatrixAndInitializeElements(1, 3, 0.0);
@@ -341,7 +344,7 @@ static void CvAux1(DoubleMatrix *data, int xCOORD, int yCOORD, int oneOrTwo, int
 		if(distanceInKm)
 		{//o COORD é uma tabela com (variável independente, variáveis dependentes)
 			double dif= abs(DoubleMatrixGetElement(data, i, 1) - DoubleMatrixGetElement(data, j, 1) );
-			double raio= raio=arcos(-1)/180;
+			double raio= raio=acos(-1)/180;
 			double argument=
 					sin(DoubleMatrixGetElement(data, i, yCOORD)*raio)
 					*sin(DoubleMatrixGetElement(data, j,yCOORD)*raio)
@@ -355,7 +358,7 @@ static void CvAux1(DoubleMatrix *data, int xCOORD, int yCOORD, int oneOrTwo, int
 			{
 				//law of cosines
 				arco =
-						arcos(
+						acos(
 							sin(DoubleMatrixGetElement(data, i,yCOORD)*raio)
 							*sin(DoubleMatrixGetElement(data, j,yCOORD)*raio)
 							+cos(DoubleMatrixGetElement(data, i,yCOORD)*raio)
@@ -384,7 +387,7 @@ static void CvAux1(DoubleMatrix *data, int xCOORD, int yCOORD, int oneOrTwo, int
 		}
 		if(
 				((FIXED_G == method  && d1 !=0) && oneOrTwo == 1)//aqui é a única diferença entre o cv1 e o cv2
-				|| (FIXED_G == method && (d1<=MAXV*1 && d1 !=0) && oneOrTwo ==2)
+				|| (FIXED_G == method && (d1<=maxDistanceBetweenPoints*1 && d1 !=0) && oneOrTwo ==2)
 				|| ((FIXED_BSQ == method || ADAPTIVE_N == method) && d1 <= h1 && d1 !=0 )
 				||(ADAPTIVE_BSQ == method && d1 !=0 )
 			)
@@ -446,6 +449,7 @@ static void CvAux1(DoubleMatrix *data, int xCOORD, int yCOORD, int oneOrTwo, int
 	{
 		DoubleMatrix *x1= NewLineDoubleMatrixFromMatrix(x, i);
 		DoubleMatrix *y1= NewLineDoubleMatrixFromMatrix(y, i);
+		double position;
 		//algo é ordenado aqui
 //		DoubleMatrixConcatenateColumn(dist, ?);//Ver que operação dos ":" faz, pois aqui está 1:nrow(dist)
 		//se eu entendi certo o objeivo é contatenar a transposta de dist a dist
@@ -456,9 +460,9 @@ static void CvAux1(DoubleMatrix *data, int xCOORD, int yCOORD, int oneOrTwo, int
 			DoubleMatrixConcatenateColumn(dist, temp, 0);
 			DeleteDoubleMatrix(temp);
 		}
-		w=NewDoubleMatrix(n, 2);//verificar se precisa desalocar antes
+//		w=NewDoubleMatrix(n, 2);//verificar se precisa desalocar antes
 		double hn= DoubleMatrixGetElement(dist, h1, 3);
-		for(int jj=2; jj < n; jj++)
+		for(int jj=2; jj < data->lines; jj++)
 		{
 			if(DoubleMatrixGetElement(dist, jj, 4) <= h1)
 			{
@@ -496,36 +500,36 @@ static void CvAux1(DoubleMatrix *data, int xCOORD, int yCOORD, int oneOrTwo, int
 	}
 	else
 	{
-		b= //inv(x1`*(w#x1#wt1))*x1`*(w#y1#wt1);
+//		b= //inv(x1`*(w#x1#wt1))*x1`*(w#y1#wt1);
 	}
 //	if(DoubleMatrixDeterminant()) //aqui faz uso do wt1, que a princípio era pra ser ignorado
 	//aqui tem 	yhat[i]=x[i,]*b; aparentemente está sobrescrevendo uma coluna da matriz por outra de outra matriz resultado de uma multiplicação
 	DoubleMatrix *temp= NewLineDoubleMatrixFromMatrix(x, i);
 	DoubleMatrix *temp2 = DoubleMatrixMultiplication(temp, b);
-	for(count =0; count < yhat->columns; count++)
+	for(int count =0; count < yhat->columns; count++)
 	{
 		DoubleMatrixSetElement(yhat, i, count, DoubleMatrixGetElement(temp2, i, count));
 	}
 	DeleteDoubleMatrix(b);
 	DeleteDoubleMatrix(temp);
-	DeleteDoubleMatrix(tem2);
+	DeleteDoubleMatrix(temp2);
 	DeleteDoubleMatrix(x1);
 	DeleteDoubleMatrix(y1);
 }
 
-static double CrossValidation(DoubleMatrix *data, int oneOrTwo, bool distanceInKm, KernelType method, int i, int xCoord, int yCoord)//aqui temos um problema, estava supondo que era pra ignorar o wt, mas ele é necessariamente utilizado no cálculo do cv.
+static double CrossValidation(DoubleMatrix *data, int oneOrTwo, bool distanceInKm, KernelType method, int forCount, int xCoord, int yCoord, DoubleMatrix *x, DoubleMatrix *y, DoubleMatrix *yhat, double h1, double maxDistanceBetweenPoints)
 {
 	if(ADAPTIVE_N != method)
 	{
 		int i;
 		for(i=0; i < data->lines; i++)
 		{
-			CvAux1(data, xCoord, yCoord, oneOrTwo, i);
+			CvAux1(data, x, y, yhat, xCoord, yCoord, oneOrTwo, i, distanceInKm, method, h1, maxDistanceBetweenPoints);
 		}
 	}
 	else
 	{
-		CvAux1();
+		CvAux1(data, x, y, yhat, xCoord, yCoord, oneOrTwo, forCount, distanceInKm, method, h1, maxDistanceBetweenPoints);
 //		cv1= ((y[i]-yhat)#wt1#w)`*(y[i]-yhat);
 	}
 	if(ADAPTIVE_N != method)
@@ -535,25 +539,29 @@ static double CrossValidation(DoubleMatrix *data, int oneOrTwo, bool distanceInK
 		DoubleMatrix *temp2= DoubleMatrixElementBinaryOperation(temp, wt1, false, Mult);
 		DoubleMatrixElementBinaryOperation(temp, w, true, Mult);
 		DoubleMatrixTranspose(temp2, true);
-		double cv= DoubleMatrixMultiplication(temp2, temp);
+		DoubleMatrix *cv= DoubleMatrixMultiplication(temp2, temp);
+		double result= cv->elements[0];
+		DeleteDoubleMatrix(cv);
 		DeleteDoubleMatrix(temp);
 		DeleteDoubleMatrix(temp2);
-		rerturn //((y-yhat)#wt1#w)`*(y-yhat);
+		return result;//((y-yhat)#wt1#w)`*(y-yhat);
 	}
 	else
 	{
 		//yhat[1]=x[i,]*b;
 
 		//((y[i]-yhat)#wt1#w)`*(y[i]-yhat)
-		DoubleMatrix *temp= NewLineDoubleMatrixFromMatrix(y, i);
+		DoubleMatrix *temp= NewLineDoubleMatrixFromMatrix(y, forCount);
 		DoubleMatrixElementBinaryOperation(temp, yhat, true, Sub);//temp = y[i] -yhat
 		DoubleMatrix *temp2= DoubleMatrixElementBinaryOperation(temp, wt1, false, Mult);
 		DoubleMatrixElementBinaryOperation(temp, w, true, Mult);
 		DoubleMatrixTranspose(temp2, true);
-		double cv= DoubleMatrixMultiplication(temp2, temp);
+		DoubleMatrix *cv= DoubleMatrixMultiplication(temp2, temp);
+		double result= cv->elements[0];
+		DeleteDoubleMatrix(cv);
 		DeleteDoubleMatrix(temp);
 		DeleteDoubleMatrix(temp2);
-		return cv;
+		return result;
 	}
 }
 
