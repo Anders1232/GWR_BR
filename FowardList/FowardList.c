@@ -24,7 +24,7 @@ void FowardListAddElement(FowardList*fw, void *element)
 	if(NULL == newElement)
 	{
 		fprintf(stderr, "[ERROR] %s | %s:%d\t\t Error allocating foward list.", __FILE__, __func__, __LINE__);
-		return NULL;
+		return;
 	}
 	newElement->next=NULL;
 	newElement->data= element;
@@ -71,4 +71,5 @@ FowardList* DeleteFowardList(FowardList *fw)
 		aux=aux2;
 	}
 	free(fw);
+	return NULL;
 }

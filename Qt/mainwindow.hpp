@@ -161,6 +161,7 @@ class MainWindow : public QMainWindow
 		char separator;
 		KernelType kernelType;
 		SelectionCriteria selectionCriteria;
+		BandwidthSelectionMethod bandwidthSelectionMethod;
 		//commonly used variables, so it is not necessary needed to findChild
 		QTabWidget *tabWidget;
 		QLineEdit *outputFileLineEdit;

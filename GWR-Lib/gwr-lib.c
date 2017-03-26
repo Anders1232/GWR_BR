@@ -258,8 +258,9 @@ static void func1(double min, double max, double *h0, double *h1, double *h2, do
 
 #define GOLDEN_PRONTO
 #ifdef GOLDEN_PRONTO
-void** Golden(GoldenArguments* args)//vai retornar a matriz de distâncias se for pedido, caso contrário retorna NULL
+void *Golden(void *args_)//vai retornar a matriz de distâncias se for pedido, caso contrário retorna NULL
 {
+	GoldenArguments *args= args_;
 	//calculando matriz de distâncias para apenas pegar a menor e a maior distância
 	double minDist/*, medDist*/, maxDist;
 	double **distances= DistanceBetweenAllPoints(args->data, args->x_dCoord, args->y_dCoord, &minDist, &maxDist, true);
@@ -305,11 +306,13 @@ void** Golden(GoldenArguments* args)//vai retornar a matriz de distâncias se fo
 	FowardListAddElement(args->communication, NULL);
 	if(args->returnDistancesMatrix)
 	{
-		return distances;
+		pthread_exit(distances);
+		return (void*)distances;
 	}
 	else
 	{
 		free(distances);
+		pthread_exit(NULL);
 		return NULL;
 	}
 }

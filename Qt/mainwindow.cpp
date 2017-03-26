@@ -79,6 +79,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	goldenRadioButton= this->findChild<QRadioButton *>("KernelGoldenRadioButton");
 	Q_ASSERT(goldenRadioButton);
+	goldenRadioButton->setChecked(true);
+	bandwidthSelectionMethod= BandwidthSelectionMethod::GOLDEN;
 	singleRadioButton= this->findChild<QRadioButton *>("KernelSingleRadioButton");
 	Q_ASSERT(singleRadioButton);
 	intervalSearchRadioButton= this->findChild<QRadioButton *>("KernelIntervalRadioButton");
@@ -690,12 +692,12 @@ void MainWindow::on_executeStartComputingButton_clicked()
 	{
 		outputDistanceBetweenPointsFileName = "";
 	}
-
-	QString result = driver.Calculate(fileName.toStdString(), separator, outputfileName, outputDistanceBetweenPointsFileName, modelType, *vList, identifer, dependent, latitude, longitude, offset, *lvList, *gvList);
-//	QString result = driver.Calculate(fileName.toLocal8Bit().toStdString(), separator, modelType, *vList, identifer, dependent, latitude, longitude, offset, *lvList, *gvList);
-
 	QTextEdit *resultArea= this->findChild<QTextEdit*>("OutputTextEdit");
 	Q_ASSERT(resultArea);
+
+	QString result = driver.Calculate(fileName.toStdString(), separator, outputfileName, outputDistanceBetweenPointsFileName, modelType, kernelType, selectionCriteria, *vList, identifer, dependent, latitude, longitude, offset, *lvList, *gvList, bandwidthSelectionMethod, *resultArea, false);
+//	QString result = driver.Calculate(fileName.toLocal8Bit().toStdString(), separator, modelType, *vList, identifer, dependent, latitude, longitude, offset, *lvList, *gvList);
+
 	resultArea->setText(result);
 	delete vList;
 	delete lvList;
@@ -798,6 +800,7 @@ void MainWindow::on_KernelGoldenRadioButton_clicked()
 	goldenRadioButton->setChecked(true);
 	singleRadioButton->setChecked(false);
 	intervalSearchRadioButton->setChecked(false);
+	bandwidthSelectionMethod= BandwidthSelectionMethod::GOLDEN;
 }
 
 void MainWindow::on_KernelSingleRadioButton_clicked()
@@ -805,6 +808,7 @@ void MainWindow::on_KernelSingleRadioButton_clicked()
 	singleRadioButton->setChecked(true);
 	goldenRadioButton->setChecked(false);
 	intervalSearchRadioButton->setChecked(false);
+	bandwidthSelectionMethod= BandwidthSelectionMethod::SINGLE;
 }
 
 void MainWindow::on_KernelIntervalRadioButton_clicked()
@@ -812,6 +816,7 @@ void MainWindow::on_KernelIntervalRadioButton_clicked()
 	intervalSearchRadioButton->setChecked(true);
 	goldenRadioButton->setChecked(false);
 	singleRadioButton->setChecked(false);
+	bandwidthSelectionMethod= BandwidthSelectionMethod::INTERVAL;
 }
 
 void MainWindow::on_KernelGoldenManualCheckBox_clicked(bool checked)

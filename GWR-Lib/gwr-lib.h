@@ -54,6 +54,8 @@ typedef struct goldenDataIfAdpN GoldenDataIfAdpN;
 DoubleMatrix* LatPlusLon(DoubleMatrix *matrix, int latColumn, int lonColumn);//implemented
 DoubleMatrix* DistanceToOrigin(DoubleMatrix* matrix, int column1, int column2);
 double** DistanceBetweenAllPoints(DoubleMatrix* base, int yVarColumn, int xVarColumn, double* minDistOut, double *maxDistOut, bool returnOnlyMinAndMax);
-void** Golden(GoldenArguments* args);//vai retornar a matriz de distâncias se for pedido, caso contrário retorna NULL
+//obs: o argumento e o tipo de retorno são void para permintir que essa função seja chamada no pthread_create,
+//mas na verdade o argumento é um ponteiro para GoldenArguments e o tipo de retorno é um ponteiro de ponteiro para void
+void* Golden(void* args);//vai retornar a matriz de distâncias se for pedido, caso contrário retorna NULL
 
 #endif

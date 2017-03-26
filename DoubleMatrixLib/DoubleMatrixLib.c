@@ -182,11 +182,11 @@ DoubleMatrix* DoubleMatrixTranspose(DoubleMatrix *matrix, bool resultInTheSameMa
 			return NULL;
 		}
 	}*/
-	int lines, columns, counter;
+	int lines, columns;
 	lines= matrix->lines;
 	columns= matrix->columns;
 	DoubleMatrix *temp= NewDoubleMatrix(columns, lines);
-	counter= 0;
+//	counter= 0;
 	int count1, count2;
 	for(count1=0; count1 < columns; count1++)
 	{
@@ -487,7 +487,7 @@ void DoubleMatrixConcatenateColumn(DoubleMatrix *mainMatrix, DoubleMatrix *matri
 	if(mainMatrix->lines != matrixWithWantedColumn->lines)
 	{
 		fprintf(stderr, "%s recieved matrices with different lines number, returning NULL", __func__);
-		return NULL;
+		return;
 	}
 	DoubleMatrixAddColumn(mainMatrix);
 	int count;
@@ -503,9 +503,9 @@ void DoubleMatrixConcatenateLine(DoubleMatrix *mainMatrix, DoubleMatrix *matrixW
 	if(mainMatrix->columns != matrixWithWantedLine->columns)
 	{
 		fprintf(stderr, "%s recieved matrices with different columns number, returning NULL", __func__);
-		return NULL;
+		return;
 	}
 	DoubleMatrixAddColumn(mainMatrix);
-	memccpy(&(mainMatrix->elements[mainMatrix->columns*(mainMatrix->lines-1)]), &(matrixWithWantedLine->elements[matrixWithWantedLine->columns*(matrixWithWantedLine->lines-1)]), sizeof(double)*(mainMatrix->columns));
+	memcpy(&(mainMatrix->elements[mainMatrix->columns*(mainMatrix->lines-1)]), &(matrixWithWantedLine->elements[matrixWithWantedLine->columns*wantedLine]), sizeof(double)*(mainMatrix->columns));
 }
 

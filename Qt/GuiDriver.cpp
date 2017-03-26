@@ -9,6 +9,19 @@ extern "C"
 }
 //C side functions implementations:
 
+static void PrintfDistancesFile(double** distances, int numberOfLines, FILE *output)
+{
+	for(int count=0; count < numberOfLines; count++)
+	{
+		for(int count2= 0; count2<= count-1; count2++)
+		{
+			fprintf(output, "%lf,", distances[count][count2]);
+		}
+		fprintf(output, "%lf", distances[count][count]);
+		fprintf(output, NEW_LINE);
+	}
+}
+
 int Gui_Init(int argc, char *argv[])
 {
 	return InitQtGui(argc, argv);
@@ -73,16 +86,65 @@ QString GuiDriver::Calculate(
 					std::string outputFileName,
 					std::string outputDistanceBetweenPointsFileName,
 					int modelType,
+					KernelType kernelType,
+					SelectionCriteria selectionCriteria,
 					std::list<std::string> const &variables,
 					std::string const &identifier,
-					const std::string &dependent,
+					const std::string &dependent,//independent, n?
 					const std::string &latitude,
 					const std::string &longitude,
 					std::string const &offset,
 					const std::list<std::string> &localVariables,
-					const std::list<std::string> &globalVariables
+					const std::list<std::string> &globalVariables,
+					BandwidthSelectionMethod bandSelectionMethod,
+					QTextEdit &textArea,
+					bool distanceInKm
 				)
 {
+	if(GOLDEN == bandSelectionMethod)
+	{
+		FILE *temp= fopen(outputFileName.c_str(), "w+");
+		fprintf(temp, "GWR BR" NEW_LINE);
+		fprintf(temp, "File: %s\t\t\tDelimiter: %c(%d)" NEW_LINE, fileName.c_str(), separator, separator);
+		FILE *temp2=NULL;
+		if("" != outputDistanceBetweenPointsFileName)
+		{
+			temp2= fopen(outputDistanceBetweenPointsFileName.c_str(), "w");
+			if(NULL == temp2)
+			{
+				fprintf(stderr, "Failed assertion at %s|%s:%d\n", __FILE__, __func__, __LINE__);
+			}
+		}
+		int dependentVariable, *indepedentLocalVariables, *independentGlobalVariables;
+		dependentVariable= NamedColumnDoubleTable_GetColumnIndex(table, dependent.c_str());
+		int latitudeColumn= NamedColumnDoubleTable_GetColumnIndex(table, latitude.c_str());
+		int longitudecolumn= NamedColumnDoubleTable_GetColumnIndex(table, longitude.c_str());
+
+		independentGlobalVariables= (int*)malloc(sizeof(int) * (globalVariables.size()+1) );
+
+		indepedentLocalVariables= (int*)malloc(sizeof(int) * (localVariables.size()+1) );
+		indepedentLocalVariables[localVariables.size()]= -1;
+		auto i= localVariables.begin();
+		for(int count=0; count < localVariables.size(); count++, i++)
+		{
+			indepedentLocalVariables[count]= NamedColumnDoubleTable_GetColumnIndex(table, i->c_str());
+		}
+
+		i= globalVariables.begin();
+		for(int count=0; count < globalVariables.size(); count++, i++)
+		{
+			independentGlobalVariables[count]= NamedColumnDoubleTable_GetColumnIndex(table, i->c_str());
+		}
+
+		independentGlobalVariables= (int*)malloc(sizeof(int) * (globalVariables.size()+1) );
+		independentGlobalVariables[globalVariables.size()]= -1;
+		CalculateGolden(textArea, temp, temp2, kernelType, this->table->matrix, distanceInKm, dependentVariable, indepedentLocalVariables, independentGlobalVariables, latitudeColumn, longitudecolumn);
+
+		free(independentGlobalVariables);
+		free(indepedentLocalVariables);
+		fclose(temp);
+		fclose(temp2);
+	}
 	if(MODE_LAT_PLUS_LON == modelType)
 	{
 		int column1= NamedColumnDoubleTable_GetColumnIndex(table, latitude.c_str());
@@ -134,45 +196,7 @@ QString GuiDriver::Calculate(
 		}
 	}
 	else if(MODE_DISTANCE_BETWEEN_POITS == modelType)
-/*	{
-		double min, med, max;
-		int column1= NamedColumnDoubleTable_GetColumnIndex(table, latitude.c_str());
-		int column2= NamedColumnDoubleTable_GetColumnIndex(table, longitude.c_str());
-		double **result= DistanceBetweenAllPoints(table->matrix, column1, column2, &min, &max, false);
-		med= min+max/2;
-		FILE *temp= fopen(outputFileName.c_str(), "w+");;
-		fprintf(temp, "GWR BR" NEW_LINE);
-		fprintf(temp, "File: %s\t\t\tDelimiter: %c(%d)" NEW_LINE, fileName.c_str(), separator, separator);
-		fprintf(temp, "Operation: BetweenPoints (Longitude, Latitude)" NEW_LINE);
-		fprintf(temp, "Latitude column: %s" NEW_LINE, latitude.c_str());
-		fprintf(temp, "Longitude column: %s" NEW_LINE, longitude.c_str());
-		fprintf(temp, "Result:" NEW_LINE NEW_LINE);
-		for(int count=0; count < table->matrix->lines; count++)
-		{
-			for(int count2= 0; count2<= count; count2++)
-			{
-				fprintf(temp, "\t%lf", result[count][count2]);
-			}
-			fprintf(temp, NEW_LINE);
-		}
-		QString ret= "";
-		rewind(temp);
-		char aux;
-		while(EOF != (aux= getc(temp)))
-		{
-			ret+= aux;
-		}
-		fclose(temp);
-		for(int count=0; count < table->matrix->lines; count++ )
-		{
-			free(result[count]);
-		}
-		free(result);
-		return(ret);
 
-
-	}
-	*/
 	{
 		return 	CalculateDistanceBetweenPoints(fileName, separator, outputDistanceBetweenPointsFileName, latitude, longitude);
 
@@ -190,11 +214,11 @@ QString GuiDriver::CalculateDistanceBetweenPoints
 		const std::string &longitude
 )
 {
-	double min, med, max;
+	double min, max;
 	int column1= NamedColumnDoubleTable_GetColumnIndex(table, latitude.c_str());
 	int column2= NamedColumnDoubleTable_GetColumnIndex(table, longitude.c_str());
 	double **result= DistanceBetweenAllPoints(table->matrix, column1, column2, &min, &max, false);
-	med= min+max/2;
+//	med= min+max/2;
 	FILE *temp= fopen(outputFileName.c_str(), "w+");;
 	fprintf(temp, "GWR BR" NEW_LINE);
 	fprintf(temp, "File: %s\t\t\tDelimiter: %c(%d)" NEW_LINE, fileName.c_str(), separator, separator);
@@ -204,15 +228,7 @@ QString GuiDriver::CalculateDistanceBetweenPoints
 	fprintf(temp, "Lower distance: %lf" NEW_LINE, min);
 	fprintf(temp, "Biggest distance: %lf" NEW_LINE, max);
 	fprintf(temp, "Result:" NEW_LINE NEW_LINE);
-	for(int count=0; count < table->matrix->lines; count++)
-	{
-		for(int count2= 0; count2<= count-1; count2++)
-		{
-			fprintf(temp, "%lf,", result[count][count2]);
-		}
-		fprintf(temp, "%lf", result[count][count]);
-		fprintf(temp, NEW_LINE);
-	}
+	PrintfDistancesFile(result, table->matrix->lines, temp);
 	QString ret= "";
 	rewind(temp);
 	char aux;
@@ -227,5 +243,75 @@ QString GuiDriver::CalculateDistanceBetweenPoints
 	}
 	free(result);
 	return(ret);
-
 }
+
+void GuiDriver::CalculateGolden(
+		QTextEdit &textArea,
+		FILE* outputFile,
+		FILE *outputDistancesBetweenPoints,
+		KernelType kernelType,
+		DoubleMatrix *data,
+		bool distanceInKm,
+		int independentVariable,
+		int *dependentLocalVariables,
+		int *dependentGlobalVariables,
+		int latitude,
+		int longitude
+)
+{
+	FowardList *fw= NewFowardList();
+	GoldenArguments args;
+	args.communication=fw;
+	args.data=data;
+	args.distanceInKM= distanceInKm;
+	args.method= kernelType;
+	args.returnDistancesMatrix= (outputDistancesBetweenPoints != NULL);
+	args.xVarColumn_independentVariable= independentVariable;
+	args.yVarColumn_dependentGlobalVariables= dependentGlobalVariables;
+	args.yVarColumn_dependentLocalVariables= dependentLocalVariables;
+	args.x_dCoord= latitude;
+	args.y_dCoord= longitude;
+	pthread_t thread;
+	pthread_create(&thread, NULL, Golden, &args);
+	if(ADAPTIVE_N == kernelType)
+	{
+		GoldenDataIfAdpN* response;
+		while(NULL !=(response= (GoldenDataIfAdpN*)FowardListGetElement(fw) ) )
+		{
+			QString temp= "\nxMin:\t";
+			temp+= response->xMin;
+			temp+= "\n";
+			textArea.append(temp);
+			fprintf(outputFile, temp.toStdString().c_str());
+		}
+	}
+	else
+	{
+		GoldenDataIfNotAdpN* response;
+		fprintf(outputDistancesBetweenPoints, "\th1\t\th2\t\tcv1\t\tcv2\n\n");
+		textArea.append(QString("\th1\t\th2\t\tcv1\t\tcv2\n\n"));
+		while(NULL !=(response= (GoldenDataIfNotAdpN*)FowardListGetElement(fw) ) )
+		{
+			QString temp= "\t";
+			temp+= response->h1;
+			temp+= "\t\t: ";
+			temp+= response->h2;
+			temp+= "\t\t: ";
+			temp+= response->cv1;
+			temp+= "\t\t: ";
+			temp+= response->cv2;
+			temp+= "\n";
+			textArea.append(temp);
+			fprintf(outputFile, temp.toStdString().c_str());
+		}
+	}
+	double** distances=NULL;
+	pthread_join(thread, (void**)distances);
+	distances= (double**)*distances;
+	if(NULL != outputDistancesBetweenPoints)
+	{
+		PrintfDistancesFile(distances, data->lines, outputDistancesBetweenPoints);
+	}
+}
+
+
