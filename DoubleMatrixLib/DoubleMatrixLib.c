@@ -340,7 +340,7 @@ double DoubleMatrixDeterminant(DoubleMatrix *mat)
 {
 	if(mat->lines != mat->columns)
 	{
-		fprintf(stderr, "%s:%d\tFunction:%s\t\tError: Not a sqared matrix.\n", __FILE__, __LINE__, __FUNCTION__);
+		fprintf(stderr, "%s:%d\tFunction:%s\t\tError: Not a sqared matrix.\n", __FILE__, __LINE__, __func__);
 	}
 	double result=0, temp;
 	int count, count2, aux;
