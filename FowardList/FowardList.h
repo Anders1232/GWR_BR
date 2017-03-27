@@ -13,8 +13,8 @@ typedef struct fowardListElement FowardListElement;
 
 struct fowardList
 {
-	pthread_mutex_t *mutex;
-	sem_t *semaphore;
+	pthread_mutex_t mutex;
+	sem_t semaphore;
 	FowardListElement *begin;
 	FowardListElement *end;
 };

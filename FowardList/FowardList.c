@@ -10,8 +10,14 @@ FowardList* NewFowardList(void)
 		fprintf(stderr, "[ERROR] %s | %s:%d\t\t Error allocating foward list.", __FILE__, __func__, __LINE__);
 		return NULL;
 	}
-	pthread_mutex_init(ret->mutex, NULL);
-	sem_init(ret->semaphore, 0, 0);
+//	ret->mutex= malloc (sizeof(pthread_mutex_t));
+/*	if(NULL == ret->mutex)
+	{
+		fprintf(stderr, "[ERROR] %s | %s:%d\t\t Error allocating foward list.", __FILE__, __func__, __LINE__);
+		return NULL;
+	}*/
+	pthread_mutex_init(&(ret->mutex), NULL);
+	sem_init(&(ret->semaphore), 0, 0);
 	ret->begin= NULL;
 	ret->end = NULL;
 	return ret;
