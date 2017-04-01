@@ -56,10 +56,10 @@ DoubleMatrix* DoubleMatrixCopy(DoubleMatrix*);	//implemented
 DoubleMatrix* DoubleMatrixIdentity(int oneDimensionSize);	//implemented
 DoubleMatrix* DoubleMatrix_Add(DoubleMatrix*, DoubleMatrix*, bool resultInTheFirstMatrix);	//implemented
 DoubleMatrix* DoubleMatrixScalarMultiplication(DoubleMatrix *matrix, double scalar, bool resultInTheSameMatrix);	//implemented
-DoubleMatrix* DoubleMatrixTranspose(DoubleMatrix*, bool resultInTheSameMatrix);	//implemented, need testing
-DoubleMatrix* DoubleMatrixMultiplication(DoubleMatrix*, DoubleMatrix*);
+DoubleMatrix* DoubleMatrixTranspose(DoubleMatrix*, bool resultInTheSameMatrix);	//implemented
+DoubleMatrix* DoubleMatrixMultiplication(DoubleMatrix*, DoubleMatrix*);//implemented
 DoubleMatrix* DoubleMatrixCompare(DoubleMatrix*, DoubleMatrix*, Comparison);
-DoubleMatrix* DoubleMatrixElementBinaryOperation(DoubleMatrix* , DoubleMatrix*, bool resultInTheFirstMatrix, double(*ElementBinFunction)(double element1, double element2));
+DoubleMatrix* DoubleMatrixElementBinaryOperation(DoubleMatrix* , DoubleMatrix*, bool resultInTheFirstMatrix, double(*ElementBinFunction)(double element1, double element2));//implemented
 DoubleMatrix* DoubleMatrixElementUnaryOperation(DoubleMatrix*, bool resultInTheFirstMatrix, double(*ElementUnaFunction)(double element));
 double DoubleMatrixMaxElement(DoubleMatrix*);
 double DoubleMatrixMinElement(DoubleMatrix*);
@@ -71,13 +71,15 @@ int DoubleMatrixColumnsNumber(DoubleMatrix*);
 int DoubleMatrixLinesNumber(DoubleMatrix*);
 bool DoubleMatrixHaveSameDimensionsAndSameElementSize(DoubleMatrix*, DoubleMatrix*);	//implemented
 void DoubleMatrixPrint(DoubleMatrix* matrix, FILE *output, char const *doubleFormat, char const *betweenLinesFormat);//implemented
-void DoubleMatrixAddLine(DoubleMatrix *matrix);
-void DoubleMatrixAddColumn(DoubleMatrix *matrix);
-DoubleMatrix* NewLineDoubleMatrixFromMatrix(DoubleMatrix *origin, int lineFromOrigin);
-DoubleMatrix* NewColumnDoubleMatrixFromMatrix(DoubleMatrix *origin, int columnFromOrigin);
-double DoubleMatrixDeterminant(DoubleMatrix *mat);
-DoubleMatrix *DoubleMatrixInverse(DoubleMatrix *matrix);
-void DoubleMatrixConcatenateColumn(DoubleMatrix *mainMatrix, DoubleMatrix *matrixWithWantedColumn, int wantedColumn);
-void DoubleMatrixConcatenateLine(DoubleMatrix *mainMatrix, DoubleMatrix *matrixWithWantedLine, int wantedLine);
+void DoubleMatrixAddLine(DoubleMatrix *matrix);//implemented
+void DoubleMatrixAddColumn(DoubleMatrix *matrix);//implemented
+DoubleMatrix* NewLineDoubleMatrixFromMatrix(DoubleMatrix *origin, int lineFromOrigin);//implemented
+DoubleMatrix* NewColumnDoubleMatrixFromMatrix(DoubleMatrix *origin, int columnFromOrigin);//implemented
+double DoubleMatrixDeterminant(DoubleMatrix *mat);//implemented
+DoubleMatrix *DoubleMatrixInverse(DoubleMatrix *matrix);//implemented
+void DoubleMatrixConcatenateColumn(DoubleMatrix *mainMatrix, DoubleMatrix *matrixWithWantedColumn, int wantedColumn);//implemented
+void DoubleMatrixConcatenateLine(DoubleMatrix *mainMatrix, DoubleMatrix *matrixWithWantedLine, int wantedLine);//implemented
+DoubleMatrix* DoubleMatrixMultLinesPerLine(DoubleMatrix *mainMatrix, DoubleMatrix *matrixWithLine, int theLine, bool resultInTheFirstMatrix);
+DoubleMatrix* DoubleMatrixMultColumnsPerColumn(DoubleMatrix *mainMatrix, DoubleMatrix *matrixWithColumn, int theColumn, bool resultInTheFirstMatrix);
 
 #endif

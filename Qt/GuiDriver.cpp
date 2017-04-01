@@ -138,6 +138,7 @@ QString GuiDriver::Calculate(
 
 		independentGlobalVariables= (int*)malloc(sizeof(int) * (globalVariables.size()+1) );
 		independentGlobalVariables[globalVariables.size()]= -1;
+		independentGlobalVariables[globalVariables.size()]= -1;
 		CalculateGolden(textArea, temp, temp2, kernelType, this->table->matrix, distanceInKm, dependentVariable, indepedentLocalVariables, independentGlobalVariables, latitudeColumn, longitudecolumn);
 
 		free(independentGlobalVariables);
@@ -288,7 +289,10 @@ void GuiDriver::CalculateGolden(
 	else
 	{
 		GoldenDataIfNotAdpN* response;
-		fprintf(outputDistancesBetweenPoints, "\th1\t\th2\t\tcv1\t\tcv2\n\n");
+//		if(NULL != outputFile)
+//		{
+			fprintf(outputFile, "\th1\t\th2\t\tcv1\t\tcv2\n\n");
+//		}
 		textArea.append(QString("\th1\t\th2\t\tcv1\t\tcv2\n\n"));
 		while(NULL !=(response= (GoldenDataIfNotAdpN*)FowardListGetElement(fw) ) )
 		{
@@ -302,7 +306,10 @@ void GuiDriver::CalculateGolden(
 			temp+= response->cv2;
 			temp+= "\n";
 			textArea.append(temp);
+//			if(NULL != outputFile)
+//			{
 			fprintf(outputFile, temp.toStdString().c_str());
+//			}
 		}
 	}
 	double** distances=NULL;

@@ -25,7 +25,7 @@ FowardList* NewFowardList(void)
 
 void FowardListAddElement(FowardList*fw, void *element)
 {
-	pthread_mutex_lock(fw->mutex);
+	pthread_mutex_lock(&(fw->mutex));
 	FowardListElement *newElement= malloc(sizeof(FowardListElement));
 	if(NULL == newElement)
 	{
@@ -43,14 +43,14 @@ void FowardListAddElement(FowardList*fw, void *element)
 		fw->end->next= newElement;
 	}
 	fw->end= newElement;
-	sem_post(fw->semaphore);
-	pthread_mutex_unlock(fw->mutex);
+	sem_post(&(fw->semaphore));
+	pthread_mutex_unlock(&(fw->mutex));
 }
 
 void* FowardListGetElement(FowardList* fw)
 {
-	sem_wait(fw->semaphore);
-	pthread_mutex_lock(fw->mutex);
+	sem_wait(&(fw->semaphore) );
+	pthread_mutex_lock(&(fw->mutex));
 	FowardListElement *toDelete= fw->begin;
 	void *ret= NULL;
 	if(NULL != toDelete)
@@ -60,14 +60,14 @@ void* FowardListGetElement(FowardList* fw)
 		free(toDelete);
 	}
 //	if()
-	pthread_mutex_unlock(fw->mutex);
+	pthread_mutex_unlock(&(fw->mutex));
 	return ret;
 }
 
 FowardList* DeleteFowardList(FowardList *fw)
 {
-	pthread_mutex_destroy(fw->mutex);
-	sem_destroy(fw->semaphore);
+	pthread_mutex_destroy(&(fw->mutex));
+	sem_destroy(&(fw->semaphore));
 	FowardListElement *aux= fw->begin;
 	FowardListElement *aux2;
 	while(NULL != aux)

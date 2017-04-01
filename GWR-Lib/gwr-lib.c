@@ -271,8 +271,9 @@ void *Golden(void *args_)//vai retornar a matriz de distâncias se for pedido, c
 	DoubleMatrixConcatenateColumn(x, args->data, args->xVarColumn_independentVariable);
 	DoubleMatrix *y= NewColumnDoubleMatrixFromMatrix(args->data, args->yVarColumn_dependentLocalVariables[0]);
 	int *yAux= (args->yVarColumn_dependentLocalVariables)+1;
-	while(NULL != yAux)
+	while(-1 != *yAux)
 	{
+		printf("%s|%s:%d\t *yAux= %d\n", __FILE__, __func__, __LINE__, *yAux);
 		DoubleMatrixConcatenateColumn(y, args->data, *yAux);
 		yAux++;
 	}

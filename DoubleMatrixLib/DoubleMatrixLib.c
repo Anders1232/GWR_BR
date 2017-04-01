@@ -297,20 +297,23 @@ void DoubleMatrixAddColumn(DoubleMatrix *matrix)
 	}
 	else
 	{
+		matrix->elements= result;
 		int count;
 		int nColumnsBefore= matrix->columns;
 		int nColumnsAfter= nColumnsBefore+1;
 		double *v= matrix->elements;
 		for(count= matrix->lines -1; count>0; count--)
 		{
+			fprintf(stdout, "%s|%s:%d\t count= %d\n", __FILE__, __func__, __LINE__, count );
 			memmove(&(v[nColumnsAfter*count]), &(v[nColumnsBefore*count]), nColumnsBefore*sizeof(double));
 		}
+		matrix->columns= nColumnsAfter;
 	}
 }
 DoubleMatrix* NewLineDoubleMatrixFromMatrix(DoubleMatrix *origin, int lineFromOrigin)
 {
 	DoubleMatrix *ret;
-	ret= NewDoubleMatrix(origin->columns, 1);
+	ret= NewDoubleMatrix(1, origin->columns);
 	if(NULL == ret)
 	{
 		return NULL;
@@ -321,7 +324,7 @@ DoubleMatrix* NewLineDoubleMatrixFromMatrix(DoubleMatrix *origin, int lineFromOr
 DoubleMatrix* NewColumnDoubleMatrixFromMatrix(DoubleMatrix *origin, int columnFromOrigin)
 {
 	DoubleMatrix *ret;
-	ret= NewDoubleMatrix(origin->columns, 1);
+	ret= NewDoubleMatrix(origin->lines, 1);
 	if(NULL == ret)
 	{
 		return NULL;
@@ -486,7 +489,7 @@ void DoubleMatrixConcatenateColumn(DoubleMatrix *mainMatrix, DoubleMatrix *matri
 {
 	if(mainMatrix->lines != matrixWithWantedColumn->lines)
 	{
-		fprintf(stderr, "%s recieved matrices with different lines number, returning NULL", __func__);
+		fprintf(stderr, "%s recieved matrices with different lines number, returning\n", __func__);
 		return;
 	}
 	DoubleMatrixAddColumn(mainMatrix);
@@ -502,10 +505,15 @@ void DoubleMatrixConcatenateLine(DoubleMatrix *mainMatrix, DoubleMatrix *matrixW
 {
 	if(mainMatrix->columns != matrixWithWantedLine->columns)
 	{
-		fprintf(stderr, "%s recieved matrices with different columns number, returning NULL", __func__);
+		fprintf(stderr, "%s recieved matrices with different columns number, returning\n", __func__);
 		return;
 	}
 	DoubleMatrixAddColumn(mainMatrix);
 	memcpy(&(mainMatrix->elements[mainMatrix->columns*(mainMatrix->lines-1)]), &(matrixWithWantedLine->elements[matrixWithWantedLine->columns*wantedLine]), sizeof(double)*(mainMatrix->columns));
 }
 
+DoubleMatrix* DoubleMatrixMultLinesPerLine(DoubleMatrix *mainMatrix, DoubleMatrix *matrixWithLine, int theLine, bool resultInTheFirstMatrix)
+{
+
+}
+DoubleMatrix* DoubleMatrixMultColumnsPerColumn(DoubleMatrix *mainMatrix, DoubleMatrix *matrixWithColumn, int theColumn, bool resultInTheFirstMatrix);
