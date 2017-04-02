@@ -506,13 +506,17 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 	}
 	//det(x1`*(w#x1#wt1))=0 then b=j(ncol(x),1,0);
 //	DoubleMatrix *aux= DoubleMatrixElementBinaryOperation(w, x1, false, Mult);//aux= w#x1
-	DoubleMatrix *aux = DoubleMatrixMultColumnsPerColumn(w, x1, 0, false);
+	DoubleMatrix *aux = DoubleMatrixBinOpColumnsPerColumn(w, x1, 0, false, Mult);
 	DoubleMatrix *aux2= DoubleMatrixElementBinaryOperation(aux, wt1, false, Mult);//aux2= w#x1#wt1
 	DeleteDoubleMatrix(aux);
 	aux= DoubleMatrixCopy(x1);
 	DoubleMatrixTranspose(aux, true);//#aux = x1'
 	DoubleMatrix *aux3= DoubleMatrixMultiplication(aux, aux2);//aux3=x1`*(w#x1#wt1)
 	DoubleMatrix *b;
+	fprintf(stderr, "%s|%s:%d\t wt1 is %dx%d\r\n", __FILE__, __func__, __LINE__, wt1->lines, wt1->columns);
+	fprintf(stderr, "%s|%s:%d\t aux is %dx%d\r\n", __FILE__, __func__, __LINE__, aux->lines, aux->columns);
+	fprintf(stderr, "%s|%s:%d\t aux2 is %dx%d\r\n", __FILE__, __func__, __LINE__, aux2->lines, aux2->columns);
+	fprintf(stderr, "%s|%s:%d\t aux3 is %dx%d\r\n", __FILE__, __func__, __LINE__, aux3->lines, aux3->columns);
 	if(0 == DoubleMatrixDeterminant(aux3))
 	{
 		b=NewDoubleMatrixAndInitializeElements(x->columns, 1, 0);

@@ -79,7 +79,7 @@ double DoubleMatrixDeterminant(DoubleMatrix *mat);//implemented
 DoubleMatrix *DoubleMatrixInverse(DoubleMatrix *matrix);//implemented
 void DoubleMatrixConcatenateColumn(DoubleMatrix *mainMatrix, DoubleMatrix *matrixWithWantedColumn, int wantedColumn);//implemented
 void DoubleMatrixConcatenateLine(DoubleMatrix *mainMatrix, DoubleMatrix *matrixWithWantedLine, int wantedLine);//implemented
-DoubleMatrix* DoubleMatrixMultLinesPerLine(DoubleMatrix *mainMatrix, DoubleMatrix *matrixWithLine, int theLine, bool resultInTheFirstMatrix);
-DoubleMatrix* DoubleMatrixMultColumnsPerColumn(DoubleMatrix *mainMatrix, DoubleMatrix *matrixWithColumn, int theColumn, bool resultInTheFirstMatrix);
+DoubleMatrix* DoubleMatrixBinOpLinesPerLine(DoubleMatrix *mainMatrix, DoubleMatrix *matrixWithLine, int theLine, bool resultInTheFirstMatrix, double (*BinaryFunction)(double, double));
+DoubleMatrix* DoubleMatrixBinOpColumnsPerColumn(DoubleMatrix *mainMatrix, DoubleMatrix *matrixWithColumn, int theColumn, bool resultInTheFirstMatrix, double (*BinaryFunction)(double, double));
 
 #endif

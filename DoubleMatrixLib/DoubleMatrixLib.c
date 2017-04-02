@@ -512,7 +512,7 @@ void DoubleMatrixConcatenateLine(DoubleMatrix *mainMatrix, DoubleMatrix *matrixW
 	memcpy(&(mainMatrix->elements[mainMatrix->columns*(mainMatrix->lines-1)]), &(matrixWithWantedLine->elements[matrixWithWantedLine->columns*wantedLine]), sizeof(double)*(mainMatrix->columns));
 }
 
-DoubleMatrix* DoubleMatrixMultLinesPerLine(DoubleMatrix *mainMatrix, DoubleMatrix *matrixWithLine, int theLine, bool resultInTheFirstMatrix)
+DoubleMatrix* DoubleMatrixBinOpLinesPerLine(DoubleMatrix *mainMatrix, DoubleMatrix *matrixWithLine, int theLine, bool resultInTheFirstMatrix, double (*BinaryFunction)(double, double))
 {
 	DoubleMatrix* ret;
 	if(mainMatrix->columns != matrixWithLine->columns)
@@ -542,24 +542,27 @@ DoubleMatrix* DoubleMatrixMultLinesPerLine(DoubleMatrix *mainMatrix, DoubleMatri
 				ret,
 				count,
 				count2,
-				DoubleMatrixGetElement
+				BinaryFunction
 				(
-					mainMatrix,
-					count,
-					count2
-				)
-				*DoubleMatrixGetElement
-				(
-					matrixWithLine,
-					theLine,
-					count2
+					DoubleMatrixGetElement
+					(
+						mainMatrix,
+						count,
+						count2
+					),
+					DoubleMatrixGetElement
+					(
+						matrixWithLine,
+						theLine,
+						count2
+					)
 				)
 			);
 		}
 	}
 	return ret;
 }
-DoubleMatrix* DoubleMatrixMultColumnsPerColumn(DoubleMatrix *mainMatrix, DoubleMatrix *matrixWithColumn, int theColumn, bool resultInTheFirstMatrix)
+DoubleMatrix* DoubleMatrixBinOpColumnsPerColumn(DoubleMatrix *mainMatrix, DoubleMatrix *matrixWithColumn, int theColumn, bool resultInTheFirstMatrix, double (*BinaryFunction)(double, double))
 {
 	DoubleMatrix* ret;
 	if(mainMatrix->lines != matrixWithColumn->lines)
@@ -589,17 +592,20 @@ DoubleMatrix* DoubleMatrixMultColumnsPerColumn(DoubleMatrix *mainMatrix, DoubleM
 				ret,
 				count2,
 				count,
-				DoubleMatrixGetElement
+				BinaryFunction
 				(
-					mainMatrix,
-					count2,
-					count
-				)
-				*DoubleMatrixGetElement
-				(
-					matrixWithColumn,
-					theColumn,
-					count
+					DoubleMatrixGetElement
+					(
+						mainMatrix,
+						count2,
+						count
+					),
+					DoubleMatrixGetElement
+					(
+						matrixWithColumn,
+						theColumn,
+						count
+					)
 				)
 			);
 		}
