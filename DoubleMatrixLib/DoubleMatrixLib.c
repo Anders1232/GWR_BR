@@ -252,7 +252,7 @@ DoubleMatrix* DoubleMatrixElementBinaryOperation(DoubleMatrix* matrixA, DoubleMa
 	}
 	else
 	{
-		ret= NewDoubleMatrix(matrixA->columns, matrixA->lines);
+		ret= NewDoubleMatrix(matrixA->lines, matrixA->columns);
 		if(NULL == ret)
 		{
 			return NULL;
@@ -514,6 +514,96 @@ void DoubleMatrixConcatenateLine(DoubleMatrix *mainMatrix, DoubleMatrix *matrixW
 
 DoubleMatrix* DoubleMatrixMultLinesPerLine(DoubleMatrix *mainMatrix, DoubleMatrix *matrixWithLine, int theLine, bool resultInTheFirstMatrix)
 {
-
+	DoubleMatrix* ret;
+	if(mainMatrix->columns != matrixWithLine->columns)
+	{
+		fprintf(stderr, "[ERROR]Operation not possible.\r\n");
+		exit(1);
+	}
+	if(resultInTheFirstMatrix)
+	{
+		ret= mainMatrix;
+	}
+	else
+	{
+		ret= NewDoubleMatrix(mainMatrix->lines, mainMatrix->columns);
+		if(NULL == ret)
+		{
+			return NULL;
+		}
+	}
+	int count, count2;
+	for(count=0; count < mainMatrix->lines; count++)
+	{
+		for(count2=0; count2< mainMatrix->columns; count2++)
+		{
+			DoubleMatrixSetElement
+			(
+				ret,
+				count,
+				count2,
+				DoubleMatrixGetElement
+				(
+					mainMatrix,
+					count,
+					count2
+				)
+				*DoubleMatrixGetElement
+				(
+					matrixWithLine,
+					theLine,
+					count2
+				)
+			);
+		}
+	}
+	return ret;
 }
-DoubleMatrix* DoubleMatrixMultColumnsPerColumn(DoubleMatrix *mainMatrix, DoubleMatrix *matrixWithColumn, int theColumn, bool resultInTheFirstMatrix);
+DoubleMatrix* DoubleMatrixMultColumnsPerColumn(DoubleMatrix *mainMatrix, DoubleMatrix *matrixWithColumn, int theColumn, bool resultInTheFirstMatrix)
+{
+	DoubleMatrix* ret;
+	if(mainMatrix->lines != matrixWithColumn->lines)
+	{
+		fprintf(stderr, "[ERROR]Operation not possible.\r\n");
+		exit(1);
+	}
+	if(resultInTheFirstMatrix)
+	{
+		ret= mainMatrix;
+	}
+	else
+	{
+		ret= NewDoubleMatrix(mainMatrix->lines, mainMatrix->columns);
+		if(NULL == ret)
+		{
+			return NULL;
+		}
+	}
+	int count, count2;
+	for(count=0; count < mainMatrix->columns; count++)
+	{
+		for(count2=0; count2< mainMatrix->lines; count2++)
+		{
+			DoubleMatrixSetElement
+			(
+				ret,
+				count2,
+				count,
+				DoubleMatrixGetElement
+				(
+					mainMatrix,
+					count2,
+					count
+				)
+				*DoubleMatrixGetElement
+				(
+					matrixWithColumn,
+					theColumn,
+					count
+				)
+			);
+		}
+	}
+	return ret;
+}
+

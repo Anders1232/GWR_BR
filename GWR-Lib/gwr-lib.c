@@ -505,7 +505,8 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 //		DeleteDoubleMatrix(y1);
 	}
 	//det(x1`*(w#x1#wt1))=0 then b=j(ncol(x),1,0);
-	DoubleMatrix *aux= DoubleMatrixElementBinaryOperation(w, x1, false, Mult);//aux= w#x1
+//	DoubleMatrix *aux= DoubleMatrixElementBinaryOperation(w, x1, false, Mult);//aux= w#x1
+	DoubleMatrix *aux = DoubleMatrixMultColumnsPerColumn(w, x1, 0, false);
 	DoubleMatrix *aux2= DoubleMatrixElementBinaryOperation(aux, wt1, false, Mult);//aux2= w#x1#wt1
 	DeleteDoubleMatrix(aux);
 	aux= DoubleMatrixCopy(x1);
@@ -568,6 +569,7 @@ static double CrossValidation(DoubleMatrix *data, int oneOrTwo, bool distanceInK
 		DoubleMatrix *temp= DoubleMatrixCopy(y);
 		DoubleMatrixElementBinaryOperation(temp, yhat, true, Sub);//temp = y[i] -yhat
 		DoubleMatrix *temp2= DoubleMatrixElementBinaryOperation(temp, wt1, false, Mult);
+//		DoubleMatrix *temp2= DoubleMatrixMultLinesPerLine(temp, wt1, 0, false);
 		DoubleMatrixElementBinaryOperation(temp, w, true, Mult);
 		DoubleMatrixTranspose(temp2, true);
 		cv= DoubleMatrixMultiplication(temp2, temp);
