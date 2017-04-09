@@ -10,6 +10,7 @@ extern "C"
 int main(int argc, char *argv[])
 {
 	setlocale(LC_ALL, "C");
+	freopen ("ErrorLog.txt","w",stderr);
 	return Gui_Init(argc, argv);
 }
 

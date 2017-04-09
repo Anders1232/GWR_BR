@@ -132,7 +132,7 @@ void MainWindow::on_actionManual_triggered()
 void MainWindow::on_SelectFileButton_clicked()
 {
 	QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"),
-													"/home",
+													"",
 													tr("data (*.csv *.gwr);; Any File(*)"));
 	QLineEdit *lineEdit = this->findChild<QLineEdit*>("fileNameLineEdit");
 	Q_ASSERT(lineEdit);
