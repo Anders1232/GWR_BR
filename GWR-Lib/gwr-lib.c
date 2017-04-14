@@ -421,10 +421,11 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 		}
 	}
 	int u= dist->lines;//[DUVIDA] x1 e y1 começam como matrizes 1x1?
+	fprintf(stderr, "%s|%s:%d\tu= %d\n", __FILE__, __func__, __LINE__, u);
 	DoubleMatrix* w= NewDoubleMatrix(u, 1);
 	DoubleMatrix *x1= NewLineDoubleMatrixFromMatrix(data, i);//verificar qual a diferença dessas 2 matrizes
 	DoubleMatrix *y1= NewLineDoubleMatrixFromMatrix(data, i);
-	DoubleMatrix *wt1= NewDoubleMatrix(1, 1);
+	DoubleMatrix *wt1= NewDoubleMatrixAndInitializeElements(1, data->lines, 1.);
 	wt1->elements[0]=0.0;
 //	DoubleMatrix *tempWT= NewDoubleMatrixAndInitializeElements(data->lines, 1, 1.0);
 	for(int jj =2-1; jj < u; jj++)
@@ -507,7 +508,7 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 	//det(x1`*(w#x1#wt1))=0 then b=j(ncol(x),1,0);
 //	DoubleMatrix *aux= DoubleMatrixElementBinaryOperation(w, x1, false, Mult);//aux= w#x1
 	DoubleMatrix *aux = DoubleMatrixBinOpColumnsPerColumn(w, x1, 0, false, Mult);
-	DoubleMatrix *aux2= DoubleMatrixElementBinaryOperation(aux, wt1, false, Mult);//aux2= w#x1#wt1
+	DoubleMatrix *aux2= DoubleMatrixBinOpColumnsPerColumn(aux, wt1, 0, false, Mult);//aux2= w#x1#wt1
 	DeleteDoubleMatrix(aux);
 	aux= DoubleMatrixCopy(x1);
 	DoubleMatrixTranspose(aux, true);//#aux = x1'

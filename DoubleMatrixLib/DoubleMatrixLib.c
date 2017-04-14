@@ -243,7 +243,7 @@ DoubleMatrix* DoubleMatrixElementBinaryOperation(DoubleMatrix* matrixA, DoubleMa
 	DoubleMatrix* ret;
 	if(!DoubleMatrixHaveSameDimensionsAndSameElementSize(matrixA, matrixB))
 	{
-		fprintf(stderr, "[ERROR]Operation not possible.\r\n");
+		fprintf(stderr, "[ERROR]Operation DoubleMatrixElementBinaryOperation not possible.\r\n");
 		exit(1);
 	}
 	if(resultInTheFirstMatrix)
@@ -386,7 +386,7 @@ DoubleMatrix *DoubleMatrixInverse(DoubleMatrix *matrix)
 {
 	if(matrix->columns != matrix->lines)
 	{
-		fprintf(stderr, "%s:%d\t\tCannot inverve non squared matrix!\n", __FILE__, __LINE__);
+		fprintf(stderr, "%s:%d\t\tCannot invert non squared matrix!\n", __FILE__, __LINE__);
 	}
 	DoubleMatrix *ret= NewDoubleMatrix(matrix->columns, matrix->columns);
 	if(NULL == ret)
@@ -517,7 +517,7 @@ DoubleMatrix* DoubleMatrixBinOpLinesPerLine(DoubleMatrix *mainMatrix, DoubleMatr
 	DoubleMatrix* ret;
 	if(mainMatrix->columns != matrixWithLine->columns)
 	{
-		fprintf(stderr, "[ERROR]Operation not possible.\r\n");
+		fprintf(stderr, "[ERROR]Operation DoubleMatrixBinOpLinesPerLine not possible.\r\n");
 		exit(1);
 	}
 	if(resultInTheFirstMatrix)
@@ -567,7 +567,7 @@ DoubleMatrix* DoubleMatrixBinOpColumnsPerColumn(DoubleMatrix *mainMatrix, Double
 	DoubleMatrix* ret;
 	if(mainMatrix->lines != matrixWithColumn->lines)
 	{
-		fprintf(stderr, "[ERROR]Operation not possible.\r\n");
+		fprintf(stderr, "[ERROR]Operation DoubleMatrixBinOpColumnsPerColumn not possible.\r\n");
 		exit(1);
 	}
 	if(resultInTheFirstMatrix)
