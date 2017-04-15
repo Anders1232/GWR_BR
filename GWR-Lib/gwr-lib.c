@@ -338,7 +338,7 @@ static double Mult(double a, double b)
 	return a*b;
 }
 
-static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleMatrix *yhat,int xCOORD, int yCOORD, int oneOrTwo, int i, bool distanceInKm, KernelType method, double h1, double maxDistanceBetweenPoints, DoubleMatrix *outWT1, DoubleMatrix *outW)
+static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleMatrix *yhat,int xCOORD, int yCOORD, int oneOrTwo, int i, bool distanceInKm, KernelType method, double h1, double maxDistanceBetweenPoints, DoubleMatrix *outW)
 {
 	DoubleMatrix *d= NewDoubleMatrix(1, 3);
 	DoubleMatrix *dist= NewDoubleMatrixAndInitializeElements(1, 3, 0.0);
@@ -425,9 +425,6 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 	DoubleMatrix* w= NewDoubleMatrix(u, 1);
 	DoubleMatrix *x1= NewLineDoubleMatrixFromMatrix(data, i);//verificar qual a diferença dessas 2 matrizes
 	DoubleMatrix *y1= NewLineDoubleMatrixFromMatrix(data, i);
-	DoubleMatrix *wt1= NewDoubleMatrixAndInitializeElements(1, data->lines, 1.);
-	wt1->elements[0]=0.0;
-//	DoubleMatrix *tempWT= NewDoubleMatrixAndInitializeElements(data->lines, 1, 1.0);
 	for(int jj =2-1; jj < u; jj++)
 	{
 		if(FIXED_BSQ == method || ADAPTIVE_N == method)
@@ -452,10 +449,6 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 		}
 		DoubleMatrixConcatenateLine(x1, x, DoubleMatrixGetElement(dist, jj, 2-1));
 		DoubleMatrixConcatenateLine(y1, y, DoubleMatrixGetElement(dist, jj, 2-1));
-		//wt1=wt1//wt[dist[jj,2],]; wt é uma matriz Nx1 onde todos os elementos são 1.0
-		DoubleMatrixAddLine(wt1);
-		DoubleMatrixSetElement(wt1, wt1->lines-1, 0, 1.0);
-//		DoubleMatrixConcatenateLine(wt1,tempWT, );
 	}
 	if(ADAPTIVE_BSQ== method)
 	{
@@ -508,13 +501,14 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 	//det(x1`*(w#x1#wt1))=0 then b=j(ncol(x),1,0);
 //	DoubleMatrix *aux= DoubleMatrixElementBinaryOperation(w, x1, false, Mult);//aux= w#x1
 	DoubleMatrix *aux = DoubleMatrixBinOpColumnsPerColumn(w, x1, 0, false, Mult);
-	DoubleMatrix *aux2= DoubleMatrixBinOpColumnsPerColumn(aux, wt1, 0, false, Mult);//aux2= w#x1#wt1
-	DeleteDoubleMatrix(aux);
+
+	DoubleMatrix *aux2;
+	aux2= aux;
+
 	aux= DoubleMatrixCopy(x1);
 	DoubleMatrixTranspose(aux, true);//#aux = x1'
 	DoubleMatrix *aux3= DoubleMatrixMultiplication(aux, aux2);//aux3=x1`*(w#x1#wt1)
 	DoubleMatrix *b;
-	fprintf(stderr, "%s|%s:%d\t wt1 is %dx%d\r\n", __FILE__, __func__, __LINE__, wt1->lines, wt1->columns);
 	fprintf(stderr, "%s|%s:%d\t aux is %dx%d\r\n", __FILE__, __func__, __LINE__, aux->lines, aux->columns);
 	fprintf(stderr, "%s|%s:%d\t aux2 is %dx%d\r\n", __FILE__, __func__, __LINE__, aux2->lines, aux2->columns);
 	fprintf(stderr, "%s|%s:%d\t aux3 is %dx%d\r\n", __FILE__, __func__, __LINE__, aux3->lines, aux3->columns);
@@ -547,25 +541,23 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 	DeleteDoubleMatrix(temp2);
 	DeleteDoubleMatrix(x1);
 	DeleteDoubleMatrix(y1);
-	outWT1= wt1;
 	outW=w;
 }
 
 static double CrossValidation(DoubleMatrix *data, int oneOrTwo, bool distanceInKm, KernelType method, int forCount, int xCoord, int yCoord, DoubleMatrix *x, DoubleMatrix *y, DoubleMatrix *yhat, double h1, double maxDistanceBetweenPoints)
 {
-	DoubleMatrix *wt1= NULL;
 	DoubleMatrix *w= NULL;
 	if(ADAPTIVE_N != method)
 	{
 		int i;
 		for(i=0; i < data->lines; i++)
 		{
-			CvAux1(data, x, y, yhat, xCoord, yCoord, oneOrTwo, i, distanceInKm, method, h1, maxDistanceBetweenPoints, wt1, w);
+			CvAux1(data, x, y, yhat, xCoord, yCoord, oneOrTwo, i, distanceInKm, method, h1, maxDistanceBetweenPoints, w);
 		}
 	}
 	else
 	{
-		CvAux1(data, x, y, yhat, xCoord, yCoord, oneOrTwo, forCount, distanceInKm, method, h1, maxDistanceBetweenPoints, wt1, w);
+		CvAux1(data, x, y, yhat, xCoord, yCoord, oneOrTwo, forCount, distanceInKm, method, h1, maxDistanceBetweenPoints, w);
 //		cv1= ((y[i]-yhat)#wt1#w)`*(y[i]-yhat);
 	}
 	DoubleMatrix *cv;
@@ -573,8 +565,7 @@ static double CrossValidation(DoubleMatrix *data, int oneOrTwo, bool distanceInK
 	{
 		DoubleMatrix *temp= DoubleMatrixCopy(y);
 		DoubleMatrixElementBinaryOperation(temp, yhat, true, Sub);//temp = y[i] -yhat
-		DoubleMatrix *temp2= DoubleMatrixElementBinaryOperation(temp, wt1, false, Mult);
-//		DoubleMatrix *temp2= DoubleMatrixMultLinesPerLine(temp, wt1, 0, false);
+		DoubleMatrix *temp2= DoubleMatrixCopy(temp);
 		DoubleMatrixElementBinaryOperation(temp, w, true, Mult);
 		DoubleMatrixTranspose(temp2, true);
 		cv= DoubleMatrixMultiplication(temp2, temp);
@@ -588,7 +579,7 @@ static double CrossValidation(DoubleMatrix *data, int oneOrTwo, bool distanceInK
 		//((y[i]-yhat)#wt1#w)`*(y[i]-yhat)
 		DoubleMatrix *temp= NewLineDoubleMatrixFromMatrix(y, forCount);
 		DoubleMatrixElementBinaryOperation(temp, yhat, true, Sub);//temp = y[i] -yhat
-		DoubleMatrix *temp2= DoubleMatrixElementBinaryOperation(temp, wt1, false, Mult);
+		DoubleMatrix *temp2= DoubleMatrixCopy(temp);
 		DoubleMatrixElementBinaryOperation(temp, w, true, Mult);
 		DoubleMatrixTranspose(temp2, true);
 		cv= DoubleMatrixMultiplication(temp2, temp);
@@ -597,7 +588,6 @@ static double CrossValidation(DoubleMatrix *data, int oneOrTwo, bool distanceInK
 	}
 	double result= cv->elements[0];
 	DeleteDoubleMatrix(cv);
-	DeleteDoubleMatrix(wt1);
 	DeleteDoubleMatrix(w);
 	return result;//((y-yhat)#wt1#w)`*(y-yhat);
 }
