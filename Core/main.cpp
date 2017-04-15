@@ -11,6 +11,7 @@ int main(int argc, char *argv[])
 {
 	setlocale(LC_ALL, "C");
 	freopen ("ErrorLog.txt","w",stderr);
+	freopen ("Log.txt","w",stdout);
 	return Gui_Init(argc, argv);
 }
 

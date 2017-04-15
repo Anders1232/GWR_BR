@@ -234,5 +234,6 @@ int NamedColumnDoubleTable_GetColumnIndex(NamedColumnDoubleTable *table, char co
 		}
 	}
 	fprintf(stderr, "[ERROR] Column index not found!"NEW_LINE);
+	return -1;
 	exit(1);
 }
