@@ -91,6 +91,9 @@ DoubleMatrix* DoubleMatrixAdd(DoubleMatrix* m1, DoubleMatrix* m2, bool resultInT
 {
 	if(!DoubleMatrixHaveSameDimensionsAndSameElementSize(m1, m2))
 	{
+		printf("%s|%s:%d\t Matrices do not have same dimensions\r\n", __FILE__, __func__, __LINE__);
+		fprintf(stderr, "%s|%s:%d, first matrix is %dx%d and the second is %dx%d\r\n", __FILE__, __func__, __LINE__, m1->lines, m1->columns, m2->lines, m2->columns);
+		printf("");
 		return NULL;
 	}
 	DoubleMatrix *ret;
@@ -168,20 +171,6 @@ DoubleMatrix* DoubleMatrixTranspose(DoubleMatrix *matrix, bool resultInTheSameMa
 	{
 		return NULL;
 	}
-	
-/*	DoubleMatrix* ret;
-	if(resultInTheSameMatrix)
-	{
-		ret= matrix;
-	}
-	else
-	{
-		ret= NewDoubleMatrix(matrix->columns, matrix->lines);
-		if(NULL == ret)
-		{
-			return NULL;
-		}
-	}*/
 	int lines, columns;
 	lines= matrix->lines;
 	columns= matrix->columns;
@@ -244,6 +233,7 @@ DoubleMatrix* DoubleMatrixElementBinaryOperation(DoubleMatrix* matrixA, DoubleMa
 	if(!DoubleMatrixHaveSameDimensionsAndSameElementSize(matrixA, matrixB))
 	{
 		fprintf(stderr, "[ERROR]Operation DoubleMatrixElementBinaryOperation not possible.\r\n");
+		fprintf(stderr, "%s|%s:%d, first matrix is %dx%d and the second is %dx%d\r\n", __FILE__, __func__, __LINE__, matrixA->lines, matrixA->columns, matrixB->lines, matrixB->columns);
 		exit(1);
 	}
 	if(resultInTheFirstMatrix)
@@ -343,7 +333,7 @@ double DoubleMatrixDeterminant(DoubleMatrix *mat)
 {
 	if(mat->lines != mat->columns)
 	{
-		fprintf(stderr, "%s:%d\tFunction:%s\t\tError: Not a sqared matrix.\n", __FILE__, __LINE__, __func__);
+		fprintf(stderr, "%s|%s:%d\t\tError: Not a sqared matrix. Its dimensions are %dx%d\n", __FILE__, __func__, __LINE__, mat->lines, mat->columns);
 	}
 	double result=0, temp;
 	int count, count2, aux;
@@ -387,6 +377,7 @@ DoubleMatrix *DoubleMatrixInverse(DoubleMatrix *matrix)
 	if(matrix->columns != matrix->lines)
 	{
 		fprintf(stderr, "%s:%d\t\tCannot invert non squared matrix!\n", __FILE__, __LINE__);
+		fprintf(stderr, "%s|%s:%d, first matrix is %dx%d and the second is %dx%d\r\n", __FILE__, __func__, __LINE__, matrix->lines, matrix->columns);
 	}
 	DoubleMatrix *ret= NewDoubleMatrix(matrix->columns, matrix->columns);
 	if(NULL == ret)
@@ -446,6 +437,7 @@ DoubleMatrix* DoubleMatrixMultiplication(DoubleMatrix *a, DoubleMatrix *b)
 	if(a->columns != b->lines)
 	{
 		fprintf(stderr, "%s:%s:%d\t\tMatrices not compatible for multiplication.\n", __func__, __FILE__, __LINE__);
+		fprintf(stderr, "%s|%s:%d, first matrix is %dx%d and the second is %dx%d\r\n", __FILE__, __func__, __LINE__, a->lines, a->columns, b->lines, b->columns);
 		return NULL;
 	}
 #ifdef DEBUG_MATRIX_MULT
@@ -490,6 +482,7 @@ void DoubleMatrixConcatenateColumn(DoubleMatrix *mainMatrix, DoubleMatrix *matri
 	if(mainMatrix->lines != matrixWithWantedColumn->lines)
 	{
 		fprintf(stderr, "%s recieved matrices with different lines number, returning\n", __func__);
+		fprintf(stderr, "%s|%s:%d, first matrix is %dx%d and the second is %dx%d\r\n", __FILE__, __func__, __LINE__, mainMatrix->lines, mainMatrix->columns, matrixWithWantedColumn->lines, matrixWithWantedColumn->columns);
 		return;
 	}
 	DoubleMatrixAddColumn(mainMatrix);
@@ -506,6 +499,7 @@ void DoubleMatrixConcatenateLine(DoubleMatrix *mainMatrix, DoubleMatrix *matrixW
 	if(mainMatrix->columns != matrixWithWantedLine->columns)
 	{
 		fprintf(stderr, "%s recieved matrices with different columns number, returning\n", __func__);
+		fprintf(stderr, "%s|%s:%d, first matrix is %dx%d and the second is %dx%d\r\n", __FILE__, __func__, __LINE__, mainMatrix->lines, mainMatrix->columns, matrixWithWantedLine->lines, matrixWithWantedLine->columns);
 		return;
 	}
 	DoubleMatrixAddColumn(mainMatrix);
@@ -518,6 +512,7 @@ DoubleMatrix* DoubleMatrixBinOpLinesPerLine(DoubleMatrix *mainMatrix, DoubleMatr
 	if(mainMatrix->columns != matrixWithLine->columns)
 	{
 		fprintf(stderr, "[ERROR]Operation DoubleMatrixBinOpLinesPerLine not possible.\r\n");
+		fprintf(stderr, "%s|%s:%d, first matrix is %dx%d and the second is %dx%d\r\n", __FILE__, __func__, __LINE__, mainMatrix->lines, mainMatrix->columns, matrixWithLine->lines, matrixWithLine->columns);
 		exit(1);
 	}
 	if(resultInTheFirstMatrix)
@@ -568,6 +563,7 @@ DoubleMatrix* DoubleMatrixBinOpColumnsPerColumn(DoubleMatrix *mainMatrix, Double
 	if(mainMatrix->lines != matrixWithColumn->lines)
 	{
 		fprintf(stderr, "[ERROR]Operation DoubleMatrixBinOpColumnsPerColumn not possible.\r\n");
+		fprintf(stderr, "%s|%s:%d, first matrix is %dx%d and the second is %dx%d\r\n", __FILE__, __func__, __LINE__, mainMatrix->lines, mainMatrix->columns, matrixWithColumn->lines, matrixWithColumn->columns);
 		exit(1);
 	}
 	if(resultInTheFirstMatrix)
