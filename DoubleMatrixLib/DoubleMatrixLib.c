@@ -436,6 +436,16 @@ DoubleMatrix* DoubleMatrixMultiplication(DoubleMatrix *a, DoubleMatrix *b)
 	DoubleMatrix* ret;
 	if(a->columns != b->lines)
 	{
+		if(a->columns == a->lines && a->columns == 1)
+		{
+			fprintf(stderr, "[WARNING] First matrix of multiplication is 1x1, multiplyng an escalar to the second matrix\r\n");
+			return DoubleMatrixScalarMultiplication(b, a->elements[0], false);
+		}
+		else if(b->columns == b->lines && b->columns == 1)
+		{
+			fprintf(stderr, "[WARNING] Second matrix of multiplication is 1x1, multiplyng an escalar to the first matrix\r\n");
+			return DoubleMatrixScalarMultiplication(a, b->elements[0], false);
+		}
 		fprintf(stderr, "%s:%s:%d\t\tMatrices not compatible for multiplication.\n", __func__, __FILE__, __LINE__);
 		fprintf(stderr, "%s|%s:%d, first matrix is %dx%d and the second is %dx%d\r\n", __FILE__, __func__, __LINE__, a->lines, a->columns, b->lines, b->columns);
 		return NULL;

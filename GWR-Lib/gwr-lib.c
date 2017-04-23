@@ -269,6 +269,9 @@ void *Golden(void *args_)//vai retornar a matriz de distâncias se for pedido, c
 	double h0, h1, h2, h3;
 	DoubleMatrix *x= NewDoubleMatrixAndInitializeElements(args->data->lines, 1, 1.0);
 	DoubleMatrixConcatenateColumn(x, args->data, args->xVarColumn_independentVariable);
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("Golden.txt:36\tx criado, dimensões %dx%d\r\n", x->lines, x->columns);
+#endif
 	DoubleMatrix *y= NewColumnDoubleMatrixFromMatrix(args->data, args->yVarColumn_dependentLocalVariables[0]);
 	int *yAux= (args->yVarColumn_dependentLocalVariables)+1;
 	while(-1 != *yAux)
@@ -277,6 +280,9 @@ void *Golden(void *args_)//vai retornar a matriz de distâncias se for pedido, c
 		DoubleMatrixConcatenateColumn(y, args->data, *yAux);
 		yAux++;
 	}
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("Golden.txt:37\ty criado, dimensões %dx%d\r\n", y->lines, y->columns);
+#endif
 	DoubleMatrix *yhat;
 	if(ADAPTIVE_N == args->method)
 	{
@@ -285,6 +291,9 @@ void *Golden(void *args_)//vai retornar a matriz de distâncias se for pedido, c
 //aparentemente é usado nos CVs
 		yhat= NewDoubleMatrix(1, 1);
 		yhat->elements[0]=0;
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("Golden.txt:50\tyhat criado, dimensões %dx%d\r\n", yhat->lines, yhat->columns);
+#endif
 		double golden[args->data->lines];
 		double xMin[args->data->lines];
 		for(int i =1; i < args->data->lines; i++)
@@ -295,6 +304,9 @@ void *Golden(void *args_)//vai retornar a matriz de distâncias se for pedido, c
 	else
 	{
 		yhat= NewDoubleMatrix(args->data->lines, 1);
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("Golden.txt:37\tyhat criado, dimensões %dx%d\r\n", yhat->lines, yhat->columns);
+#endif
 //		memset(yhat->elements, 0, sizeof(double)*yhat->lines);
 		double golden;
 		double xMin;
@@ -342,6 +354,9 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 {
 	DoubleMatrix *d= NewDoubleMatrix(1, 3);
 	DoubleMatrix *dist= NewDoubleMatrixAndInitializeElements(1, 3, 0.0);
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("cv1.txt:6\td e dist criados, dimensões %dx%d\r\n", d->lines, d->columns);
+#endif
 	for(int j=0; j < data->lines; j++)
 	{
 		double arco, d1;
@@ -423,8 +438,17 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 	int u= dist->lines;//[DUVIDA] x1 e y1 começam como matrizes 1x1?
 	fprintf(stderr, "%s|%s:%d\tu= %d\n", __FILE__, __func__, __LINE__, u);
 	DoubleMatrix* w= NewDoubleMatrix(u, 1);
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("cv1.txt:44\tw criado, dimensões %dx%d\r\n", w->lines, w->columns);
+#endif
 	DoubleMatrix *x1= NewLineDoubleMatrixFromMatrix(data, i);//verificar qual a diferença dessas 2 matrizes
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("cv1.txt:45\tx1 criado, dimensões %dx%d\r\n", x1->lines, x1->columns);
+#endif
 	DoubleMatrix *y1= NewLineDoubleMatrixFromMatrix(data, i);
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("cv1.txt:46\ty1 criado, dimensões %dx%d\r\n", y1->lines, y1->columns);
+#endif
 	for(int jj =2-1; jj < u; jj++)
 	{
 		if(FIXED_BSQ == method || ADAPTIVE_N == method)
@@ -450,6 +474,10 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 		DoubleMatrixConcatenateLine(x1, x, DoubleMatrixGetElement(dist, jj, 2-1));
 		DoubleMatrixConcatenateLine(y1, y, DoubleMatrixGetElement(dist, jj, 2-1));
 	}
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("cv1.txt:56\tx1, dimensões %dx%d\r\n", x1->lines, x1->columns);
+	printf("cv1.txt:56\ty1, dimensões %dx%d\r\n", y1->lines, y1->columns);
+#endif
 	if(ADAPTIVE_BSQ== method)
 	{
 //		DoubleMatrix *x1= NewLineDoubleMatrixFromMatrix(x, i);
@@ -461,10 +489,22 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 		for(int count=0; count < dist->lines; count++)
 		{
 			DoubleMatrix *temp= NewLineDoubleMatrixFromMatrix(dist, count);
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("cv1.txt:62\tdist[i] criado, dimensões %dx%d\r\n", temp->lines, temp->columns);
+#endif
 			DoubleMatrixTranspose(temp, true);
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("cv1.txt:62\tdist[i]' criado, dimensões %dx%d\r\n", temp->lines, temp->columns);
+#endif
 			DoubleMatrixConcatenateColumn(dist, temp, 0);
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("cv1.txt:62\tdist= dist ||dist[i]' criado, dimensões %dx%d\r\n", temp->lines, temp->columns);
+#endif
 			DeleteDoubleMatrix(temp);
 		}
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("cv1.txt:63\tdist ficou com as dimensões %dx%d\r\n", dist->lines, dist->columns);
+#endif
 //		w=NewDoubleMatrix(n, 2);//verificar se precisa desalocar antes
 		double hn= DoubleMatrixGetElement(dist, h1, 3);
 		for(int jj=2; jj < data->lines; jj++)
@@ -498,20 +538,36 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 //		DeleteDoubleMatrix(x1);
 //		DeleteDoubleMatrix(y1);
 	}
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("cv1.txt:75\tx1, dimensões %dx%d\r\n", x1->lines, x1->columns);
+	printf("cv1.txt:75\ty1, dimensões %dx%d\r\n", y1->lines, y1->columns);
+#endif
 	//det(x1`*(w#x1#wt1))=0 then b=j(ncol(x),1,0);
 //	DoubleMatrix *aux= DoubleMatrixElementBinaryOperation(w, x1, false, Mult);//aux= w#x1
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("cv1.txt:63\tw está as dimensões %dx%d\r\n", w->lines, w->columns);
+	printf("cv1.txt:63\tx1 está com as dimensões %dx%d\r\n", x1->lines, x1->columns);
+#endif
 	DoubleMatrix *aux = DoubleMatrixBinOpColumnsPerColumn(w, x1, 0, false, Mult);
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("cv1.txt:77\tw#x1 ficou com as dimensões %dx%d\r\n", aux->lines, aux->columns);
+#endif
 
 	DoubleMatrix *aux2;
 	aux2= aux;
 
 	aux= DoubleMatrixCopy(x1);
 	DoubleMatrixTranspose(aux, true);//#aux = x1'
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("cv1.txt:77\tx1' ficou com as dimensões %dx%d\r\n", aux->lines, aux->columns);
+#endif
 	DoubleMatrix *aux3= DoubleMatrixMultiplication(aux, aux2);//aux3=x1`*(w#x1#wt1)
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("cv1.txt:77\tx1`*(w#x1#wt1) ficou com as dimensões %dx%d\r\n", aux3->lines, aux3->columns);
+#endif
 	DoubleMatrix *b;
-	fprintf(stderr, "%s|%s:%d\t aux is %dx%d\r\n", __FILE__, __func__, __LINE__, aux->lines, aux->columns);
-	fprintf(stderr, "%s|%s:%d\t aux2 is %dx%d\r\n", __FILE__, __func__, __LINE__, aux2->lines, aux2->columns);
-	fprintf(stderr, "%s|%s:%d\t aux3 is %dx%d\r\n", __FILE__, __func__, __LINE__, aux3->lines, aux3->columns);
+//	fprintf(stderr, "%s|%s:%d\t aux2 is %dx%d\r\n", __FILE__, __func__, __LINE__, aux2->lines, aux2->columns);
+//	fprintf(stderr, "%s|%s:%d\t aux3 is %dx%d\r\n", __FILE__, __func__, __LINE__, aux3->lines, aux3->columns);
 	if(0 == DoubleMatrixDeterminant(aux3))
 	{
 		b=NewDoubleMatrixAndInitializeElements(x->columns, 1, 0);
@@ -520,10 +576,19 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 	{
 		//inv(x1`*(w#x1#wt1))*x1`*(w#y1#wt1);
 		b= DoubleMatrixInverse(aux3);
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("cv1.txt:79\tinv(x1`*(w#x1#wt1)) ficou com as dimensões %dx%d\r\n", b->lines, b->columns);
+#endif
 		DeleteDoubleMatrix(aux3);
 		aux3= DoubleMatrixMultiplication(b, aux);//aux3=inv(x1`*(w#x1#wt1))*x1`
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("cv1.txt:79\tinv(x1`*(w#x1#wt1))*x1` ficou com as dimensões %dx%d\r\n", aux3->lines, aux3->columns);
+#endif
 		DeleteDoubleMatrix(b);
 		b= DoubleMatrixMultiplication(aux3, aux2);
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("cv1.txt:79\tb ficou com as dimensões %dx%d\r\n", b->lines, b->columns);
+#endif
 	}
 	DeleteDoubleMatrix(aux3);
 	DeleteDoubleMatrix(aux2);
@@ -531,7 +596,13 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 //	if(DoubleMatrixDeterminant()) //aqui faz uso do wt1, que a princípio era pra ser ignorado
 	//aqui tem 	yhat[i]=x[i,]*b; aparentemente está sobrescrevendo uma coluna da matriz por outra de outra matriz resultado de uma multiplicação
 	DoubleMatrix *temp= NewLineDoubleMatrixFromMatrix(x, i);
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("cv1.txt:81\tx[i] ficou com as dimensões %dx%d\r\n", temp->lines, temp->columns);
+#endif
 	DoubleMatrix *temp2 = DoubleMatrixMultiplication(temp, b);
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("cv1.txt:81\tx[i]*b ficou com as dimensões %dx%d\r\n", temp2->lines, temp2->columns);
+#endif
 	for(int count =0; count < yhat->columns; count++)
 	{
 		DoubleMatrixSetElement(yhat, i, count, DoubleMatrixGetElement(temp2, i, count));
@@ -565,10 +636,22 @@ static double CrossValidation(DoubleMatrix *data, int oneOrTwo, bool distanceInK
 	{
 		DoubleMatrix *temp= DoubleMatrixCopy(y);
 		DoubleMatrixElementBinaryOperation(temp, yhat, true, Sub);//temp = y[i] -yhat
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("cv1.txt:83\ty-yhat criado, dimensões %dx%d\r\n", temp->lines, temp->columns);
+#endif
 		DoubleMatrix *temp2= DoubleMatrixCopy(temp);
 		DoubleMatrixElementBinaryOperation(temp, w, true, Mult);
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("cv1.txt:83\ty-yhat#w criado, dimensões %dx%d\r\n", temp->lines, temp->columns);
+#endif
 		DoubleMatrixTranspose(temp2, true);
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("cv1.txt:83\t(y-yhat#w)' criado, dimensões %dx%d\r\n", temp2->lines, temp2->columns);
+#endif
 		cv= DoubleMatrixMultiplication(temp2, temp);
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("cv1.txt:83\t(y-yhat#w)'*(y-yhat) criado, dimensões %dx%d\r\n", cv->lines, cv->columns);
+#endif
 		DeleteDoubleMatrix(temp);
 		DeleteDoubleMatrix(temp2);
 	}
@@ -578,11 +661,26 @@ static double CrossValidation(DoubleMatrix *data, int oneOrTwo, bool distanceInK
 
 		//((y[i]-yhat)#wt1#w)`*(y[i]-yhat)
 		DoubleMatrix *temp= NewLineDoubleMatrixFromMatrix(y, forCount);
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("cv1.txt:87\ty[i] criado, dimensões %dx%d\r\n", temp->lines, temp->columns);
+#endif
 		DoubleMatrixElementBinaryOperation(temp, yhat, true, Sub);//temp = y[i] -yhat
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("cv1.txt:87\ty[i]-yhat criado, dimensões %dx%d\r\n", temp->lines, temp->columns);
+#endif
 		DoubleMatrix *temp2= DoubleMatrixCopy(temp);
 		DoubleMatrixElementBinaryOperation(temp, w, true, Mult);
-		DoubleMatrixTranspose(temp2, true);
-		cv= DoubleMatrixMultiplication(temp2, temp);
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("cv1.txt:87\t(y[i]-yhat)#w criado, dimensões %dx%d\r\n", temp->lines, temp->columns);
+#endif
+		DoubleMatrixTranspose(temp, true);
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("cv1.txt:87\t( (y[i]-yhat)#w)' criado, dimensões %dx%d\r\n", temp->lines, temp->columns);
+#endif
+		cv= DoubleMatrixMultiplication(temp, temp2);
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("cv1.txt:87\t( (y[i]-yhat)#w)'*(y[i]-yhat) criado, dimensões %dx%d\r\n", cv->lines, cv->columns);
+#endif
 		DeleteDoubleMatrix(temp);
 		DeleteDoubleMatrix(temp2);
 	}

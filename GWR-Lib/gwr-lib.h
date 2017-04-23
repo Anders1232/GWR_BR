@@ -4,6 +4,8 @@
 #include "DoubleMatrixLib.h"
 #include "FowardList.h"
 
+#define DEBUG_MATRIX_DIMENSIONS
+
 enum kernelType
 {
 	FIXED_G,
