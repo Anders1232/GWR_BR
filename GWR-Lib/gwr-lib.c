@@ -568,7 +568,7 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 	DoubleMatrix *b;
 //	fprintf(stderr, "%s|%s:%d\t aux2 is %dx%d\r\n", __FILE__, __func__, __LINE__, aux2->lines, aux2->columns);
 //	fprintf(stderr, "%s|%s:%d\t aux3 is %dx%d\r\n", __FILE__, __func__, __LINE__, aux3->lines, aux3->columns);
-	if(0 == DoubleMatrixDeterminant(aux3))
+	if(0 == GWR_Determinant(aux3))
 	{
 		b=NewDoubleMatrixAndInitializeElements(x->columns, 1, 0);
 	}
@@ -593,7 +593,7 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 	DeleteDoubleMatrix(aux3);
 	DeleteDoubleMatrix(aux2);
 	DeleteDoubleMatrix(aux);
-//	if(DoubleMatrixDeterminant()) //aqui faz uso do wt1, que a princípio era pra ser ignorado
+//	if(GWR_Determinant()) //aqui faz uso do wt1, que a princípio era pra ser ignorado
 	//aqui tem 	yhat[i]=x[i,]*b; aparentemente está sobrescrevendo uma coluna da matriz por outra de outra matriz resultado de uma multiplicação
 	DoubleMatrix *temp= NewLineDoubleMatrixFromMatrix(x, i);
 #ifdef DEBUG_MATRIX_DIMENSIONS
@@ -688,6 +688,16 @@ static double CrossValidation(DoubleMatrix *data, int oneOrTwo, bool distanceInK
 	DeleteDoubleMatrix(cv);
 	DeleteDoubleMatrix(w);
 	return result;//((y-yhat)#wt1#w)`*(y-yhat);
+}
+
+double GWR_Determinant(DoubleMatrix *m)
+{
+	DoubleMatrix *temp = DoubleMatrixTranspose(m, false);
+	DoubleMatrix *temp2= DoubleMatrixMultiplication(temp, m);
+	double result= DoubleMatrixDeterminant(temp2);
+	DeleteDoubleMatrix(temp);
+	DeleteDoubleMatrix(temp2);
+	return result;
 }
 
 
