@@ -59,5 +59,6 @@ double** DistanceBetweenAllPoints(DoubleMatrix* base, int yVarColumn, int xVarCo
 //obs: o argumento e o tipo de retorno são void para permintir que essa função seja chamada no pthread_create,
 //mas na verdade o argumento é um ponteiro para GoldenArguments e o tipo de retorno é um ponteiro de ponteiro para void
 void* Golden(void* args);//vai retornar a matriz de distâncias se for pedido, caso contrário retorna NULL
+double GWR_Determinant(DoubleMatrix *m);
 
 #endif

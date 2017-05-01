@@ -505,9 +505,10 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 #ifdef DEBUG_MATRIX_DIMENSIONS
 	printf("cv1.txt:63\tdist ficou com as dimensões %dx%d\r\n", dist->lines, dist->columns);
 #endif
-//		w=NewDoubleMatrix(n, 2);//verificar se precisa desalocar antes
+		DeleteDoubleMatrix(w);
+		w=NewDoubleMatrix(n, 2);//verificar se precisa desalocar antes
 		double hn= DoubleMatrixGetElement(dist, h1, 3);
-		for(int jj=2; jj < data->lines; jj++)
+		for(int jj=2-1; jj < data->lines; jj++)
 		{
 			if(DoubleMatrixGetElement(dist, jj, 4) <= h1)
 			{
@@ -532,7 +533,10 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 		memset(w->elements, 0, w->lines*w->columns);
 //		DoubleMatrixConcatenateLine(w, w, position, 1);
 		//whot? 	w={0}//w[position,1];//está concatenando um elemento numa linha
-
+		DoubleMatrix *temp= NewDoubleMatrix(1, 2);
+		temp->elements[0]=0;
+		temp->elements[1]= DoubleMatrixGetElement(w, position, 1);
+		//fim do whot
 		DoubleMatrixConcatenateLine(x1, x, position);
 		DoubleMatrixConcatenateLine(y1, y, position);
 //		DeleteDoubleMatrix(x1);
