@@ -1,8 +1,9 @@
 #include"NamedColumnDoubleTable.h"
 #include<string.h>
 
+#ifndef _WIN32
 #define DEBUG_NAMED_COLUMN
-
+#endif
 NamedColumnDoubleTable *NewNamedColumnDoubleTableWithNoMatrix(int numberOfColumns)
 {
 	NamedColumnDoubleTable *ret= malloc(sizeof(NamedColumnDoubleTable));

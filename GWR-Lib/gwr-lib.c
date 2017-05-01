@@ -506,7 +506,7 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 	printf("cv1.txt:63\tdist ficou com as dimensões %dx%d\r\n", dist->lines, dist->columns);
 #endif
 		DeleteDoubleMatrix(w);
-		w=NewDoubleMatrix(n, 2);//verificar se precisa desalocar antes
+		w=NewDoubleMatrix(data->lines, 2);//verificar se precisa desalocar antes
 		double hn= DoubleMatrixGetElement(dist, h1, 3);
 		for(int jj=2-1; jj < data->lines; jj++)
 		{
@@ -530,19 +530,24 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 		}
 		//whot?  w={0}//w[position,1];
 		//supondo que essa chaves atribua zero a todos os elementos de w, pergunta se é isso mesmo
-		memset(w->elements, 0, w->lines*w->columns);
-//		DoubleMatrixConcatenateLine(w, w, position, 1);
-		//whot? 	w={0}//w[position,1];//está concatenando um elemento numa linha
+#ifdef MODO1
+		memset(w->elements, 0, w->lines*w->columns*sizeof(double));
+#else
 		DoubleMatrix *temp= NewDoubleMatrix(1, 2);
 		temp->elements[0]=0;
 		temp->elements[1]= DoubleMatrixGetElement(w, position, 1);
-		//fim do whot
+		DoubleMatrixConcatenateLine(w, temp, 0);
+#endif
+		//		DoubleMatrixConcatenateLine(w, w, position, 1);
+		//whot? 	w={0}//w[position,1];//está concatenando um elemento numa linha
+
 		DoubleMatrixConcatenateLine(x1, x, position);
 		DoubleMatrixConcatenateLine(y1, y, position);
 //		DeleteDoubleMatrix(x1);
 //		DeleteDoubleMatrix(y1);
 	}
 #ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("cv1.txt:44\tw, dimensões %dx%d\r\n", w->lines, w->columns);
 	printf("cv1.txt:75\tx1, dimensões %dx%d\r\n", x1->lines, x1->columns);
 	printf("cv1.txt:75\ty1, dimensões %dx%d\r\n", y1->lines, y1->columns);
 #endif
