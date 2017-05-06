@@ -10,7 +10,7 @@ extern "C"
 int main(int argc, char *argv[])
 {
 	setlocale(LC_ALL, "C");
-#ifndef _WIN32
+#ifdef _WIN32
 	freopen ("ErrorLog.txt","w",stderr);
 	freopen ("Log.txt","w",stdout);
 #endif
