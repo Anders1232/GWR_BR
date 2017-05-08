@@ -246,16 +246,15 @@ QString GuiDriver::CalculateDistanceBetweenPoints
 	return(ret);
 }
 
-void GuiDriver::CalculateGolden(
-		QTextEdit &textArea,
+void GuiDriver::CalculateGolden(QTextEdit &textArea,
 		FILE* outputFile,
 		FILE *outputDistancesBetweenPoints,
 		KernelType kernelType,
 		DoubleMatrix *data,
 		bool distanceInKm,
-		int independentVariable,
-		int *dependentLocalVariables,
-		int *dependentGlobalVariables,
+		int dependentVariable,
+		int *independentLocalVariables,
+		int *independentGlobalVariables,
 		int latitude,
 		int longitude
 )
@@ -267,9 +266,9 @@ void GuiDriver::CalculateGolden(
 	args.distanceInKM= distanceInKm;
 	args.method= kernelType;
 	args.returnDistancesMatrix= (outputDistancesBetweenPoints != NULL);
-	args.xVarColumn_independentVariable= independentVariable;
-	args.yVarColumn_dependentGlobalVariables= dependentGlobalVariables;
-	args.yVarColumn_dependentLocalVariables= dependentLocalVariables;
+	args.xVarColumn_dependentVariable= dependentVariable;
+	args.yVarColumn_independentGlobalVariables= independentGlobalVariables;
+	args.yVarColumn_independentLocalVariables= independentLocalVariables;
 	args.x_dCoord= latitude;
 	args.y_dCoord= longitude;
 	pthread_t thread;

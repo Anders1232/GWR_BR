@@ -27,9 +27,9 @@ struct goldenArguments
 {
 	FowardList *communication;
 	DoubleMatrix *data;
-	int *yVarColumn_dependentLocalVariables;//pergunta se é usar as variáveis locais ou globais
-	int *yVarColumn_dependentGlobalVariables;
-	int xVarColumn_independentVariable;
+	int *yVarColumn_independentLocalVariables;//pergunta se é usar as variáveis locais ou globais
+	int *yVarColumn_independentGlobalVariables;
+	int xVarColumn_dependentVariable;
 	int x_dCoord;
 	int y_dCoord;
 	KernelType method;

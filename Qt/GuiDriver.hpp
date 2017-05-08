@@ -65,16 +65,15 @@ class GuiDriver
 				const std::string &latitude,
 				const std::string &longitude
 		);
-		void CalculateGolden(
-				QTextEdit &textArea,
+		void CalculateGolden(QTextEdit &textArea,
 				FILE* outputFile,
 				FILE *outputDistancesBetweenPoints,
 				KernelType kernelType,
 				DoubleMatrix *data,
 				bool distanceInKm,
-				int independentVariable,
-				int *dependentLocalVariables,
-				int *dependentGlobalVariables,
+				int dependentVariable,
+				int *independentLocalVariables,
+				int *independentGlobalVariables,
 				int latitude,
 				int longitude
 			);

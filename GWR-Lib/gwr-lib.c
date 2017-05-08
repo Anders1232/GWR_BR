@@ -3,6 +3,7 @@
 #include "string.h"
 
 #define APPROX_EARTH_RADIUS (6371)
+#define WHERE printf("%s|%s:%s\r\n", __FILE__, __func__, __LINE__);
 
 #define ASSERT(X)\
 	if( !(X) )\
@@ -79,6 +80,31 @@ double** DistanceBetweenAllPoints(DoubleMatrix* base, int yVarColumn, int xVarCo
 {
 	double** distances;
 	if(!returnOnlyMinAndMax)
+		JOGUE GRÁTIS!
+		Nome de usuário:
+		Password:
+		Endereço de E-Mail:
+		Universo: (Diferenças)
+		Betelgeuse 	
+		Os nossos T&Cs e Política de Privacidade aplicam-se no jogo
+		
+		    Inicio
+		    Sobre OGame
+		    Media
+		
+		Wiki
+		
+		OGame - Conquiste o universo
+		
+		O OGame é um jogo de estratégia no espaço onde milhares de jogadores espalhados pelos quatro cantos do mundo, competem ao mesmo tempo. Para conseguir jogar só precisa de um web browser.
+		Fórum
+		Trailer
+		Impressão | Declaração de Privacidade | AGB | Contactar | Regras
+		Google+
+		Facebook
+		
+		© 2002 Gameforge 4D GmbH. Todos os direitos reservados.
+
 	{
 		distances= (double**)malloc(base->lines * sizeof(double*));
 		ASSERT(NULL != distances);
@@ -265,21 +291,27 @@ void *Golden(void *args_)//vai retornar a matriz de distâncias se for pedido, c
 	double minDist/*, medDist*/, maxDist;
 	double **distances= DistanceBetweenAllPoints(args->data, args->x_dCoord, args->y_dCoord, &minDist, &maxDist, true);
 //	medDist=(maxDist + minDist)/2;
-
+	//x é em loop, y não é em loop.
+	//o erro está na interface gráfica
 	double h0, h1, h2, h3;
 	DoubleMatrix *x= NewDoubleMatrixAndInitializeElements(args->data->lines, 1, 1.0);
-	DoubleMatrixConcatenateColumn(x, args->data, args->xVarColumn_independentVariable);
+	int *xAux= (args->yVarColumn_independentLocalVariables);//+1????
+	while(-1 != *xAux)
+	{
+		printf("%s|%s:%d\t *xAux= %d\n", __FILE__, __func__, __LINE__, *xAux);
+		DoubleMatrixConcatenateColumn(x, args->data, *xAux);
+		xAux++;
+	}
+	WHERE;
+	DoubleMatrixPrint(x, stdout, "\t%lf", "\n");
+	printf("args->xVarColumn_independentVariable: %d\n", args->xVarColumn_dependentVariable);
 #ifdef DEBUG_MATRIX_DIMENSIONS
 	printf("Golden.txt:36\tx criado, dimensões %dx%d\r\n", x->lines, x->columns);
 #endif
-	DoubleMatrix *y= NewColumnDoubleMatrixFromMatrix(args->data, args->yVarColumn_dependentLocalVariables[0]);
-	int *yAux= (args->yVarColumn_dependentLocalVariables)+1;
-	while(-1 != *yAux)
-	{
-		printf("%s|%s:%d\t *yAux= %d\n", __FILE__, __func__, __LINE__, *yAux);
-		DoubleMatrixConcatenateColumn(y, args->data, *yAux);
-		yAux++;
-	}
+	DoubleMatrix *y= NewColumnDoubleMatrixFromMatrix(args->data, args->yVarColumn_independentLocalVariables[0]);
+	DoubleMatrixConcatenateColumn(y, args->data, args->xVarColumn_dependentVariable);
+	WHERE;
+	DoubleMatrixPrint(y, stdout, "\t%lf", "\n");
 #ifdef DEBUG_MATRIX_DIMENSIONS
 	printf("Golden.txt:37\ty criado, dimensões %dx%d\r\n", y->lines, y->columns);
 #endif
@@ -436,14 +468,14 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 		}
 	}
 	int u= dist->lines;//[DUVIDA] x1 e y1 começam como matrizes 1x1?
-	fprintf(stderr, "%s|%s:%d\tu= %d\n", __FILE__, __func__, __LINE__, u);
+	fprintf(stdout, "%s|%s:%d\tu= %d\n", __FILE__, __func__, __LINE__, u);
 	DoubleMatrix* w= NewDoubleMatrix(u, 1);
 #ifdef DEBUG_MATRIX_DIMENSIONS
 	printf("cv1.txt:44\tw criado, dimensões %dx%d\r\n", w->lines, w->columns);
 #endif
 	DoubleMatrix *x1= NewLineDoubleMatrixFromMatrix(data, i);//verificar qual a diferença dessas 2 matrizes
 #ifdef DEBUG_MATRIX_DIMENSIONS
-	printf("cv1.txt:45\tx1 criado, dimensões %dx%d\r\n", x1->lines, x1->columns);
+	printf("cv1.txt:45\tx1 criado, dimensões i=%d %dx%d\r\n", i, x1->lines, x1->columns);
 #endif
 	DoubleMatrix *y1= NewLineDoubleMatrixFromMatrix(data, i);
 #ifdef DEBUG_MATRIX_DIMENSIONS

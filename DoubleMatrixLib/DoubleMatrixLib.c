@@ -294,7 +294,7 @@ void DoubleMatrixAddColumn(DoubleMatrix *matrix)
 		double *v= matrix->elements;
 		for(count= matrix->lines -1; count>0; count--)
 		{
-			fprintf(stdout, "%s|%s:%d\t count= %d\n", __FILE__, __func__, __LINE__, count );
+//			fprintf(stdout, "%s|%s:%d\t count= %d\n", __FILE__, __func__, __LINE__, count );
 			memmove(&(v[nColumnsAfter*count]), &(v[nColumnsBefore*count]), nColumnsBefore*sizeof(double));
 		}
 		matrix->columns= nColumnsAfter;
