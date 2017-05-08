@@ -3,7 +3,7 @@
 #include "string.h"
 
 #define APPROX_EARTH_RADIUS (6371)
-#define WHERE printf("%s|%s:%s\r\n", __FILE__, __func__, __LINE__);
+#define WHERE printf("%s|%s:%d\r\n", __FILE__, __func__, __LINE__);
 
 #define ASSERT(X)\
 	if( !(X) )\
@@ -80,30 +80,6 @@ double** DistanceBetweenAllPoints(DoubleMatrix* base, int yVarColumn, int xVarCo
 {
 	double** distances;
 	if(!returnOnlyMinAndMax)
-		JOGUE GRÁTIS!
-		Nome de usuário:
-		Password:
-		Endereço de E-Mail:
-		Universo: (Diferenças)
-		Betelgeuse 	
-		Os nossos T&Cs e Política de Privacidade aplicam-se no jogo
-		
-		    Inicio
-		    Sobre OGame
-		    Media
-		
-		Wiki
-		
-		OGame - Conquiste o universo
-		
-		O OGame é um jogo de estratégia no espaço onde milhares de jogadores espalhados pelos quatro cantos do mundo, competem ao mesmo tempo. Para conseguir jogar só precisa de um web browser.
-		Fórum
-		Trailer
-		Impressão | Declaração de Privacidade | AGB | Contactar | Regras
-		Google+
-		Facebook
-		
-		© 2002 Gameforge 4D GmbH. Todos os direitos reservados.
 
 	{
 		distances= (double**)malloc(base->lines * sizeof(double*));
@@ -308,8 +284,8 @@ void *Golden(void *args_)//vai retornar a matriz de distâncias se for pedido, c
 #ifdef DEBUG_MATRIX_DIMENSIONS
 	printf("Golden.txt:36\tx criado, dimensões %dx%d\r\n", x->lines, x->columns);
 #endif
-	DoubleMatrix *y= NewColumnDoubleMatrixFromMatrix(args->data, args->yVarColumn_independentLocalVariables[0]);
-	DoubleMatrixConcatenateColumn(y, args->data, args->xVarColumn_dependentVariable);
+	DoubleMatrix *y= NewColumnDoubleMatrixFromMatrix(args->data, args->xVarColumn_dependentVariable);
+//	DoubleMatrixConcatenateColumn(y, args->data, args->xVarColumn_dependentVariable);
 	WHERE;
 	DoubleMatrixPrint(y, stdout, "\t%lf", "\n");
 #ifdef DEBUG_MATRIX_DIMENSIONS
