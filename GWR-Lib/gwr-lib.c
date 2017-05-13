@@ -443,17 +443,19 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 			DoubleMatrixConcatenateLine(dist, d, 0);
 		}
 	}
-	int u= dist->lines;//[DUVIDA] x1 e y1 começam como matrizes 1x1?
+	int u= data->lines;//[DUVIDA] x1 e y1 começam como matrizes 1x1?
 	fprintf(stdout, "%s|%s:%d\tu= %d\n", __FILE__, __func__, __LINE__, u);
+	fprintf(stdout, "%s|%s:%d\tdata está %dx%d\n", __FILE__, __func__, __LINE__, data->lines, data->columns);
+	fprintf(stdout, "%s|%s:%d\tdist está %dx%d\n", __FILE__, __func__, __LINE__, dist->lines, dist->columns);
 	DoubleMatrix* w= NewDoubleMatrix(u, 1);
 #ifdef DEBUG_MATRIX_DIMENSIONS
 	printf("cv1.txt:44\tw criado, dimensões %dx%d\r\n", w->lines, w->columns);
 #endif
-	DoubleMatrix *x1= NewLineDoubleMatrixFromMatrix(data, i);//verificar qual a diferença dessas 2 matrizes
+	DoubleMatrix *x1= NewLineDoubleMatrixFromMatrix(x, i);//verificar qual a diferença dessas 2 matrizes
 #ifdef DEBUG_MATRIX_DIMENSIONS
 	printf("cv1.txt:45\tx1 criado, dimensões i=%d %dx%d\r\n", i, x1->lines, x1->columns);
 #endif
-	DoubleMatrix *y1= NewLineDoubleMatrixFromMatrix(data, i);
+	DoubleMatrix *y1= NewLineDoubleMatrixFromMatrix(y, i);
 #ifdef DEBUG_MATRIX_DIMENSIONS
 	printf("cv1.txt:46\ty1 criado, dimensões %dx%d\r\n", y1->lines, y1->columns);
 #endif
@@ -481,6 +483,8 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 		}
 		DoubleMatrixConcatenateLine(x1, x, DoubleMatrixGetElement(dist, jj, 2-1));
 		DoubleMatrixConcatenateLine(y1, y, DoubleMatrixGetElement(dist, jj, 2-1));
+		printf("%s|%s:%d\t[DEBUG] I was here!\r\n", __FILE__, __func__, __LINE__);
+		printf("jj = %d\n", jj);
 	}
 #ifdef DEBUG_MATRIX_DIMENSIONS
 	printf("cv1.txt:56\tx1, dimensões %dx%d\r\n", x1->lines, x1->columns);
