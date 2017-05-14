@@ -93,7 +93,6 @@ DoubleMatrix* DoubleMatrixAdd(DoubleMatrix* m1, DoubleMatrix* m2, bool resultInT
 	{
 		printf("%s|%s:%d\t Matrices do not have same dimensions\r\n", __FILE__, __func__, __LINE__);
 		fprintf(stderr, "%s|%s:%d, first matrix is %dx%d and the second is %dx%d\r\n", __FILE__, __func__, __LINE__, m1->lines, m1->columns, m2->lines, m2->columns);
-		printf("");
 		return NULL;
 	}
 	DoubleMatrix *ret;

@@ -125,13 +125,13 @@ QString GuiDriver::Calculate(
 		indepedentLocalVariables= (int*)malloc(sizeof(int) * (localVariables.size()+1) );
 		indepedentLocalVariables[localVariables.size()]= -1;
 		auto i= localVariables.begin();
-		for(int count=0; count < localVariables.size(); count++, i++)
+		for(unsigned int count=0; count < localVariables.size(); count++, i++)
 		{
 			indepedentLocalVariables[count]= NamedColumnDoubleTable_GetColumnIndex(table, i->c_str());
 		}
 
 		i= globalVariables.begin();
-		for(int count=0; count < globalVariables.size(); count++, i++)
+		for(unsigned int count=0; count < globalVariables.size(); count++, i++)
 		{
 			independentGlobalVariables[count]= NamedColumnDoubleTable_GetColumnIndex(table, i->c_str());
 		}
@@ -144,7 +144,10 @@ QString GuiDriver::Calculate(
 		free(independentGlobalVariables);
 		free(indepedentLocalVariables);
 		fclose(temp);
+		if(NULL != temp2)
+		{
 		fclose(temp2);
+		}
 	}
 	if(MODE_LAT_PLUS_LON == modelType)
 	{
@@ -313,7 +316,10 @@ void GuiDriver::CalculateGolden(QTextEdit &textArea,
 	}
 	double** distances=NULL;
 	pthread_join(thread, (void**)distances);
-	distances= (double**)*distances;
+	if(distances != NULL)
+	{
+		distances= (double**)*distances;
+	}
 	if(NULL != outputDistancesBetweenPoints)
 	{
 		PrintfDistancesFile(distances, data->lines, outputDistancesBetweenPoints);

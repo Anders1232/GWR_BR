@@ -22,6 +22,9 @@ RESOURCES     = resources.qrc
 QMAKE_CXXFLAGS += -finline-functions -Wall -pedantic -std=c++11
 QMAKE_CFLAGS += -finline-functions -Wall -pedantic -std=c99
 
+QMAKE_CFLAGS_DEBUG += -O0
+QMAKE_CXXFLAGS_DEBUG += -O0
+
 QMAKE_CFLAGS_RELEASE += -O3
 QMAKE_CXXFLAGS_RELEASE += -O3
 

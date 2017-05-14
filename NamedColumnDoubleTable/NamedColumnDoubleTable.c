@@ -194,7 +194,7 @@ NamedColumnDoubleTable *NewNamedColumnDoubleTableFromFile(char const *fileName, 
 #endif
 			*elements= temp;
 #ifdef DEBUG_NAMED_COLUMN
-			printf("Number read verification: %p contains %lf"NEW_LINE, elements, *(elements));
+			printf("Number read verification: %p contains %lf"NEW_LINE, (void*)elements, *(elements));
 #endif
 			elements++;
 			aux = getc(file);
