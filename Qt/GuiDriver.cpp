@@ -296,13 +296,13 @@ void GuiDriver::CalculateGolden(QTextEdit &textArea,
 		while(NULL !=(response= (GoldenDataIfNotAdpN*)FowardListGetElement(fw) ) )
 		{
 			QString temp= "\t";
-			temp+= QString::number(response->h1);
-			temp+= "\t\t: ";
-			temp+= QString::number(response->h2);
-			temp+= "\t\t: ";
-			temp+= QString::number(response->cv1);
-			temp+= "\t\t: ";
-			temp+= QString::number(response->cv2);
+			temp+= QString::number(response->h1, 'f');
+			temp+= "\t\t ";
+			temp+= QString::number(response->h2, 'f');
+			temp+= "\t\t ";
+			temp+= QString::number(response->cv1, 'f');
+			temp+= "\t\t ";
+			temp+= QString::number(response->cv2, 'f');
 			temp+= "\n";
 			textArea.append(temp);
 //			if(NULL != outputFile)
