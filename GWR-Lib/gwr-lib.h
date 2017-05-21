@@ -4,7 +4,7 @@
 #include "DoubleMatrixLib.h"
 #include "FowardList.h"
 
-#define DEBUG_MATRIX_DIMENSIONS
+//#define DEBUG_MATRIX_DIMENSIONS
 
 enum kernelType
 {
@@ -50,6 +50,8 @@ typedef struct goldenDataIfNotAdpN GoldenDataIfNotAdpN;
 struct goldenDataIfAdpN//if method is adaptive N
 {
 	double xMin;
+	double cv1;
+	double cv2;
 };
 typedef struct goldenDataIfAdpN GoldenDataIfAdpN;
 

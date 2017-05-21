@@ -101,9 +101,11 @@ QString GuiDriver::Calculate(
 					bool distanceInKm
 				)
 {
+	FILE *temp= fopen(outputFileName.c_str(), "w+");
 	if(GOLDEN == bandSelectionMethod)
 	{
-		FILE *temp= fopen(outputFileName.c_str(), "w+");
+//		FILE *temp= fopen(outputFileName.c_str(), "w+");
+		fprintf(temp, "%s|%s:%d\t[DEBUG] I was here!\r\n", __FILE__, __func__, __LINE__);
 		fprintf(temp, "GWR BR" NEW_LINE);
 		fprintf(temp, "File: %s\t\t\tDelimiter: %c(%d)" NEW_LINE, fileName.c_str(), separator, separator);
 		FILE *temp2=NULL;
@@ -139,11 +141,13 @@ QString GuiDriver::Calculate(
 		independentGlobalVariables= (int*)malloc(sizeof(int) * (globalVariables.size()+1) );
 		independentGlobalVariables[globalVariables.size()]= -1;
 		independentGlobalVariables[globalVariables.size()]= -1;
+		fprintf(temp ,"%s|%s:%d\t[DEBUG] I was here!\r\n", __FILE__, __func__, __LINE__);
 		CalculateGolden(textArea, temp, temp2, kernelType, this->table->matrix, distanceInKm, dependentVariable, indepedentLocalVariables, independentGlobalVariables, latitudeColumn, longitudecolumn);
+		fprintf(temp ,"%s|%s:%d\t[DEBUG] I was here!\r\n", __FILE__, __func__, __LINE__);
 
 		free(independentGlobalVariables);
 		free(indepedentLocalVariables);
-		fclose(temp);
+//		fclose(temp);
 		if(NULL != temp2)
 		{
 		fclose(temp2);
@@ -154,7 +158,8 @@ QString GuiDriver::Calculate(
 		int column1= NamedColumnDoubleTable_GetColumnIndex(table, latitude.c_str());
 		int column2= NamedColumnDoubleTable_GetColumnIndex(table, longitude.c_str());
 		DoubleMatrix *result= LatPlusLon(table->matrix, column1, column2);
-		FILE *temp= fopen(outputFileName.c_str(), "w+");
+//		FILE *temp= fopen(outputFileName.c_str(), "w+");
+		fprintf(temp, "Lat + Lon  output: \n");
 		fprintf(temp, "GWR BR" NEW_LINE);
 		fprintf(temp, "File: %s\t\t\tDelimiter: %c(%d)" NEW_LINE, fileName.c_str(), separator, separator);
 		fprintf(temp, "Operation: Latitude + Longitude" NEW_LINE);
@@ -169,7 +174,6 @@ QString GuiDriver::Calculate(
 		{
 			ret+= aux;
 		}
-		fclose(temp);
 		if("" != outputDistanceBetweenPointsFileName)
 		{
 			CalculateDistanceBetweenPoints(fileName, separator, outputDistanceBetweenPointsFileName, latitude, longitude);
@@ -185,7 +189,7 @@ QString GuiDriver::Calculate(
 		int column1= NamedColumnDoubleTable_GetColumnIndex(table, latitude.c_str());
 		int column2= NamedColumnDoubleTable_GetColumnIndex(table, longitude.c_str());
 		DoubleMatrix *result= DistanceToOrigin(table->matrix, column1, column2);
-		FILE *temp= fopen(outputFileName.c_str(), "w+");;
+//		FILE *temp= fopen(outputFileName.c_str(), "w+");;
 		fprintf(temp, "GWR BR" NEW_LINE);
 		fprintf(temp, "File: %s\t\t\tDelimiter: %c(%d)" NEW_LINE, fileName.c_str(), separator, separator);
 		fprintf(temp, "Operation: Distance to origin from (Longitude, Latitude)" NEW_LINE);
@@ -205,6 +209,7 @@ QString GuiDriver::Calculate(
 		return 	CalculateDistanceBetweenPoints(fileName, separator, outputDistanceBetweenPointsFileName, latitude, longitude);
 
 	}
+	fclose(temp);
 	return QString("");
 
 }
@@ -278,14 +283,21 @@ void GuiDriver::CalculateGolden(QTextEdit &textArea,
 	pthread_create(&thread, NULL, Golden, &args);
 	if(ADAPTIVE_N == kernelType)
 	{
+		printf("%s|%s:%d\t[DEBUG] I was here!\r\n", __FILE__, __func__, __LINE__);
+		fprintf(outputFile, "xMin\t\tcv1\t\tcv2\n");
 		GoldenDataIfAdpN* response;
 		while(NULL !=(response= (GoldenDataIfAdpN*)FowardListGetElement(fw) ) )
 		{
 			QString temp= "\nxMin:\t";
-			temp+= response->xMin;
+			temp+= QString::fromStdString( std::to_string(response->xMin) );
+			temp+= "\t\t";
+			temp+= QString::fromStdString( std::to_string(response->cv1) ) ;
+			temp+= "\t\t";
+			temp+= QString::fromStdString( std::to_string(response->cv2) );
 			temp+= "\n";
 			textArea.append(temp);
 			fprintf(outputFile, temp.toStdString().c_str());
+			fflush(outputFile);
 		}
 	}
 	else
@@ -312,6 +324,7 @@ void GuiDriver::CalculateGolden(QTextEdit &textArea,
 //			{
 			fprintf(outputFile, temp.toStdString().c_str());
 //			}
+			fflush(outputFile);
 		}
 	}
 	double** distances=NULL;
@@ -319,10 +332,10 @@ void GuiDriver::CalculateGolden(QTextEdit &textArea,
 	if(distances != NULL)
 	{
 		distances= (double**)*distances;
-	}
-	if(NULL != outputDistancesBetweenPoints)
-	{
-		PrintfDistancesFile(distances, data->lines, outputDistancesBetweenPoints);
+		if(NULL != outputDistancesBetweenPoints)
+		{
+			PrintfDistancesFile(distances, data->lines, outputDistancesBetweenPoints);
+		}
 	}
 }
 

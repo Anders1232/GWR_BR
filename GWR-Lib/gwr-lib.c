@@ -253,6 +253,8 @@ static void func1(double min, double max, double *h0, double *h1, double *h2, do
 		GoldenDataIfAdpN *dataToReturn= malloc(sizeof(GoldenDataIfAdpN));
 		ASSERT(dataToReturn);
 		dataToReturn->xMin= outXMin[forCounter];
+		dataToReturn->cv1= cv1;
+		dataToReturn->cv2= cv2;
 		FowardListAddElement(args->communication, dataToReturn);//supondo que esse apend está querendo retornar o xmin
 	}
 }
@@ -520,7 +522,9 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 		DeleteDoubleMatrix(w);
 		w=NewDoubleMatrix(data->lines, 2);//verificar se precisa desalocar antes
 		double hn= DoubleMatrixGetElement(dist, h1, 3);
+#ifdef DEBUG_MATRIX_DIMENSIONS
 		printf("%s|%s:%d\t%s\n", __FILE__, __func__, __LINE__, (NULL == w)? "W é NULL": "W é válido.");
+#endif
 		for(int jj=2-1; jj < data->lines; jj++)
 		{
 			if(DoubleMatrixGetElement(dist, jj, 4) <= h1)
@@ -559,8 +563,8 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 //		DeleteDoubleMatrix(x1);
 //		DeleteDoubleMatrix(y1);
 	}
-	printf("%s|%s:%d\t%s\n", __FILE__, __func__, __LINE__, (NULL == w)? "W é NULL": "W é válido.");
 #ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("%s|%s:%d\t%s\n", __FILE__, __func__, __LINE__, (NULL == w)? "W é NULL": "W é válido.");
 	printf("cv1.txt:44\tw, dimensões %dx%d\r\n", w->lines, w->columns);
 	printf("cv1.txt:75\tx1, dimensões %dx%d\r\n", x1->lines, x1->columns);
 	printf("cv1.txt:75\ty1, dimensões %dx%d\r\n", y1->lines, y1->columns);
@@ -587,8 +591,8 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 	DoubleMatrix *aux3= DoubleMatrixMultiplication(aux, aux2);//aux3=x1`*(w#x1#wt1)
 #ifdef DEBUG_MATRIX_DIMENSIONS
 	printf("cv1.txt:77\tx1`*(w#x1#wt1) ficou com as dimensões %dx%d\r\n", aux3->lines, aux3->columns);
-#endif
 	printf("%s|%s:%d\t%s\n", __FILE__, __func__, __LINE__, (NULL == w)? "W é NULL": "W é válido.");
+#endif
 	DoubleMatrix *b;
 //	fprintf(stderr, "%s|%s:%d\t aux2 is %dx%d\r\n", __FILE__, __func__, __LINE__, aux2->lines, aux2->columns);
 //	fprintf(stderr, "%s|%s:%d\t aux3 is %dx%d\r\n", __FILE__, __func__, __LINE__, aux3->lines, aux3->columns);
@@ -614,7 +618,9 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 	printf("cv1.txt:79\tb ficou com as dimensões %dx%d\r\n", b->lines, b->columns);
 #endif
 	}
+#ifdef DEBUG_MATRIX_DIMENSIONS
 	printf("%s|%s:%d\t%s\n", __FILE__, __func__, __LINE__, (NULL == w)? "W é NULL": "W é válido.");
+#endif
 	DeleteDoubleMatrix(aux3);
 	DeleteDoubleMatrix(aux2);
 	DeleteDoubleMatrix(aux);
@@ -637,7 +643,9 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 	DeleteDoubleMatrix(temp2);
 	DeleteDoubleMatrix(x1);
 	DeleteDoubleMatrix(y1);
+#ifdef DEBUG_MATRIX_DIMENSIONS
 	printf("%s|%s:%d\t%s\n", __FILE__, __func__, __LINE__, (NULL == w)? "W é NULL": "W é válido.");
+#endif
 	*outW= w;
 }
 
@@ -650,7 +658,9 @@ static double CrossValidation(DoubleMatrix *data, int oneOrTwo, bool distanceInK
 		for(i=0; i < data->lines; i++)
 		{
 			CvAux1(data, x, y, yhat, xCoord, yCoord, oneOrTwo, i, distanceInKm, method, h1, maxDistanceBetweenPoints, &w);
+#ifdef DEBUG_MATRIX_DIMENSIONS
 			printf("%s|%s:%d\t%s\n", __FILE__, __func__, __LINE__, (NULL == w)? "W é NULL": "W é válido.");
+#endif
 		}
 		printf("%s|%s:%d\t%s\n", __FILE__, __func__, __LINE__, (NULL == w)? "W é NULL": "W é válido.");
 	}
