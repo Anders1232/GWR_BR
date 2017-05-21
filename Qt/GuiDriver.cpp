@@ -104,8 +104,6 @@ QString GuiDriver::Calculate(
 	FILE *temp= fopen(outputFileName.c_str(), "w+");
 	if(GOLDEN == bandSelectionMethod)
 	{
-//		FILE *temp= fopen(outputFileName.c_str(), "w+");
-		fprintf(temp, "%s|%s:%d\t[DEBUG] I was here!\r\n", __FILE__, __func__, __LINE__);
 		fprintf(temp, "GWR BR" NEW_LINE);
 		fprintf(temp, "File: %s\t\t\tDelimiter: %c(%d)" NEW_LINE, fileName.c_str(), separator, separator);
 		FILE *temp2=NULL;
@@ -147,7 +145,6 @@ QString GuiDriver::Calculate(
 
 		free(independentGlobalVariables);
 		free(indepedentLocalVariables);
-//		fclose(temp);
 		if(NULL != temp2)
 		{
 		fclose(temp2);
@@ -158,8 +155,6 @@ QString GuiDriver::Calculate(
 		int column1= NamedColumnDoubleTable_GetColumnIndex(table, latitude.c_str());
 		int column2= NamedColumnDoubleTable_GetColumnIndex(table, longitude.c_str());
 		DoubleMatrix *result= LatPlusLon(table->matrix, column1, column2);
-//		FILE *temp= fopen(outputFileName.c_str(), "w+");
-		fprintf(temp, "Lat + Lon  output: \n");
 		fprintf(temp, "GWR BR" NEW_LINE);
 		fprintf(temp, "File: %s\t\t\tDelimiter: %c(%d)" NEW_LINE, fileName.c_str(), separator, separator);
 		fprintf(temp, "Operation: Latitude + Longitude" NEW_LINE);
@@ -189,7 +184,6 @@ QString GuiDriver::Calculate(
 		int column1= NamedColumnDoubleTable_GetColumnIndex(table, latitude.c_str());
 		int column2= NamedColumnDoubleTable_GetColumnIndex(table, longitude.c_str());
 		DoubleMatrix *result= DistanceToOrigin(table->matrix, column1, column2);
-//		FILE *temp= fopen(outputFileName.c_str(), "w+");;
 		fprintf(temp, "GWR BR" NEW_LINE);
 		fprintf(temp, "File: %s\t\t\tDelimiter: %c(%d)" NEW_LINE, fileName.c_str(), separator, separator);
 		fprintf(temp, "Operation: Distance to origin from (Longitude, Latitude)" NEW_LINE);
@@ -311,13 +305,13 @@ void GuiDriver::CalculateGolden(QTextEdit &textArea,
 		while(NULL !=(response= (GoldenDataIfNotAdpN*)FowardListGetElement(fw) ) )
 		{
 			QString temp= "\t";
-			temp+= response->h1;
-			temp+= "\t\t: ";
-			temp+= response->h2;
-			temp+= "\t\t: ";
-			temp+= response->cv1;
-			temp+= "\t\t: ";
-			temp+= response->cv2;
+			temp+= QString::number(response->h1, 'f');
+			temp+= "\t\t ";
+			temp+= QString::number(response->h2, 'f');
+			temp+= "\t\t ";
+			temp+= QString::number(response->cv1, 'f');
+			temp+= "\t\t ";
+			temp+= QString::number(response->cv2, 'f');
 			temp+= "\n";
 			textArea.append(temp);
 //			if(NULL != outputFile)
