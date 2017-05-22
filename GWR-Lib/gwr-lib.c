@@ -206,7 +206,8 @@ static void func1(double min, double max, double *h0, double *h1, double *h2, do
 			*h0= *h1;
 			*h1= *h2;
 			*h2= r*(*h1) + c*(*h3);
-			cv1= CrossValidation(args->data, 1, args->distanceInKM, args->method, forCounter, args->x_dCoord, args->y_dCoord, x, y, yhat, *h1, max);
+			cv1=cv2;
+//			cv1= CrossValidation(args->data, 1, args->distanceInKM, args->method, forCounter, args->x_dCoord, args->y_dCoord, x, y, yhat, *h1, max);
 			cv2= CrossValidation(args->data, 2, args->distanceInKM, args->method, forCounter, args->x_dCoord, args->y_dCoord, x, y, yhat, *h1, max);
 		}
 		else
@@ -214,7 +215,8 @@ static void func1(double min, double max, double *h0, double *h1, double *h2, do
 			*h3= *h2;
 			*h2= *h1;
 			*h1= r*(*h2) + c*(*h0);
-			cv1= CrossValidation(args->data, 1, args->distanceInKM, args->method, forCounter, args->x_dCoord, args->y_dCoord, x, y, yhat, *h1, max);
+			cv2=cv1;
+//			cv1= CrossValidation(args->data, 1, args->distanceInKM, args->method, forCounter, args->x_dCoord, args->y_dCoord, x, y, yhat, *h1, max);
 			cv2= CrossValidation(args->data, 2, args->distanceInKM, args->method, forCounter, args->x_dCoord, args->y_dCoord, x, y, yhat, *h1, max);
 		}
 		if(ADAPTIVE_N != args->method)
