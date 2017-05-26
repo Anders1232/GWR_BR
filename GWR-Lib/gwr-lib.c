@@ -743,5 +743,33 @@ double GWR_Determinant(DoubleMatrix *m)
 	return result;
 }
 
+void GWR(void *args_)
+{
+	GWRArguments* args= args_;//contém o h
+	DoubleMatrix *x= NewDoubleMatrixAndInitializeElements(args->data->lines, 1, 1.0);
+	int *xAux= (args->yVarColumn_independentLocalVariables);//+1????
+	while(-1 != *xAux)
+	{
+		printf("%s|%s:%d\t *xAux= %d\n", __FILE__, __func__, __LINE__, *xAux);
+		DoubleMatrixConcatenateColumn(x, args->data, *xAux);
+		xAux++;
+	}
+	WHERE;
+	DoubleMatrixPrint(x, stdout, "\t%lf", "\n");
+	printf("args->xVarColumn_independentVariable: %d\n", args->xVarColumn_dependentVariable);
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("Golden.txt:36\tx criado, dimensões %dx%d\r\n", x->lines, x->columns);
+#endif
+	DoubleMatrix *y= NewColumnDoubleMatrixFromMatrix(args->data, args->xVarColumn_dependentVariable);
+//	DoubleMatrixConcatenateColumn(y, args->data, args->xVarColumn_dependentVariable);
+	WHERE;
+	DoubleMatrixPrint(y, stdout, "\t%lf", "\n");
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("Golden.txt:37\ty criado, dimensões %dx%d\r\n", y->lines, y->columns);
+#endif
+	DoubleMatrix *yhat= NewDoubleMatrix(args->data->lines, 1);;
+	
+}
+
 
 #endif
