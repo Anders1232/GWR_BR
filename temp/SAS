@@ -1,0 +1,333 @@
+ /******************************************************/
+/* Written By Alan Ricardo da Silva				   */
+/* University of Brasilia, Brazil (08/2014)				  */
+/* E-mail: alansilva@unb.br										  */
+/******************************************************/
+
+/********************************************************************************/
+/* Macro for searching the Bandwidth */
+/*
+/* REQUIRED PARAMETERS
+/*	DATA = the name of the SAS data set to be used
+/*	YVAR = the name of the dependent or response variable
+/*	XVAR = the name of the independent or explicative variables. A blank space
+/*		   should separate the names. Note: an intercept variable must not be
+/*		   created in advance
+/*  DCOORD = the name of the SAS data set with the geographic coordinates
+/*  OUTPUT = the name of the SAS data set to be used as output results
+/*	MINV = the minimum distance between two locations i and k to be consider
+/* MIDDLEV = the middle distance between two locations i and k to be consider
+/*	MAXV = the maximum distance between two locations i and k to be consider
+/*  METHOD = there are three choices:
+/*		   FIXED_G asks the program to compute the bandwidth as fixed gaussian;
+/*		   FIXED_BSQ to compute the bandwidth as fixed bi-square;
+/*		   ADAPTIVEN to compute the bandwidth as adaptive bi-square ($n$ values) and
+/*						 ADAPTIVE_BSQ to compute the bandwidth as adaptive bi-square ($one$ value)
+/*  DISTANCEKM = if the distances between two locations will be computed in Km
+/*			   using the Basic formulae for calculating spherical distance. The
+/*			   default value is NO, so the distance is computed using euclidian
+/*			   distance.
+/********************************************************************************/
+
+%macro Golden(DATA=,YVAR=,XVAR=,WEIGHT=,DCOORD=,OUTPUT=,MINV=,MIDDLEV=,MAXV=,METHOD=,DISTANCEKM=NO);
+/* remember that pi=arcos(-1)=3.1415926536 */
+proc iml;
+use &DATA;
+read all var {&YVAR} into y;
+read all var {&XVAR} into x;
+n=nrow(y);
+%IF &WEIGHT NE %THEN %DO;
+read all var {&WEIGHT} into wt;
+%END;
+%ELSE %DO;
+wt=j(n,1,1);
+%END;
+close &DATA;
+x=j(n,1,1)||x;
+yhat=j(n,1,0);
+%IF %UPCASE(&METHOD)=ADAPTIVEN %THEN %DO;
+		hv=j(1,1,0);
+		yhat=j(1,1,0);
+		create &OUTPUT from hv[colname='h'];
+				do i=1 to n;
+%END;
+						ax=&MINV;
+						bx=&MIDDLEV;
+						cx=&MAXV;
+						r=0.61803399;
+						tol=0.001;
+						c=1-r;
+						h0=ax;
+						h3=cx;
+						*bx=c*(cx-ax);
+						if abs(cx-bx)>abs(bx-ax) then do;
+								h1=bx;
+								h2=bx+c*(cx-bx);
+						end;
+						else do;
+								h2=bx;
+								h1=bx-c*(bx-ax);
+				end;
+
+use &DCOORD;																															 
+read all var{x y} into COORD;																													 
+close &DCOORD;
+
+start cv1;
+%IF %UPCASE(&METHOD)=FIXED_G or %UPCASE(&METHOD)=FIXED_BSQ or %UPCASE(&METHOD)=ADAPTIVE_BSQ %THEN %DO;
+		do i=1 to n;
+%END;
+*** Basic formulae for calculating spherical distance *** ;
+d=j(1,3,0);
+dist=d;
+		do j=1 to n;
+		%IF %UPCASE(&DISTANCEKM)=YES %THEN %DO;
+				dif=abs(COORD[i,1]-COORD[j,1]);   
+				raio=arcos(-1)/180;
+				argument=sin(COORD[i,2]*raio)*sin(COORD[j,2]*raio)+cos(COORD[i,2]*raio)*cos(COORD[j,2]*raio)*cos(dif*raio);
+				if argument>=1 then arco=0;
+				else
+				/* Law of Cosines */ 
+				arco=arcos(sin(COORD[i,2]*raio)*sin(COORD[j,2]*raio)+cos(COORD[i,2]*raio)*cos(COORD[j,2]*raio)*cos(dif*raio));
+				d1=arco*6371 /*Earth's Radius = 6371 (aproximately)*/;
+				if d1<=1e-3 then d1=0;
+		%END;
+		%ELSE %DO;
+				d1=sqrt((COORD[i,1]-COORD[j,1])**2+(COORD[i,2]-COORD[j,2])**2);
+		%END;
+%IF %UPCASE(&METHOD)=FIXED_G %THEN %DO;
+				if d1 ^=0 then do;
+%END;
+%ELSE %IF %UPCASE(&METHOD)=FIXED_BSQ or %UPCASE(&METHOD)=ADAPTIVEN %THEN %DO;
+				if d1<=h1 & d1 ^=0 then do;
+%END;
+%ELSE %IF %UPCASE(&METHOD)=ADAPTIVE_BSQ %THEN %DO;
+				if d1 ^=0 then do;
+%END;
+				d[1]=i; 
+				d[2]=j;
+		%IF %UPCASE(&DISTANCEKM)=YES %THEN %DO;
+				d[3]=arco*6371 /*Earth's Radius = 6371 (approximately)*/;   
+		%END;
+		%ELSE %DO;
+				d[3]=sqrt((COORD[i,1]-COORD[j,1])**2+(COORD[i,2]-COORD[j,2])**2);
+		%END;
+				dist=dist//d;
+				end;
+		end;
+u=nrow(dist);
+w=j(u,1,0);
+x1=x[i,];
+y1=y[i,];
+wt1=wt[i,];
+		do jj=2 to u;
+				w[jj]=exp(-(dist[jj,3]/h1)**2);
+%IF %UPCASE(&METHOD)=FIXED_BSQ or %UPCASE(&METHOD)=ADAPTIVEN %THEN %DO;
+				w[jj]=(1-(dist[jj,3]/h1)**2)**2;
+%END;
+				x1=x1//x[dist[jj,2],];
+				y1=y1//y[dist[jj,2],];
+				wt1=wt1//wt[dist[jj,2],];
+		end;
+%IF %UPCASE(&METHOD)=ADAPTIVE_BSQ %THEN %DO;
+		x1=x[i,];
+		y1=y[i,];
+		wt1=wt[i,];
+		call sort(dist,{3});
+		dist=dist||(1:nrow(dist))`;
+		w=j(n,2,0);		
+		hn=dist[h1,3];
+		do jj=2 to n;
+				 if dist[jj,4]<=h1 then
+				w[jj,1]=(1-(dist[jj,3]/hn)**2)**2;
+				else w[jj,1]=0;
+				w[jj,2]=dist[jj,2];
+		end;
+		position=w[loc(w[,1]>0),2];
+		w={0}//w[position,1];
+		x1=x1//x[position,];
+		y1=y1//y[position,];
+		wt1=wt1//wt[position,];
+%END;
+if det(x1`*(w#x1#wt1))=0 then b=j(ncol(x),1,0);
+else
+b=inv(x1`*(w#x1#wt1))*x1`*(w#y1#wt1);
+%IF %UPCASE(&METHOD)=FIXED_G or %UPCASE(&METHOD)=FIXED_BSQ or %UPCASE(&METHOD)=ADAPTIVE_BSQ %THEN %DO;
+		yhat[i]=x[i,]*b;
+		end;
+CV1=((y-yhat)#wt)`*(y-yhat);
+%END;
+%ELSE %IF %UPCASE(&METHOD)=ADAPTIVEN %THEN %DO;
+		yhat[1]=x[i,]*b;
+		CV1=((y[i]-yhat)#wt)`*(y[i]-yhat);
+%END;
+free dist w;
+finish cv1;
+
+start cv2;
+%IF %UPCASE(&METHOD)=FIXED_G or %UPCASE(&METHOD)=FIXED_BSQ or %UPCASE(&METHOD)=ADAPTIVE_BSQ %THEN %DO;
+*** Basic formulae for calculating spherical distance *** ;
+		do i=1 to n;
+%END;
+				d=j(1,3,0);
+				dist=d;
+		do j=1 to n;																														 
+				%IF %UPCASE(&DISTANCEKM)=YES %THEN %DO;
+				dif=abs(COORD[i,1]-COORD[j,1]);   
+				raio=arcos(-1)/180;   
+				argument=sin(COORD[i,2]*raio)*sin(COORD[j,2]*raio)+cos(COORD[i,2]*raio)*cos(COORD[j,2]*raio)*cos(dif*raio);
+				if argument>=1 then arco=0;
+				else
+				/* Law of Cosines */ 
+				arco=arcos(sin(COORD[i,2]*raio)*sin(COORD[j,2]*raio)+cos(COORD[i,2]*raio)*cos(COORD[j,2]*raio)*cos(dif*raio));
+				d1=arco*6371 /*Earth's Radius = 6371 (aproximately)*/;
+				if d1<=1e-3 then d1=0;
+		%END;
+		%ELSE %DO;
+				d1=sqrt((COORD[i,1]-COORD[j,1])**2+(COORD[i,2]-COORD[j,2])**2);
+		%END;
+%IF %UPCASE(&METHOD)=FIXED_G %THEN %DO;
+				if d1<=&MAXV*1 & d1 ^=0 then do;
+%END;
+%ELSE %IF %UPCASE(&METHOD)=FIXED_BSQ or %UPCASE(&METHOD)=ADAPTIVEN %THEN %DO;
+				if d1<=h1 & d1 ^=0 then do;
+%END;
+%ELSE %IF %UPCASE(&METHOD)=ADAPTIVE_BSQ %THEN %DO;
+				if d1 ^=0 then do;
+%END;
+				d[1]=i; 
+				d[2]=j;
+		%IF %UPCASE(&DISTANCEKM)=YES %THEN %DO;
+				d[3]=arco*6371 /*Earth's Radius = 6371 (approximately)*/;   
+		%END;
+		%ELSE %DO;
+				d[3]=sqrt((COORD[i,1]-COORD[j,1])**2+(COORD[i,2]-COORD[j,2])**2);
+		%END;
+				dist=dist//d;
+				end;
+		end;
+				u=nrow(dist);
+				w=j(u,1,0);
+				x1=x[i,];
+				y1=y[i,];
+				wt1=wt[i,];
+				do jj=2 to u;
+						w[jj]=exp(-(dist[jj,3]/h1)**2);
+%IF %UPCASE(&METHOD)=FIXED_BSQ or %UPCASE(&METHOD)=ADAPTIVEN %THEN %DO;
+						w[jj]=(1-(dist[jj,3]/h1)**2)**2;
+%END;
+				x1=x1//x[dist[jj,2],];
+				y1=y1//y[dist[jj,2],];
+				wt1=wt1//wt[dist[jj,2],];
+		end;
+%IF %UPCASE(&METHOD)=ADAPTIVE_BSQ %THEN %DO;
+		x1=x[i,];
+		y1=y[i,];
+		wt1=wt[i,];
+		call sort(dist,{3});
+		dist=dist||(1:nrow(dist))`;
+		w=j(n,2,0);		
+		hn=dist[h1,3];
+		do jj=2 to n;
+				 if dist[jj,4]<=h1 then
+				w[jj,1]=(1-(dist[jj,3]/hn)**2)**2;
+				else w[jj,1]=0;
+				w[jj,2]=dist[jj,2];
+		end;
+		position=w[loc(w[,1]>0),2];
+		w={0}//w[position,1];
+		x1=x1//x[position,];
+		y1=y1//y[position,];
+		wt1=wt1//wt[position,];
+%END;
+				if det(x1`*(w#x1#wt1))=0 then b=j(ncol(x),1,0);
+				else
+				b=inv(x1`*(w#x1#wt1))*x1`*(w#y1#wt1);
+%IF %UPCASE(&METHOD)=FIXED_G or %UPCASE(&METHOD)=FIXED_BSQ or %UPCASE(&METHOD)=ADAPTIVE_BSQ %THEN %DO;
+				yhat[i]=x[i,]*b;
+		end;
+CV2=((y-yhat)#wt)`*(y-yhat);
+%END;
+%ELSE %IF %UPCASE(&METHOD)=ADAPTIVEN %THEN %DO;
+		yhat[1]=x[i,]*b;
+		CV2=((y[i]-yhat)#wt)`*(y[i]-yhat);
+%END;
+free dist w;
+finish cv2;
+
+run cv1;
+run cv2;
+
+%IF %UPCASE(&METHOD)=FIXED_G or %UPCASE(&METHOD)=FIXED_BSQ or %UPCASE(&METHOD)=ADAPTIVE_BSQ %THEN %DO;
+		create &OUTPUT var{h1 cv1 h2 cv2};
+%END;
+do while(abs(h3-h0) > tol*(abs(h1)+abs(h2)));
+		if CV2<CV1 then do;
+				h0=h1;
+				h1=h2;
+				h2=r*h1+c*h3;
+				CV1=CV2;
+				run cv2;
+		end;
+		else do;
+				h3=h2;
+				h2=h1;
+				h1=r*h2+c*h0;
+				CV2=CV1;
+				run cv1;
+		end;
+%IF %UPCASE(&METHOD)=FIXED_G or %UPCASE(&METHOD)=FIXED_BSQ or %UPCASE(&METHOD)=ADAPTIVE_BSQ %THEN %DO;
+				append;
+%END;
+end;
+if CV1<CV2 then do;
+		golden=CV1;
+		xmin=h1;
+%IF %UPCASE(&METHOD)=ADAPTIVE_BSQ %THEN %DO;
+		xmin=floor(h1);
+%end;
+end;
+else do;
+		golden=CV2;
+		xmin=h2;
+%IF %UPCASE(&METHOD)=ADAPTIVE_BSQ %THEN %DO;
+		xmin=floor(h2);
+%end;
+end;
+%IF %UPCASE(&METHOD)=FIXED_G or %UPCASE(&METHOD)=FIXED_BSQ or %UPCASE(&METHOD)=ADAPTIVE_BSQ %THEN %DO;
+		print golden xmin;
+%END;
+%ELSE %IF %UPCASE(&METHOD)=ADAPTIVEN %THEN %DO;
+		hv[1]=xmin;
+		append from hv;
+		end;
+%END;
+quit;
+
+%IF %UPCASE(&METHOD)=FIXED_G or %UPCASE(&METHOD)=FIXED_BSQ %THEN %DO;
+		%global _h_;
+		data _null_;
+		 set &OUTPUT;
+		 if CV1<CV2 then do;
+		  call symput('_h_',h1);
+		 end;
+		 else do;
+		  call symput('_h_',h2);
+		 end;
+		run;
+%put h=&_h_;
+%END;
+%ELSE %IF %UPCASE(&METHOD)=ADAPTIVE_BSQ %THEN %DO;
+%global _h_;
+		data _null_;
+		 set &OUTPUT;
+		 if CV1<CV2 then do;
+		  call symput('_h_',floor(h1));
+		 end;
+		 else do;
+		  call symput('_h_',floor(h2));
+		 end;
+		run;
+%put h=&_h_;
+%END;
+%mend Golden;

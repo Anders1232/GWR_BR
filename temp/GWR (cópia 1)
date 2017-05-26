@@ -1,0 +1,312 @@
+/*******************************************************************************/
+/* Macro for estimating GWR Model */
+/* REQUIRED PARAMETERS
+/*	DATA = the name of the SAS data set to be used
+/*	YVAR = the name of the dependent or response variable
+/*	XVAR = the name of the independent or explicative variables. A blank space
+/*		   should separate the names. Note: an intercept variable must not be
+/*		   created in advance
+/*   WEIGHT = the name of the sample weight variable
+/*  CLUSTER = the name of the cluster variable
+/*   STRATA = the name of the strata variable
+/*	  FPC = the name of the sampling rate (n/N) or probability selection variable
+/*  DCOORD = the name of the SAS data set with the geographic coordinates
+/*	GRID = the name of the SAS data set with the grid of geographic coordinates
+/*  SIGMA2 = the value of the variance to be used in the standard errors
+/* GMATRIX = the name of the SAS data set with the G MATRIX to be used in the
+/*		   the standard errors of complex data
+/*	 DHV = the name of the SAS data set with the bandwidth adaptive ($n$ values),
+/*		   which must have an unique variable
+/*	   H = A pre-defined bandwidth value for METHOD equal to FIXED or ADAPTIVE1
+/*	MAXV = the maximum distance between two locations i and k to be consider
+/*  METHOD = there are three choices:
+/*		   FIXED_G asks the program to compute the bandwidth as fixed gaussian;
+/*		   FIXED_BSQ to compute the bandwidth as fixed bi-square;
+/*		   ADAPTIVEN to compute the bandwidth as adaptive bi-square ($n$ values) and
+/*						 ADAPTIVE_BSQ to compute the bandwidth as adaptive bi-square ($one$ value)
+/*  DISTANCEKM = if the distances between two locations will be computed in Km
+/*			   using the Basic formulae for calculating spherical distance. The
+/*			   default value is NO, so the distance is computed using euclidian
+/*			   distance.
+/********************************************************************************/
+
+%macro GWR(DATA=,YVAR=,XVAR=,WEIGHT=,CLUSTER=,STRATA=,FPC=,DCOORD=,GRID=,SIGMA2=,GMATRIX=,DHV=,MAXV=,METHOD=,DISTANCEKM=NO,H=);
+%IF &CLUSTER NE AND &STRATA NE %THEN %DO;
+proc sort data=&data;by &STRATA &CLUSTER;
+%END;
+%ELSE %IF &CLUSTER NE %THEN %DO;
+proc sort data=&data;by &CLUSTER;
+%END;
+%ELSE %IF &STRATA NE %THEN %DO;
+proc sort data=&data;by &STRATA;
+%END;
+proc iml;
+use &DATA;
+read all var {&YVAR} into y;
+read all var {&XVAR} into x;
+n=nrow(y);
+%IF &CLUSTER NE %THEN %DO;
+read all var {&CLUSTER} into ci;
+%END;
+%IF &STRATA NE %THEN %DO;
+read all var {&STRATA} into sh;
+%END;
+fh=j(n,1,0);
+%IF &FPC NE %THEN %DO;
+read all var {&FPC} into fh;
+%END;
+wt=j(n,1,1);
+%IF &WEIGHT NE %THEN %DO;
+read all var {&WEIGHT} into wt;
+%END;
+close &DATA;
+ni=ncol(unique(ci));
+nh=ncol(unique(sh));
+
+%IF %UPCASE(&METHOD)=ADAPTIVEN %THEN %DO;
+		use &DHV;read all into hv;
+%END;
+x=j(n,1,1)||x;
+yhat=j(n,1,0);
+
+use &DCOORD;
+read all var{x y} into COORD;
+%if &grid= %then %do;
+		read all var{x y} into POINTS;
+%end;
+close &DCOORD;
+%if &grid^= %then %do;
+		use &grid;
+		read all var{x y} into POINTS;	 
+		close &grid;
+%end;
+m=nrow(POINTS);
+
+bi=j(ncol(x)*m,4,0);
+BB=j(ncol(x)*n,n,0);
+rsqri=j(m,1,0);
+sumwi=j(m,1,0);
+varbi=j(ncol(x)*m,1,0);
+varbigg=j(ncol(x)*m,1,0);
+varbis=j(ncol(x)*m,ncol(x),0);
+S=j(m,1,0);
+S2=j(m,1,0);
+biT=j(m,ncol(x)+1,0);
+ym=y-y[:];
+*rikl=j(n,comb(ncol(x)-1,2),0);
+vif=j(n,ncol(x)-1,0);
+
+
+
+*** Basic formulae for calculating spherical distance *** ;
+do i=1 to m;
+free dist;
+		d=j(1,3,0);
+		do j=1 to n;
+		%IF %UPCASE(&DISTANCEKM)=YES %THEN %DO;
+				dif=abs(POINTS[i,1]-COORD[j,1]);   
+				raio=arcos(-1)/180; 
+				argument=sin(POINTS[i,2]*raio)*sin(COORD[j,2]*raio)+cos(POINTS[i,2]*raio)*cos(COORD[j,2]*raio)*cos(dif*raio);
+				if argument>1 then arco=0;
+				else
+				/* Law of Cosines */ 
+				arco=arcos(sin(POINTS[i,2]*raio)*sin(COORD[j,2]*raio)+cos(POINTS[i,2]*raio)*cos(COORD[j,2]*raio)*cos(dif*raio));
+				d1=arco*6371 /*Earth's Radius = 6371 (aproximately)*/;
+				if d1<=1e-3 then d1=0;
+		%END;
+		%ELSE %DO;
+				d1=sqrt((POINTS[i,1]-COORD[j,1])**2+(POINTS[i,2]-COORD[j,2])**2);
+		%END;
+%IF %UPCASE(&METHOD)=FIXED_G %THEN %DO;
+				if d1<=&MAXV*1 & d1 ^=0 then do;
+%END;
+%ELSE %IF %UPCASE(&METHOD)=FIXED_BSQ %THEN %DO;
+				if d1<=h & d1 ^=0 then do;
+%END;
+%ELSE %IF %UPCASE(&METHOD)=ADAPTIVEN %THEN %DO;
+				if d1<=hv[i] & d1 ^=0 then do;
+%END;
+%ELSE %IF %UPCASE(&METHOD)=ADAPTIVE_BSQ %THEN %DO;
+				if d1 ^=0 then do;
+%END;
+						d[1]=i; 
+						d[2]=j;
+		%IF %UPCASE(&DISTANCEKM)=YES %THEN %DO;
+				d[3]=arco*6371 /*Earth's Radius = 6371 (approximately)*/;   
+		%END;
+		%ELSE %DO;
+				d[3]=sqrt((POINTS[i,1]-COORD[j,1])**2+(POINTS[i,2]-COORD[j,2])**2);
+		%END;
+						dist=dist//d;
+				end;
+		end;
+		u=nrow(dist);
+		w=j(u,1,0);
+		%if &grid= %then %do;
+		x1=x[i,];
+		y1=y[i,];
+		wt1=wt[i,];
+		ym1=ym[i,];
+		%end;
+		do jj=1 to u;
+%IF %UPCASE(&METHOD)=FIXED_G %THEN %DO;
+				w[jj]=exp(-(dist[jj,3]/h)**2);
+%END;
+%ELSE %IF %UPCASE(&METHOD)=FIXED_BSQ %THEN %DO;
+				w[jj]=(1-(dist[jj,3]/h)**2)**2;
+%END;
+%ELSE %IF %UPCASE(&METHOD)=ADAPTIVEN %THEN %DO;
+				w[jj]=(1-(dist[jj,3]/hv[i])**2)**2;
+%END;
+		%if &grid= %then %do;
+				x1=x1//x[dist[jj,2],];
+				y1=y1//y[dist[jj,2],];
+				wt1=wt1//wt[dist[jj,2],];
+				ym1=ym1//ym[dist[jj,2],];
+		end;
+		w={1}//w;
+		%IF %UPCASE(&METHOD)=ADAPTIVE_BSQ %THEN %DO;
+		x1=x[i,];
+		y1=y[i,];
+		wt1=wt[i,];
+		ym1=ym[i,];
+		call sort(dist,{3});
+		dist=dist||(1:nrow(dist))`;
+		w=j(n,2,0);		
+		hn=dist[h,3];
+		do jj=1 to n-1;
+				 if dist[jj,4]<=h then
+				w[jj,1]=(1-(dist[jj,3]/hn)**2)**2;
+				else w[jj,1]=0;
+				w[jj,2]=dist[jj,2];
+		end;
+		position=w[loc(w[,1]>0),2];
+		w={1}//w[loc(w[,1]>0),1];
+		x1=x1//x[position,];
+		y1=y1//y[position,];
+		wt1=wt1//wt[position,];
+		ym1=ym1//ym[position,];
+		%END;
+		%end;
+		%else %do;
+		if jj=1 then do;
+				x1=x[dist[jj,2],];
+				y1=y[dist[jj,2],];
+				wt1=wt[dist[jj,2],];
+				ym1=ym[dist[jj,2],];
+		end;
+		else do;
+				x1=x1//x[dist[jj,2],];
+				y1=y1//y[dist[jj,2],];
+				wt1=wt1//wt[dist[jj,2],];
+				ym1=ym1//ym[dist[jj,2],];
+		end;
+		end;
+		%IF %UPCASE(&METHOD)=ADAPTIVE_BSQ %THEN %DO;
+		call sort(dist,{3});
+		dist=dist||(1:n)`;
+		w=j(n,2,0);		
+		hn=dist[h,3];
+		do jj=1 to n;
+				 if dist[jj,4]<=h then
+				w[jj,1]=(1-(dist[jj,3]/hn)**2)**2;
+				else w[jj,1]=0;
+				w[jj,2]=dist[jj,2];
+		end;
+		position=w[loc(w[,1]>0),2];
+		w=w[loc(w[,1]>0),1];
+		x1=x[position,];
+		y1=y[position,];
+		wt1=wt[position,];
+		ym1=ym[position,];
+		%END;
+		%end;
+		if det(x1`*(w#x1#wt1))=0 then b=j(ncol(x),1,0);
+		else
+		b=inv(x1`*(w#x1#wt1))*x1`*(w#y1#wt1);
+		if det(x1`*(w#x1#wt1))=0 then C=j(ncol(x),1,0);
+		else
+		C=inv(x1`*(w#x1#wt1))*x1`#(w#wt1)`;
+		varbs=ginv(x1`*(w#x1#wt1));
+		varb=C*C`;
+		/*** standard GWR variance ****/
+		%IF &WEIGHT NE %THEN %DO;
+		varbgg=varbs;
+		%END;
+		%ELSE %DO;
+		varbgg=varb;
+		%END;
+		/*******************************/
+		m1=(i-1)*ncol(x)+1;
+		m2=m1+(ncol(x)-1);
+		bi[m1:m2,1]=i;
+		bi[m1:m2,2]=b;
+		bi[m1:m2,3]=POINTS[i,1];
+		bi[m1:m2,4]=POINTS[i,2];
+		varbi[m1:m2,1]=vecdiag(varb);
+		varbigg[m1:m2,1]=vecdiag(varbgg);
+		varbis[m1:m2,]=varbs;
+		%if &grid= %then %do;
+		if det(x1`*(w#x1#wt1))=0 then r=0;
+		else
+		r=x[i,]*C;
+		yhat[i]=x[i,]*b;
+		m1=(i-1)*ncol(x)+1;
+		m2=m1+(ncol(x)-1);
+		bi[m1:m2,1]=i;
+		bi[m1:m2,2]=b;
+		/** creating non-stationarity matrix **/
+		%IF %UPCASE(&METHOD) ne ADAPTIVE_BSQ %THEN %DO;
+		CCC=x1||w||wt1;
+		CCC1=CCC[1,];
+		if i=1 then CCC2=CCC;
+		else if i=n then CCC2=CCC[2:i,]//CCC1;
+		else CCC2=CCC[2:i,]//CCC1//CCC[i+1:nrow(CCC),];
+		BB[m1:m2,]=inv(CCC2[,1:ncol(x1)]`*(CCC2[,ncol(CCC)-1]#CCC2[,1:ncol(x1)]#CCC2[,ncol(CCC)]))*CCC2[,1:ncol(x1)]`#(CCC2[,ncol(CCC)-1]#CCC2[,ncol(CCC)])`;
+		%END;
+		/*************************************/
+		varbi[m1:m2,1]=vecdiag(varb);
+		varbigg[m1:m2,1]=vecdiag(varbgg);
+		varbis[m1:m2,]=varbs;
+		S[i]=r[1];
+		S2[i]=r*r`;
+		biT[i,1]=i;
+		biT[i,2:ncol(x)+1]=b`;
+		yhati=x*b;
+		yhati1=yhati[i,];
+		%IF %UPCASE(&METHOD)=ADAPTIVE_BSQ %THEN %DO;
+				yhati1=yhati1//yhati[position,];
+		%END;
+		%ELSE %DO;
+		do jj=1 to u;
+				yhati1=yhati1//yhati[dist[jj,2],];
+		end;
+		%END;
+		TSS=(y1#w#wt1)`*y1-((y1#w#wt1)[+]**2)/(w#wt1)[+];
+		RSS=((y1-yhati1)#wt1)`*(w#(y1-yhati1));
+		rsqri[i]=1-RSS/TSS;
+		_w_=w;
+		call sort(_w_,{1});
+		sumwi[i]=_w_[1:int(nrow(_w_)*1)][+];
+		%end;
+/*
+*CALCULATING CORRELATION BETWEEN VARIABLE K AND L;
+we=w/sum(w);
+x1es=j(1,ncol(x1),0);
+do kk=1 to ncol(x1);
+x1es[kk]=sum(we#x1[,kk]);
+end;
+do kk=2 to ncol(x1)-1;
+do kkm=kk+1 to ncol(x1);
+if kk=2 then do;
+rikl[i,1+kkm-(kk+1)]=sum(we#(x1[,kk]-x1es[kk])#(x1[,kkm]-x1es[kkm]))/(sqrt(sum(we#((x1[,kk]-x1es[kk])#(x1[,kk]-x1es[kk]))))*sqrt(sum(we#((x1[,kkm]-x1es[kkm])#(x1[,kkm]-x1es[kkm])))));
+rikl[i,1+kkm-(kk+1)]=1/(1-rikl[i,1+kkm-(kk+1)]*rikl[i,1+kkm-(kk+1)]);
+end;
+else do;
+rikl[i,2*(kk-1)+kkm-(kk+1)]=sum(we#(x1[,kk]-x1es[kk])#(x1[,kkm]-x1es[kkm]))/(sqrt(sum(we#((x1[,kk]-x1es[kk])#(x1[,kk]-x1es[kk]))))*sqrt(sum(we#((x1[,kkm]-x1es[kkm])#(x1[,kkm]-x1es[kkm])))));
+rikl[i,2*(kk-1)+kkm-(kk+1)]=1/(1-rikl[i,2*(kk-1)+kkm-(kk+1)]*rikl[i,2*(kk-1)+kkm-(kk+1)]);
+end;
+end;
+end;
+*/
+
