@@ -369,7 +369,7 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 #ifdef DEBUG_MATRIX_DIMENSIONS
 	printf("cv1.txt:6\td e dist criados, dimensões %dx%d\r\n", d->lines, d->columns);
 #endif
-	for(int j=0; j < data->lines; j++)
+	for(int j=0; j < data->lines; j++)s
 	{
 		double arco, d1;
 		if(distanceInKm)
@@ -768,7 +768,27 @@ void GWR(void *args_)
 	printf("Golden.txt:37\ty criado, dimensões %dx%d\r\n", y->lines, y->columns);
 #endif
 	DoubleMatrix *yhat= NewDoubleMatrix(args->data->lines, 1);;
+	double ni;//=ncol(unique(ci))
+	double nh;//=ncol(unique(sh))
+	//read all var {x,y} into POINTS??
+	int m= points->lines;
+	int n= y->lines;
+	DoubleMatrix *fh= NewDoubleMatrixAndInitializeElements(n, 1, 0.);
+	DoubleMatrix *bi= NewDoubleMatrixAndInitializeElements(x->columns*m, 4, 0.0);
+	DoubleMatrix *BB= NewDoubleMatrixAndInitializeElements(x->columns*n, n, 0.);
+	DoubleMatrix *rsqri= NewDoubleMatrixAndInitializeElements(m, 1, 0.);
+	DoubleMatrix *sumwi= NewDoubleMatrixAndInitializeElements(m, 1, 0.);
+	DoubleMatrix *varbi= NewDoubleMatrixAndInitializeElements(x->columns*m, 1, 0.);
+	DoubleMatrix *varbigg= NewDoubleMatrixAndInitializeElements(x->columns*m, x->columns, 0.);
+	DoubleMatrix *varbis= NewDoubleMatrixAndInitializeElements(x->columns*m, x->columns, 0.);
+	DoubleMatrix *S= NewDoubleMatrixAndInitializeElements(m, 1, 0.);
+	DoubleMatrix *S2= NewDoubleMatrixAndInitializeElements(m, 1, 0.);
+	DoubleMatrix *biT= NewDoubleMatrixAndInitializeElements(m, x->columns+1, 0.);
+	ym; //= y-y[:];??
+	DoubleMatrix *rikl= NewDoubleMatrixAndInitializeElements(n, /*comb(x->columns-1, 2)*/, 0.);
+	DoubleMatrix *vif= NewDoubleMatrixAndInitializeElements(n, x->columns-1, 0.);
 	
+	//Aqui agora é o negócio de pegar distância entre pontos que nem no primerio dor do CvAux1, usando points no lugar de dcoord,
 }
 
 
