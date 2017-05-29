@@ -344,9 +344,6 @@ void *Golden(void *args_)//vai retornar a matriz de distâncias se for pedido, c
 #endif
 
 
-#define CV_PRONTO
-#ifdef CV_PRONTO
-
 static double Sub(double a, double b)
 {
 	return a-b;
@@ -369,7 +366,7 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 #ifdef DEBUG_MATRIX_DIMENSIONS
 	printf("cv1.txt:6\td e dist criados, dimensões %dx%d\r\n", d->lines, d->columns);
 #endif
-	for(int j=0; j < data->lines; j++)s
+	for(int j=0; j < data->lines; j++)
 	{
 		double arco, d1;
 		if(distanceInKm)
@@ -743,6 +740,9 @@ double GWR_Determinant(DoubleMatrix *m)
 	return result;
 }
 
+#define GWR_PRONTO
+#ifdef GWR_PRONTO
+
 void GWR(void *args_)
 {
 	GWRArguments* args= args_;//contém o h
@@ -789,7 +789,87 @@ void GWR(void *args_)
 	DoubleMatrix *vif= NewDoubleMatrixAndInitializeElements(n, x->columns-1, 0.);
 	
 	//Aqui agora é o negócio de pegar distância entre pontos que nem no primerio dor do CvAux1, usando points no lugar de dcoord,
+	//criar d e dist aqui
+	for(int j=0; j < data->lines; j++)
+	{
+		double arco, d1;
+		if(distanceInKm)
+		{//o COORD é uma tabela com (variável independente, variáveis dependentes)
+			double dif= abs(DoubleMatrixGetElement(data, i, 1) - DoubleMatrixGetElement(data, j, 1) );
+			double raio= raio=acos(-1)/180;
+			double argument=
+					sin(DoubleMatrixGetElement(data, i, yCOORD)*raio)
+					*sin(DoubleMatrixGetElement(data, j,yCOORD)*raio)
+					+cos(DoubleMatrixGetElement(data, i,yCOORD)*raio)
+					*cos(DoubleMatrixGetElement(data,j, yCOORD)*raio)*cos(dif*raio);
+			if(1 <= argument)
+			{
+				arco=0;
+			}
+			else//dúvida: onde realmente termina esse else? Estou supondo que na linha seguinte
+			{
+				//law of cosines
+				arco =
+						acos(
+							sin(DoubleMatrixGetElement(data, i,yCOORD)*raio)
+							*sin(DoubleMatrixGetElement(data, j,yCOORD)*raio)
+							+cos(DoubleMatrixGetElement(data, i,yCOORD)*raio)
+							*cos(DoubleMatrixGetElement(data, j,yCOORD)*raio)
+							*cos(dif*raio)
+						);
+			}
+			d1= arco *APPROX_EARTH_RADIUS;
+			if(0.001 >= d1)
+			{
+				d1=0;
+			}
+		}
+		else
+		{
+			d1= sqrt(//isolar em uma função 01
+						pow(
+							DoubleMatrixGetElement(data, i,xCOORD)
+							-DoubleMatrixGetElement(data, j,xCOORD)
+							,2)
+						+pow(
+							DoubleMatrixGetElement(data,i,yCOORD)
+							-DoubleMatrixGetElement(data,j,yCOORD)
+							,2)
+					);
+		}
+		if(
+				(FIXED_G == method && (d1<=maxDistanceBetweenPoints*1 && d1 !=0) )
+				|| (FIXED_BSQ == method && d1 <= h1 && d1 !=0 )
+				|| (ADAPTIVE_N == method && d1 <= hv[1] && d1 !=0 )
+				||(ADAPTIVE_BSQ == method && d1 !=0 )
+			)
+		{//foi feito um super if para tratar tantas condições
+			DoubleMatrixSetElement(d, 0, 0, i);
+			DoubleMatrixSetElement(d, 0, 1, j);
+			if(!distanceInKm)
+			{
+				DoubleMatrixSetElement(d, 0, 2,
+						sqrt(
+							pow(
+								DoubleMatrixGetElement(data, i,xCOORD)
+								-DoubleMatrixGetElement(data, j,xCOORD)
+								,2)
+							+pow(
+								DoubleMatrixGetElement(data,i,yCOORD)
+								-DoubleMatrixGetElement(data,j,yCOORD)
+								,2)
+						)
+					);
+			}
+			else
+			{
+				DoubleMatrixSetElement(d, 0, 2, arco*APPROX_EARTH_RADIUS);
+			}
+			DoubleMatrixConcatenateLine(dist, d, 0);
+		}
+	}
+	
 }
 
-
 #endif
+
