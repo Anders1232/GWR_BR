@@ -790,66 +790,52 @@ void GWR(void *args_)
 	
 	//Aqui agora é o negócio de pegar distância entre pontos que nem no primerio dor do CvAux1, usando points no lugar de dcoord,
 	//criar d e dist aqui
-	for(int j=0; j < data->lines; j++)
+	DoubleMatrix *dist;
+	dist= NULL;
+	for(int i= 1-1; i < m; i++)
 	{
-		double arco, d1;
-		if(distanceInKm)
-		{//o COORD é uma tabela com (variável independente, variáveis dependentes)
-			double dif= abs(DoubleMatrixGetElement(data, i, 1) - DoubleMatrixGetElement(data, j, 1) );
-			double raio= raio=acos(-1)/180;
-			double argument=
-					sin(DoubleMatrixGetElement(data, i, yCOORD)*raio)
-					*sin(DoubleMatrixGetElement(data, j,yCOORD)*raio)
-					+cos(DoubleMatrixGetElement(data, i,yCOORD)*raio)
-					*cos(DoubleMatrixGetElement(data,j, yCOORD)*raio)*cos(dif*raio);
-			if(1 <= argument)
-			{
-				arco=0;
-			}
-			else//dúvida: onde realmente termina esse else? Estou supondo que na linha seguinte
-			{
-				//law of cosines
-				arco =
-						acos(
-							sin(DoubleMatrixGetElement(data, i,yCOORD)*raio)
-							*sin(DoubleMatrixGetElement(data, j,yCOORD)*raio)
-							+cos(DoubleMatrixGetElement(data, i,yCOORD)*raio)
-							*cos(DoubleMatrixGetElement(data, j,yCOORD)*raio)
-							*cos(dif*raio)
-						);
-			}
-			d1= arco *APPROX_EARTH_RADIUS;
-			if(0.001 >= d1)
-			{
-				d1=0;
-			}
-		}
-		else
+		if(NULL == dist)
 		{
-			d1= sqrt(//isolar em uma função 01
-						pow(
-							DoubleMatrixGetElement(data, i,xCOORD)
-							-DoubleMatrixGetElement(data, j,xCOORD)
-							,2)
-						+pow(
-							DoubleMatrixGetElement(data,i,yCOORD)
-							-DoubleMatrixGetElement(data,j,yCOORD)
-							,2)
-					);
+			DeleteDoubleMatrix(dist);
 		}
-		if(
-				(FIXED_G == method && (d1<=maxDistanceBetweenPoints*1 && d1 !=0) )
-				|| (FIXED_BSQ == method && d1 <= h1 && d1 !=0 )
-				|| (ADAPTIVE_N == method && d1 <= hv[1] && d1 !=0 )
-				||(ADAPTIVE_BSQ == method && d1 !=0 )
-			)
-		{//foi feito um super if para tratar tantas condições
-			DoubleMatrixSetElement(d, 0, 0, i);
-			DoubleMatrixSetElement(d, 0, 1, j);
-			if(!distanceInKm)
+		DoubleMatrix *d= NewDoubleMatrixAndInitializeElements(1, 3, 0.);
+		for(int j=0; j < data->lines; j++)
+		{
+			double arco, d1;
+			if(distanceInKm)
+			{//o COORD é uma tabela com (variável independente, variáveis dependentes)
+				double dif= abs(DoubleMatrixGetElement(data, i, 1) - DoubleMatrixGetElement(data, j, 1) );
+				double raio= raio=acos(-1)/180;
+				double argument=
+						sin(DoubleMatrixGetElement(data, i, yCOORD)*raio)
+						*sin(DoubleMatrixGetElement(data, j,yCOORD)*raio)
+						+cos(DoubleMatrixGetElement(data, i,yCOORD)*raio)
+						*cos(DoubleMatrixGetElement(data,j, yCOORD)*raio)*cos(dif*raio);
+				if(1 <= argument)
+				{
+					arco=0;
+				}
+				else//dúvida: onde realmente termina esse else? Estou supondo que na linha seguinte
+				{
+					//law of cosines
+					arco =
+							acos(
+								sin(DoubleMatrixGetElement(data, i,yCOORD)*raio)
+								*sin(DoubleMatrixGetElement(data, j,yCOORD)*raio)
+								+cos(DoubleMatrixGetElement(data, i,yCOORD)*raio)
+								*cos(DoubleMatrixGetElement(data, j,yCOORD)*raio)
+								*cos(dif*raio)
+							);
+					d1= arco *APPROX_EARTH_RADIUS;
+					if(0.001 >= d1)
+					{
+						d1=0;
+					}
+				}
+			}
+			else
 			{
-				DoubleMatrixSetElement(d, 0, 2,
-						sqrt(
+				d1= sqrt(//isolar em uma função 01
 							pow(
 								DoubleMatrixGetElement(data, i,xCOORD)
 								-DoubleMatrixGetElement(data, j,xCOORD)
@@ -858,17 +844,103 @@ void GWR(void *args_)
 								DoubleMatrixGetElement(data,i,yCOORD)
 								-DoubleMatrixGetElement(data,j,yCOORD)
 								,2)
-						)
-					);
+						);
 			}
-			else
-			{
-				DoubleMatrixSetElement(d, 0, 2, arco*APPROX_EARTH_RADIUS);
+			if(
+					(FIXED_G == method && (d1<=maxDistanceBetweenPoints*1 && d1 !=0) )
+					|| (FIXED_BSQ == method && d1 <= h1 && d1 !=0 )
+					|| (ADAPTIVE_N == method && d1 <= hv[1] && d1 !=0 )
+					||(ADAPTIVE_BSQ == method && d1 !=0 )
+				)
+			{//foi feito um super if para tratar tantas condições
+				DoubleMatrixSetElement(d, 0, 1-1, i);
+				DoubleMatrixSetElement(d, 0, 2-1, j);
+				if(!distanceInKm)
+				{
+					DoubleMatrixSetElement(d, 0, 3-1,
+							sqrt(
+								pow(
+									DoubleMatrixGetElement(data, i,xCOORD)
+									-DoubleMatrixGetElement(data, j,xCOORD)
+									,2)
+								+pow(
+									DoubleMatrixGetElement(data,i,yCOORD)
+									-DoubleMatrixGetElement(data,j,yCOORD)
+									,2)
+							)
+						);
+				}
+				else
+				{
+					DoubleMatrixSetElement(d, 0, 3-1, arco*APPROX_EARTH_RADIUS);
+				}
+				if(NULL == dist)
+				{
+					dist= NewLineDoubleMatrixFromMatrix(d, 0);
+				}
+				else
+				{
+					DoubleMatrixConcatenateLine(dist, d, 0);
+				}
 			}
-			DoubleMatrixConcatenateLine(dist, d, 0);
 		}
+		//verificar se esse é mesmo o contexto ou se tem que fechar mais uma chave
+		int u= data->lines;//[DUVIDA] x1 e y1 começam como matrizes 1x1?
+		fprintf(stdout, "%s|%s:%d\tu= %d\n", __FILE__, __func__, __LINE__, u);
+		fprintf(stdout, "%s|%s:%d\tdata está %dx%d\n", __FILE__, __func__, __LINE__, data->lines, data->columns);
+		fprintf(stdout, "%s|%s:%d\tdist está %dx%d\n", __FILE__, __func__, __LINE__, dist->lines, dist->columns);
+		DoubleMatrix *w= NewDoubleMatrix(u+1, 1);
+		w->elements[0]= 1.0;
+#ifdef DEBUG_MATRIX_DIMENSIONS
+		printf("cv1.txt:44\tw criado, dimensões %dx%d\r\n", w->lines, w->columns);
+#endif
+		DoubleMatrix *x1= NewLineDoubleMatrixFromMatrix(x, i);//verificar qual a diferença dessas 2 matrizes
+#ifdef DEBUG_MATRIX_DIMENSIONS
+		printf("cv1.txt:45\tx1 criado, dimensões i=%d %dx%d\r\n", i, x1->lines, x1->columns);
+#endif
+		DoubleMatrix *y1= NewLineDoubleMatrixFromMatrix(y, i);
+#ifdef DEBUG_MATRIX_DIMENSIONS
+		printf("cv1.txt:46\ty1 criado, dimensões %dx%d\r\n", y1->lines, y1->columns);
+#endif
+		DoubleMatrix *ym1= NewLineDoubleMatrixFromMatrix(ym, i);
+		//colocou-se +1 nos jj que acessam w pq depois dessas operações adicionava-se uma linha com o número 1, agora já faço isso na momento da criação.
+		for(int jj =1-1; jj < u; jj++)
+		{
+			if(FIXED_BSQ == method)
+			{
+	//			w[jj]= pow(1-pow(DoubleMatrixGetElement(dist, jj, 3) / h1, 2), 2);
+				DoubleMatrixSetElement(
+										w,
+										jj+1,
+										0,
+										pow(1-pow(DoubleMatrixGetElement(dist, jj, 3) / h1, 2), 2)//é h, no lugar de h1?
+									);
+			}
+			else if(ADAPTIVE_N == method)
+			{
+				DoubleMatrixSetElement(
+										w,
+										jj+1,
+										0,
+										pow(1-pow(DoubleMatrixGetElement(dist, jj, 3) / hv[i], 2), 2)
+									);
+			}
+			else if(FIXED_G == method)
+			{
+				DoubleMatrixSetElement(
+										w,
+										jj+1,
+										0,
+										exp(pow(-(DoubleMatrixGetElement(dist,jj,3)/ h1),2))
+									);
+			}
+		}
+		if(ADAPTIVE_BSQ == method)
+		{//linha 168 GWR1
+			
+		}
+		
 	}
-	
 }
 
 #endif
