@@ -161,8 +161,6 @@ double** DistanceBetweenAllPoints(DoubleMatrix* base, int yVarColumn, int xVarCo
 
 static double CrossValidation(DoubleMatrix *data, int oneOrTwo, bool distanceInKm, KernelType method, int forCount, int xCoord, int yCoord, DoubleMatrix *x, DoubleMatrix *y, DoubleMatrix *yhat, double h1, double maxDistanceBetweenPoints);
 
-#define F1_PRONTO
-#ifdef F1_PRONTO
 static void func1(double min, double max, double *h0, double *h1, double *h2, double *h3,/* double *hv,*/ DoubleMatrix *yhat, GoldenArguments *args, DoubleMatrix *x, DoubleMatrix *y, double *outGolden, double *outXMin, int forCounter)//de acordo com o código SAS o outGolden e outXMin só são retornados(printados) caso o método não seja adaptive N, mas como em todos os casos essas variáveis existem, estou retornando-as
 {
 	double ax, bx, cx, r, tol, c;
@@ -260,10 +258,7 @@ static void func1(double min, double max, double *h0, double *h1, double *h2, do
 		FowardListAddElement(args->communication, dataToReturn);//supondo que esse apend está querendo retornar o xmin
 	}
 }
-#endif
 
-#define GOLDEN_PRONTO
-#ifdef GOLDEN_PRONTO
 void *Golden(void *args_)//vai retornar a matriz de distâncias se for pedido, caso contrário retorna NULL
 {
 	GoldenArguments *args= args_;
@@ -341,7 +336,6 @@ void *Golden(void *args_)//vai retornar a matriz de distâncias se for pedido, c
 		return NULL;
 	}
 }
-#endif
 
 
 static double Sub(double a, double b)
@@ -740,7 +734,7 @@ double GWR_Determinant(DoubleMatrix *m)
 	return result;
 }
 
-#define GWR_PRONTO
+//#define GWR_PRONTO
 #ifdef GWR_PRONTO
 
 void GWR(void *args_)
@@ -937,9 +931,53 @@ void GWR(void *args_)
 		}
 		if(ADAPTIVE_BSQ == method)
 		{//linha 168 GWR1
-			
+			// é necessário criar novamente x1, y1, e ym1??
+			//aqui tem call sort (dist, {3}), perguntar o que é
+	//		DoubleMatrixConcatenateColumn(dist, ?);//Ver que operação dos ":" faz, pois aqui está 1:nrow(dist)
+			//se eu entendi certo o objeivo é contatenar a transposta de dist a dist
+			for(int count=0; count < dist->lines; count++)
+			{
+				DoubleMatrix *temp= NewLineDoubleMatrixFromMatrix(dist, count);
+	#ifdef DEBUG_MATRIX_DIMENSIONS
+		printf("cv1.txt:62\tdist[i] criado, dimensões %dx%d\r\n", temp->lines, temp->columns);
+	#endif
+				DoubleMatrixTranspose(temp, true);
+	#ifdef DEBUG_MATRIX_DIMENSIONS
+		printf("cv1.txt:62\tdist[i]' criado, dimensões %dx%d\r\n", temp->lines, temp->columns);
+	#endif
+				DoubleMatrixConcatenateColumn(dist, temp, 0);
+	#ifdef DEBUG_MATRIX_DIMENSIONS
+		printf("cv1.txt:62\tdist= dist ||dist[i]' criado, dimensões %dx%d\r\n", temp->lines, temp->columns);
+	#endif
+				DeleteDoubleMatrix(temp);
+			}
+			if(NULL != w){
+				DeleteDoubleMatrix(w);
+			}
+			w= NewDoubleMatrixAndInitializeElements(n, 2, 0.);
+			double hn= DoubleMatrixGetElement(h, 3);
 		}
-		
+		for(int jj=1-1; jj < n-1; jj++)
+		{
+			if(DoubleMatrixGetElement(dist, jj, 4/*-1?*/) <= h1/*h?*/)
+			{
+				DoubleMatrixSetElement(w, jj, 1, pow(1-pow((DoubleMatrixGetElement(dist, jj, 3)/hn), 2), 2) );
+			}
+			else
+			{
+				DoubleMatrixSetElement(w, jj, 1, 0);
+			}
+			DoubleMatrixSetElement(w, jj, 2, DoubleMatrixGetElement(dist, jj, 2));
+		}
+		//whot??position= w[loc(w[,1]>0),2];
+		for(int count=0; count < w->lines; count++)
+		{
+			if(DoubleMatrixGetElement(w, count, 1) > 0)
+			{
+				position= DoubleMatrixGetElement(w, count, 2);
+			}
+		}
+		//linha 184 do GWR cópia 1, linha 533 desse mesmo arquivo
 	}
 }
 
