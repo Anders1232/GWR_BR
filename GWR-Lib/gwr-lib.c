@@ -734,10 +734,10 @@ double GWR_Determinant(DoubleMatrix *m)
 	return result;
 }
 
-//#define GWR_PRONTO
+#define GWR_PRONTO
 #ifdef GWR_PRONTO
 
-void GWR(void *args_)
+void* GWR(void *args_)
 {
 	GWRArguments* args= args_;//contém o h
 	DoubleMatrix *x= NewDoubleMatrixAndInitializeElements(args->data->lines, 1, 1.0);
@@ -956,28 +956,82 @@ void GWR(void *args_)
 			}
 			w= NewDoubleMatrixAndInitializeElements(n, 2, 0.);
 			double hn= DoubleMatrixGetElement(h, 3);
-		}
-		for(int jj=1-1; jj < n-1; jj++)
+			for(int jj=1-1; jj < n-1; jj++)
+			{
+				if(DoubleMatrixGetElement(dist, jj, 4/*-1?*/) <= h1/*h?*/)
+				{
+					DoubleMatrixSetElement(w, jj, 1, pow(1-pow((DoubleMatrixGetElement(dist, jj, 3)/hn), 2), 2) );
+				}
+				else
+				{
+					DoubleMatrixSetElement(w, jj, 1, 0);
+				}
+				DoubleMatrixSetElement(w, jj, 2, DoubleMatrixGetElement(dist, jj, 2));
+			}
+			//whot??position= w[loc(w[,1]>0),2];
+			for(int count=0; count < w->lines; count++)
+			{
+				if(DoubleMatrixGetElement(w, count, 1) > 0)
+				{
+					position= DoubleMatrixGetElement(w, count, 2);
+				}
+			}
+			DeleteDoubleMatrix(d);
+			//linha 184 do GWR cópia 1, linha 533 desse mesmo arquivo
+			
+			DoubleMatrixConcatenateLine(w, /*w[loc(w[, 1)>0], 1*/);
+			DoubleMatrixConcatenateLine(x1, x, position);
+			DoubleMatrixConcatenateLine(y1, y, position);
+			DoubleMatrixConcatenateLine(ym1, ym, position);
+		}//aqui tem um %end, percebo que o código original tem o jj redeclarado
+		//GWR copia 1 linah 184
+		//aqui tem o else de um if que não achei
+		if(1 ==jj)
 		{
-			if(DoubleMatrixGetElement(dist, jj, 4/*-1?*/) <= h1/*h?*/)
+			if(NULL != x1)
 			{
-				DoubleMatrixSetElement(w, jj, 1, pow(1-pow((DoubleMatrixGetElement(dist, jj, 3)/hn), 2), 2) );
+				DeleteDoubleMatrix(x1);
 			}
-			else
+			x1= NewLineDoubleMatrixFromMatrix(x, DoubleMatrixGetElement(dist, jj, 2-1));
+			if(NULL != y1)
 			{
-				DoubleMatrixSetElement(w, jj, 1, 0);
+				DeleteDoubleMatrix(y1);
 			}
-			DoubleMatrixSetElement(w, jj, 2, DoubleMatrixGetElement(dist, jj, 2));
+			y1= NewLineDoubleMatrixFromMatrix(y, DoubleMatrixGetElement(dist, jj, 2-1));
+			if(NULL != ym1)
+			{
+				DeleteDoubleMatrix(ym1);
+			}
+			ym1= NewLineDoubleMatrixFromMatrix(ym, DoubleMatrixGetElement(dist, jj, 2-1));
 		}
-		//whot??position= w[loc(w[,1]>0),2];
-		for(int count=0; count < w->lines; count++)
+		else
 		{
-			if(DoubleMatrixGetElement(w, count, 1) > 0)
-			{
-				position= DoubleMatrixGetElement(w, count, 2);
-			}
+			DoubleMatrixConcatenateLine(x1, x, DoubleMatrixGetElement(dist, jj, 2-1));
+			DoubleMatrixConcatenateLine(y1, y, DoubleMatrixGetElement(dist, jj, 2-1));
+			DoubleMatrixConcatenateLine(ym1, ym, DoubleMatrixGetElement(dist, jj, 2-1));
 		}
-		//linha 184 do GWR cópia 1, linha 533 desse mesmo arquivo
+		if(ADAPTIVE_BSQ == method)
+		{
+			//call sirt(dist, {3})
+			//dist= dist|| (1:n)
+			for(int count=0; count < dist->lines; count++)
+			{
+				DoubleMatrix *temp= NewLineDoubleMatrixFromMatrix(dist, count);
+	#ifdef DEBUG_MATRIX_DIMENSIONS
+		printf("cv1.txt:62\tdist[i] criado, dimensões %dx%d\r\n", temp->lines, temp->columns);
+	#endif
+				DoubleMatrixTranspose(temp, true);
+	#ifdef DEBUG_MATRIX_DIMENSIONS
+		printf("cv1.txt:62\tdist[i]' criado, dimensões %dx%d\r\n", temp->lines, temp->columns);
+	#endif
+				DoubleMatrixConcatenateColumn(dist, temp, 0);
+	#ifdef DEBUG_MATRIX_DIMENSIONS
+		printf("cv1.txt:62\tdist= dist ||dist[i]' criado, dimensões %dx%d\r\n", temp->lines, temp->columns);
+	#endif
+				DeleteDoubleMatrix(temp);
+			}
+			//linha 208 do GWR(copia 1)
+		}
 	}
 }
 
