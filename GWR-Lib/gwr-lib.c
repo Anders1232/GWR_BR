@@ -1030,9 +1030,101 @@ void* GWR(void *args_)
 	#endif
 				DeleteDoubleMatrix(temp);
 			}
-			//linha 208 do GWR(copia 1)
+			//linha 202 do GWR(copia 1)
+			w= NewDoubleMatrixAndInitializeElements(n, 2, 0.);
+			hh= DoubleMatrixGetElement(dist, h, 3-1);
+			for(jj=0; jj< n; jj++)
+			{
+				if(DoubleMatrixGetElement(dist, jj, 4-1) <= h)
+				{
+					DoubleMatrixSetElement(w, jj, 1-1,
+											pow(1-pow(DoubleMatrixGetElement(jj, 3-1)/hn, 2), 2)
+										);
+				}
+				else
+				{
+					DoubleMatrixSetElement(w, jj, 1-1, 0.);
+					DoubleMatrixSetElement(w, jj, 2-1,
+											DoubleMatrixGetElement(dist, jj, 2-1)
+										);
+				}
+			}
+			//linha 210 GWR cópia 1
+//			position = w[loc(w[, 1-1]>0), 2-1];
+//			w=         w[loc(w[, 1-1]>0), 1-1];
+			for(int i=0; i < w->lines; i++)
+			{
+				if(0<DoubleMatrixGetElement(w, i, 1-1)){
+					position= DoubleMatrixGetElement(w, i, 2-1);
+					w= DoubleMatrixGetElement(w, i, 1-1);//w é uma matriz ou um double??
+					break;
+				}
+			}
+			DoubleMatrixConcatenateLine(x1, x, position);
+			DoubleMatrixConcatenateLine(y1, y, position);
+			DoubleMatrixConcatenateLine(ym1, ym, position);
 		}
+		//linha 217 GWR cópia 1
+		//aqui tem um end não sei do q, vou supor que é do i mesmo
 	}
+	//control+C control V do Golden
+	//det(x1`*(w#x1#wt1))=0 then b=j(ncol(x),1,0);
+//	DoubleMatrix *aux= DoubleMatrixElementBinaryOperation(w, x1, false, Mult);//aux= w#x1
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("cv1.txt:63\tw está as dimensões %dx%d\r\n", w->lines, w->columns);
+	printf("cv1.txt:63\tx1 está com as dimensões %dx%d\r\n", x1->lines, x1->columns);
+#endif
+	DoubleMatrix *aux = DoubleMatrixBinOpColumnsPerColumn(w, x1, 0, false, Mult);
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("cv1.txt:77\tw#x1 ficou com as dimensões %dx%d\r\n", aux->lines, aux->columns);
+#endif
+
+	DoubleMatrix *aux2;
+	aux2= aux;
+
+	aux= DoubleMatrixCopy(x1);
+	DoubleMatrixTranspose(aux, true);//#aux = x1'
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("cv1.txt:77\tx1' ficou com as dimensões %dx%d\r\n", aux->lines, aux->columns);
+#endif
+	DoubleMatrix *aux3= DoubleMatrixMultiplication(aux, aux2);//aux3=x1`*(w#x1#wt1)
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("cv1.txt:77\tx1`*(w#x1#wt1) ficou com as dimensões %dx%d\r\n", aux3->lines, aux3->columns);
+	printf("%s|%s:%d\t%s\n", __FILE__, __func__, __LINE__, (NULL == w)? "W é NULL": "W é válido.");
+#endif
+	DoubleMatrix *b;
+//	fprintf(stderr, "%s|%s:%d\t aux2 is %dx%d\r\n", __FILE__, __func__, __LINE__, aux2->lines, aux2->columns);
+//	fprintf(stderr, "%s|%s:%d\t aux3 is %dx%d\r\n", __FILE__, __func__, __LINE__, aux3->lines, aux3->columns);
+	if(0 == GWR_Determinant(aux3))
+	{
+		b=NewDoubleMatrixAndInitializeElements(x->columns, 1, 0);
+	}
+	else
+	{
+		//inv(x1`*(w#x1#wt1))*x1`*(w#y1#wt1);
+		b= DoubleMatrixInverse(aux3);
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("cv1.txt:79\tinv(x1`*(w#x1#wt1)) ficou com as dimensões %dx%d\r\n", b->lines, b->columns);
+#endif
+		DeleteDoubleMatrix(aux3);
+		aux3= DoubleMatrixMultiplication(b, aux);//aux3=inv(x1`*(w#x1#wt1))*x1`
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("cv1.txt:79\tinv(x1`*(w#x1#wt1))*x1` ficou com as dimensões %dx%d\r\n", aux3->lines, aux3->columns);
+#endif
+		DeleteDoubleMatrix(b);
+		b= DoubleMatrixMultiplication(aux3, aux2);
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("cv1.txt:79\tb ficou com as dimensões %dx%d\r\n", b->lines, b->columns);
+#endif
+	}
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("%s|%s:%d\t%s\n", __FILE__, __func__, __LINE__, (NULL == w)? "W é NULL": "W é válido.");
+#endif
+	DeleteDoubleMatrix(aux3);
+	DeleteDoubleMatrix(aux2);
+	DeleteDoubleMatrix(aux);
+//fim Control C control+V Golden
+	//linha 221 GWR cópia 1
 }
 
 #endif
