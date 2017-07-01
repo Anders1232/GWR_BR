@@ -1163,6 +1163,7 @@ void* GWR(void *args_)
 	aux2= DoubleMatrixMultiplication(aux3, aux);//aux2= inv(x' *x)*x'
 	DoubleMatrix *bg= DoubleMatrixMultiplication(aux2, y);
 	//linha 241 GWR copia 1
+	DoubleMatrix *s2g;
 }
 
 #endif
