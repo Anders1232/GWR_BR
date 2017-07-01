@@ -89,11 +89,11 @@ sumwi=j(m,1,0);
 varbi=j(ncol(x)*m,1,0);
 varbigg=j(ncol(x)*m,1,0);
 varbis=j(ncol(x)*m,ncol(x),0);
-S=j(m,1,0);
-S2=j(m,1,0);
-biT=j(m,ncol(x)+1,0);
+//S=j(m,1,0);
+//S2=j(m,1,0);
+//biT=j(m,ncol(x)+1,0);
 ym=y-y[:];
-*rikl=j(n,comb(ncol(x)-1,2),0);
+//*rikl=j(n,comb(ncol(x)-1,2),0);
 vif=j(n,ncol(x)-1,0);
 
 
@@ -221,86 +221,34 @@ free dist;
 		if det(x1`*(w#x1#wt1))=0 then C=j(ncol(x),1,0);
 		else
 		C=inv(x1`*(w#x1#wt1))*x1`#(w#wt1)`;
-		varbs=ginv(x1`*(w#x1#wt1));
 		varb=C*C`;
-		/*** standard GWR variance ****/
-		%IF &WEIGHT NE %THEN %DO;
-		varbgg=varbs;
-		%END;
-		%ELSE %DO;
-		varbgg=varb;
-		%END;
-		/*******************************/
 		m1=(i-1)*ncol(x)+1;
 		m2=m1+(ncol(x)-1);
 		bi[m1:m2,1]=i;
 		bi[m1:m2,2]=b;
 		bi[m1:m2,3]=POINTS[i,1];
 		bi[m1:m2,4]=POINTS[i,2];
-		varbi[m1:m2,1]=vecdiag(varb);
-		varbigg[m1:m2,1]=vecdiag(varbgg);
-		varbis[m1:m2,]=varbs;
-		%if &grid= %then %do;
-		if det(x1`*(w#x1#wt1))=0 then r=0;
-		else
-		r=x[i,]*C;
+		varbi[m1:m2,1]=vecdiag(varb);//vetor diagonal
 		yhat[i]=x[i,]*b;
-		m1=(i-1)*ncol(x)+1;
-		m2=m1+(ncol(x)-1);
-		bi[m1:m2,1]=i;
-		bi[m1:m2,2]=b;
-		/** creating non-stationarity matrix **/
-		%IF %UPCASE(&METHOD) ne ADAPTIVE_BSQ %THEN %DO;
-		CCC=x1||w||wt1;
-		CCC1=CCC[1,];
-		if i=1 then CCC2=CCC;
-		else if i=n then CCC2=CCC[2:i,]//CCC1;
-		else CCC2=CCC[2:i,]//CCC1//CCC[i+1:nrow(CCC),];
-		BB[m1:m2,]=inv(CCC2[,1:ncol(x1)]`*(CCC2[,ncol(CCC)-1]#CCC2[,1:ncol(x1)]#CCC2[,ncol(CCC)]))*CCC2[,1:ncol(x1)]`#(CCC2[,ncol(CCC)-1]#CCC2[,ncol(CCC)])`;
-		%END;
-		/*************************************/
-		varbi[m1:m2,1]=vecdiag(varb);
-		varbigg[m1:m2,1]=vecdiag(varbgg);
-		varbis[m1:m2,]=varbs;
-		S[i]=r[1];
-		S2[i]=r*r`;
-		biT[i,1]=i;
-		biT[i,2:ncol(x)+1]=b`;
-		yhati=x*b;
-		yhati1=yhati[i,];
-		%IF %UPCASE(&METHOD)=ADAPTIVE_BSQ %THEN %DO;
-				yhati1=yhati1//yhati[position,];
-		%END;
-		%ELSE %DO;
-		do jj=1 to u;
-				yhati1=yhati1//yhati[dist[jj,2],];
-		end;
-		%END;
-		TSS=(y1#w#wt1)`*y1-((y1#w#wt1)[+]**2)/(w#wt1)[+];
-		RSS=((y1-yhati1)#wt1)`*(w#(y1-yhati1));
-		rsqri[i]=1-RSS/TSS;
-		_w_=w;
-		call sort(_w_,{1});
-		sumwi[i]=_w_[1:int(nrow(_w_)*1)][+];
-		%end;
-/*
-*CALCULATING CORRELATION BETWEEN VARIABLE K AND L;
-we=w/sum(w);
-x1es=j(1,ncol(x1),0);
-do kk=1 to ncol(x1);
-x1es[kk]=sum(we#x1[,kk]);
-end;
-do kk=2 to ncol(x1)-1;
-do kkm=kk+1 to ncol(x1);
-if kk=2 then do;
-rikl[i,1+kkm-(kk+1)]=sum(we#(x1[,kk]-x1es[kk])#(x1[,kkm]-x1es[kkm]))/(sqrt(sum(we#((x1[,kk]-x1es[kk])#(x1[,kk]-x1es[kk]))))*sqrt(sum(we#((x1[,kkm]-x1es[kkm])#(x1[,kkm]-x1es[kkm])))));
-rikl[i,1+kkm-(kk+1)]=1/(1-rikl[i,1+kkm-(kk+1)]*rikl[i,1+kkm-(kk+1)]);
-end;
-else do;
-rikl[i,2*(kk-1)+kkm-(kk+1)]=sum(we#(x1[,kk]-x1es[kk])#(x1[,kkm]-x1es[kkm]))/(sqrt(sum(we#((x1[,kk]-x1es[kk])#(x1[,kk]-x1es[kk]))))*sqrt(sum(we#((x1[,kkm]-x1es[kkm])#(x1[,kkm]-x1es[kkm])))));
-rikl[i,2*(kk-1)+kkm-(kk+1)]=1/(1-rikl[i,2*(kk-1)+kkm-(kk+1)]*rikl[i,2*(kk-1)+kkm-(kk+1)]);
-end;
-end;
-end;
-*/
+%end
 
+res=(y-yhat);
+stdbi=sqrt(varbi);
+tstat = bi[,2]/stdbi;
+
+/***** global estimates ***************/
+bg=inv(x`*(x))*x`*(y);
+s2g=((y-x*bg))`*(y-x*bg)/(n-nrow(bg));
+varg=vecdiag(inv(x`*(x))*s2g);
+
+stdg=sqrt(varg);
+tg=bg/stdg;
+probtg=2*(1-probt(abs(tg),glg));
+create _res_ var{y yhat res};//criar arquivo
+append;
+create _beta_ from bi[colname={"id" "B"}];
+append from bi;
+bistdt=bi||stdbi||tstat;
+create _parameters_ from bistdt[colname={"id" "B" "x" "y" "stdbi" "tstat"}];
+append from bistdt;
+%mend GWR
