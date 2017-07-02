@@ -1159,11 +1159,64 @@ void* GWR(void *args_)
 	aux= DoubleMatrixTranspose(x, false);
 	aux2= DoubleMatrixMultiplication(aux, x);
 	aux3= DoubleMatrixInverse(aux2);//aux3= inv(x' *x)
+	DoubleMatrix *aux4= DoubleMatrixCopy(aux3);
 	DeleteDoubleMatrix(aux2);
 	aux2= DoubleMatrixMultiplication(aux3, aux);//aux2= inv(x' *x)*x'
 	DoubleMatrix *bg= DoubleMatrixMultiplication(aux2, y);
+	DeleteDoubleMatrix(aux2);
 	//linha 241 GWR copia 1
-	DoubleMatrix *s2g;
+	aux2= DoubleMatrixMultiplication(x, bg);
+	aux= DoubleMatrixElementBinaryOperation(y, aux2, false, Sub);//(y-x*bg)
+	DoubleMatrix *s2g= DoubleMatrixTranspose(aux, false);//(y-x*bg)'
+	for(int p=0; p < aux2->lines; p++)
+	{
+		for(int q=0; q < aux2->columns; q++)
+		{
+			DoubleMatrixSetElement(aux, p, q, DoubleMatrixGetElement(aux, p, q)/(n-bg->lines) );
+		}
+	}
+	aux3= s2g;
+	s2g= DoubleMatrixMultiplication(aux3, aux);
+	DeleteDoubleMatrix(aux);
+	DeleteDoubleMatrix(aux2);
+	DeleteDoubleMatrix(aux3);
+	aux= DoubleMatrixMultiplication(aux4, s2g);
+	DoubleMatrix *varg= NewDoubleMatrix(1, aux4->columns);
+	for(int count=0; count < varg->columns; count++){
+		DoubleMatrixSetElement(varg, 1, count, DoubleMatrixGetElement(aux, count, count));
+	}
+	DeleteDoubleMatrix(aux);
+	DeleteDoubleMatrix(aux4);
+	
+	//linha 244 GWR cópia 1
+	DoubleMatrix *stdg= DoubleMatrixElementUnaryOperation(varg, false, sqrt);
+	DoubleMatrix *tg = DoubleMatrixElementBinaryOperation(bg, stdg, false, Div);
+	//a linha 246 supõe a existência de uma matriz probt que não existe, pulando
+	FILE *f= fopen("__res__.csv", "w");
+	if(NULL == f)
+	{
+		printf("%s|%s:%d\t[ERROR]\r\n", __FILE__, __func__, __LINE__);
+		exit(1);
+	}
+	fprintf(f, "\r\ny:\r\n");
+	DoubleMatrixPrint(y, f, "\t%lf", "\r\n");
+	fprintf(f, "\r\nyhat:\r\n");
+	DoubleMatrixPrint(yhat, f, "\t%lf", "\r\n");
+	fprintf(f, "\r\nres:\r\n");
+	DoubleMatrixPrint(res, f, "\t%lf", "\r\n");
+	fclose(f);
+	
+	FILE *f= fopen("__beta__.csv", "w");
+	if(NULL == f)
+	{
+		printf("%s|%s:%d\t[ERROR]\r\n", __FILE__, __func__, __LINE__);
+		exit(1);
+	}
+	fprintf(f, "\r\nid\t\tB\t\tx\t\ty\r\n");
+	DoubleMatrixPrint(bi, f, "\t%lf", "\r\n");
+	fclose(f);
+
+	//linha 252 GWR cópia 1
 }
 
 #endif
