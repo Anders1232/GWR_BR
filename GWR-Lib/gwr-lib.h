@@ -35,6 +35,7 @@ struct goldenArguments
 	KernelType method;
 	bool distanceInKM;
 	bool returnDistancesMatrix;
+	double *outMaxDistanceBetweenPoints;
 };
 typedef struct goldenArguments GoldenArguments;
 
@@ -55,6 +56,24 @@ struct goldenDataIfAdpN//if method is adaptive N
 };
 typedef struct goldenDataIfAdpN GoldenDataIfAdpN;
 
+struct GWRArguments_
+{
+//	FowardList *communication;
+	DoubleMatrix *data;
+	int *yVarColumn_independentLocalVariables;//pergunta se é usar as variáveis locais ou globais
+//	int *yVarColumn_independentGlobalVariables;
+	int xVarColumn_dependentVariable;
+	int x_dCoord;
+	int y_dCoord;
+	KernelType method;
+	bool distanceInKm;
+	double maxDistanceBetweenPoints;
+//	bool returnDistancesMatrix;
+	double h;
+};
+typedef struct GWRArguments_ GWRArguments;
+
+
 DoubleMatrix* LatPlusLon(DoubleMatrix *matrix, int latColumn, int lonColumn);//implemented
 DoubleMatrix* DistanceToOrigin(DoubleMatrix* matrix, int column1, int column2);
 double** DistanceBetweenAllPoints(DoubleMatrix* base, int yVarColumn, int xVarColumn, double* minDistOut, double *maxDistOut, bool returnOnlyMinAndMax);
@@ -62,5 +81,6 @@ double** DistanceBetweenAllPoints(DoubleMatrix* base, int yVarColumn, int xVarCo
 //mas na verdade o argumento é um ponteiro para GoldenArguments e o tipo de retorno é um ponteiro de ponteiro para void
 void* Golden(void* args);//vai retornar a matriz de distâncias se for pedido, caso contrário retorna NULL
 double GWR_Determinant(DoubleMatrix *m);
+void* GWR(void *args_);
 
 #endif

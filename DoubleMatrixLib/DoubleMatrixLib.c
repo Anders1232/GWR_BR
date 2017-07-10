@@ -618,3 +618,30 @@ DoubleMatrix* DoubleMatrixBinOpColumnsPerColumn(DoubleMatrix *mainMatrix, Double
 	return ret;
 }
 
+DoubleMatrix* DoubleMatrixElementUnaryOperation(DoubleMatrix *mat, bool resultInTheFirstMatrix, double(*ElementUnaFunction)(double element)){
+	DoubleMatrix* ret;
+	if(resultInTheFirstMatrix)
+	{
+		ret= mat;
+	}
+	else
+	{
+		ret= NewDoubleMatrix(mat->lines, mat->columns);
+		if(NULL == ret)
+		{
+			return NULL;
+		}
+	}
+	int numberOfElements= (mat->lines) * (mat->columns);
+	double *p1= mat->elements;
+	double *p3= ret->elements;
+	int count;
+	for(count =0; count < numberOfElements; count++)
+	{
+		*p3= ElementUnaFunction(*p1);
+		p1++;
+		p3++;
+	}
+	return ret;
+}
+

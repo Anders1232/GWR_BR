@@ -261,6 +261,7 @@ void GuiDriver::CalculateGolden(QTextEdit &textArea,
 		int longitude
 )
 {
+	double maxDisBetPoints;
 	FowardList *fw= NewFowardList();
 	GoldenArguments args;
 	args.communication=fw;
@@ -273,6 +274,8 @@ void GuiDriver::CalculateGolden(QTextEdit &textArea,
 	args.yVarColumn_independentLocalVariables= independentLocalVariables;
 	args.x_dCoord= latitude;
 	args.y_dCoord= longitude;
+	args.outMaxDistanceBetweenPoints= &maxDisBetPoints;
+	double h;
 	pthread_t thread;
 	pthread_create(&thread, NULL, Golden, &args);
 	if(ADAPTIVE_N == kernelType)
@@ -314,6 +317,7 @@ void GuiDriver::CalculateGolden(QTextEdit &textArea,
 			temp+= QString::number(response->cv2, 'f');
 			temp+= "\n";
 			textArea.append(temp);
+			h= response->h1;
 //			if(NULL != outputFile)
 //			{
 			fprintf(outputFile, temp.toStdString().c_str());
@@ -331,6 +335,17 @@ void GuiDriver::CalculateGolden(QTextEdit &textArea,
 			PrintfDistancesFile(distances, data->lines, outputDistancesBetweenPoints);
 		}
 	}
+	GWRArguments gwrArgs;
+	gwrArgs.data= data;
+	gwrArgs.yVarColumn_independentLocalVariables= independentLocalVariables;
+	gwrArgs.xVarColumn_dependentVariable= dependentVariable;
+	gwrArgs.x_dCoord= latitude;
+	gwrArgs.y_dCoord= longitude;
+	gwrArgs.method= kernelType;
+	gwrArgs.distanceInKm= distanceInKm;
+	gwrArgs.maxDistanceBetweenPoints= maxDisBetPoints;
+	gwrArgs.h= h;
+	GWR(&gwrArgs);
 }
 
 

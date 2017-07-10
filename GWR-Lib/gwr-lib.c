@@ -360,6 +360,7 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 #ifdef DEBUG_MATRIX_DIMENSIONS
 	printf("cv1.txt:6\td e dist criados, dimensões %dx%d\r\n", d->lines, d->columns);
 #endif
+	double hn;
 	for(int j=0; j < data->lines; j++)
 	{
 		double arco, d1;
@@ -765,7 +766,7 @@ void* GWR(void *args_)
 	double ni;//=ncol(unique(ci))
 	double nh;//=ncol(unique(sh))
 	//read all var {x,y} into POINTS??
-	int m= points->lines;
+	int m= args->data->lines;
 	int n= y->lines;
 	DoubleMatrix *fh= NewDoubleMatrixAndInitializeElements(n, 1, 0.);
 	DoubleMatrix *bi= NewDoubleMatrixAndInitializeElements(x->columns*m, 4, 0.0);
@@ -778,33 +779,37 @@ void* GWR(void *args_)
 	DoubleMatrix *S= NewDoubleMatrixAndInitializeElements(m, 1, 0.);
 	DoubleMatrix *S2= NewDoubleMatrixAndInitializeElements(m, 1, 0.);
 	DoubleMatrix *biT= NewDoubleMatrixAndInitializeElements(m, x->columns+1, 0.);
-	ym; //= y-y[:];??
-	DoubleMatrix *rikl= NewDoubleMatrixAndInitializeElements(n, /*comb(x->columns-1, 2)*/, 0.);
+	DoubleMatrix *ym; //= y-y[:];??
+//	DoubleMatrix *rikl= NewDoubleMatrixAndInitializeElements(n, /*comb(x->columns-1, 2)*/, 0.);
+	DoubleMatrix *rikl= NewDoubleMatrixAndInitializeElements(n, BinomialCoefficient(x->columns-1, 2), 0.);
 	DoubleMatrix *vif= NewDoubleMatrixAndInitializeElements(n, x->columns-1, 0.);
 	
 	//Aqui agora é o negócio de pegar distância entre pontos que nem no primerio dor do CvAux1, usando points no lugar de dcoord,
 	//criar d e dist aqui
 	DoubleMatrix *dist;
 	dist= NULL;
+	int position;
 	for(int i= 1-1; i < m; i++)
 	{
+		int m1= (i-1)*(x->columns)+1;
+		int m2= m1+(x->columns-1);
 		if(NULL == dist)
 		{
 			DeleteDoubleMatrix(dist);
 		}
 		DoubleMatrix *d= NewDoubleMatrixAndInitializeElements(1, 3, 0.);
-		for(int j=0; j < data->lines; j++)
+		for(int j=0; j < args->data->lines; j++)
 		{
 			double arco, d1;
-			if(distanceInKm)
+			if(args->distanceInKm)
 			{//o COORD é uma tabela com (variável independente, variáveis dependentes)
-				double dif= abs(DoubleMatrixGetElement(data, i, 1) - DoubleMatrixGetElement(data, j, 1) );
+				double dif= abs(DoubleMatrixGetElement(args->data, i, 1) - DoubleMatrixGetElement(args->data, j, 1) );
 				double raio= raio=acos(-1)/180;
 				double argument=
-						sin(DoubleMatrixGetElement(data, i, yCOORD)*raio)
-						*sin(DoubleMatrixGetElement(data, j,yCOORD)*raio)
-						+cos(DoubleMatrixGetElement(data, i,yCOORD)*raio)
-						*cos(DoubleMatrixGetElement(data,j, yCOORD)*raio)*cos(dif*raio);
+						sin(DoubleMatrixGetElement(args->data, i, args->y_dCoord)*raio)
+						*sin(DoubleMatrixGetElement(args->data, j,args->y_dCoord)*raio)
+						+cos(DoubleMatrixGetElement(args->data, i,args->y_dCoord)*raio)
+						*cos(DoubleMatrixGetElement(args->data,j, args->y_dCoord)*raio)*cos(dif*raio);
 				if(1 <= argument)
 				{
 					arco=0;
@@ -814,10 +819,10 @@ void* GWR(void *args_)
 					//law of cosines
 					arco =
 							acos(
-								sin(DoubleMatrixGetElement(data, i,yCOORD)*raio)
-								*sin(DoubleMatrixGetElement(data, j,yCOORD)*raio)
-								+cos(DoubleMatrixGetElement(data, i,yCOORD)*raio)
-								*cos(DoubleMatrixGetElement(data, j,yCOORD)*raio)
+								sin(DoubleMatrixGetElement(args->data, i,args->y_dCoord)*raio)
+								*sin(DoubleMatrixGetElement(args->data, j,args->y_dCoord)*raio)
+								+cos(DoubleMatrixGetElement(args->data, i,args->y_dCoord)*raio)
+								*cos(DoubleMatrixGetElement(args->data, j,args->y_dCoord)*raio)
 								*cos(dif*raio)
 							);
 					d1= arco *APPROX_EARTH_RADIUS;
@@ -831,35 +836,35 @@ void* GWR(void *args_)
 			{
 				d1= sqrt(//isolar em uma função 01
 							pow(
-								DoubleMatrixGetElement(data, i,xCOORD)
-								-DoubleMatrixGetElement(data, j,xCOORD)
+								DoubleMatrixGetElement(args->data, i,args->x_dCoord)
+								-DoubleMatrixGetElement(args->data, j,args->x_dCoord)
 								,2)
 							+pow(
-								DoubleMatrixGetElement(data,i,yCOORD)
-								-DoubleMatrixGetElement(data,j,yCOORD)
+								DoubleMatrixGetElement(args->data,i,args->y_dCoord)
+								-DoubleMatrixGetElement(args->data,j,args->y_dCoord)
 								,2)
 						);
 			}
 			if(
-					(FIXED_G == method && (d1<=maxDistanceBetweenPoints*1 && d1 !=0) )
-					|| (FIXED_BSQ == method && d1 <= h1 && d1 !=0 )
-					|| (ADAPTIVE_N == method && d1 <= hv[1] && d1 !=0 )
-					||(ADAPTIVE_BSQ == method && d1 !=0 )
+					(FIXED_G == args->method && (d1<=args->maxDistanceBetweenPoints*1 && d1 !=0) )
+					|| (FIXED_BSQ == args->method && d1 <= args->h && d1 !=0 )
+					|| (ADAPTIVE_N == args->method /*&& d1 <= hv[1]*/ && d1 !=0 )
+					||(ADAPTIVE_BSQ == args->method && d1 !=0 )
 				)
 			{//foi feito um super if para tratar tantas condições
 				DoubleMatrixSetElement(d, 0, 1-1, i);
 				DoubleMatrixSetElement(d, 0, 2-1, j);
-				if(!distanceInKm)
+				if(!args->distanceInKm)
 				{
 					DoubleMatrixSetElement(d, 0, 3-1,
 							sqrt(
 								pow(
-									DoubleMatrixGetElement(data, i,xCOORD)
-									-DoubleMatrixGetElement(data, j,xCOORD)
+									DoubleMatrixGetElement(args->data, i,args->x_dCoord)
+									-DoubleMatrixGetElement(args->data, j,args->x_dCoord)
 									,2)
 								+pow(
-									DoubleMatrixGetElement(data,i,yCOORD)
-									-DoubleMatrixGetElement(data,j,yCOORD)
+									DoubleMatrixGetElement(args->data,i,args->y_dCoord)
+									-DoubleMatrixGetElement(args->data,j,args->y_dCoord)
 									,2)
 							)
 						);
@@ -878,10 +883,11 @@ void* GWR(void *args_)
 				}
 			}
 		}
+		double hn= DoubleMatrixGetElement(dist, args->h, 3-1);
 		//verificar se esse é mesmo o contexto ou se tem que fechar mais uma chave
-		int u= data->lines;//[DUVIDA] x1 e y1 começam como matrizes 1x1?
+		int u= args->data->lines;//[DUVIDA] x1 e y1 começam como matrizes 1x1?
 		fprintf(stdout, "%s|%s:%d\tu= %d\n", __FILE__, __func__, __LINE__, u);
-		fprintf(stdout, "%s|%s:%d\tdata está %dx%d\n", __FILE__, __func__, __LINE__, data->lines, data->columns);
+		fprintf(stdout, "%s|%s:%d\tdata está %dx%d\n", __FILE__, __func__, __LINE__, args->data->lines, args->data->columns);
 		fprintf(stdout, "%s|%s:%d\tdist está %dx%d\n", __FILE__, __func__, __LINE__, dist->lines, dist->columns);
 		DoubleMatrix *w= NewDoubleMatrix(u+1, 1);
 		w->elements[0]= 1.0;
@@ -897,39 +903,41 @@ void* GWR(void *args_)
 		printf("cv1.txt:46\ty1 criado, dimensões %dx%d\r\n", y1->lines, y1->columns);
 #endif
 		DoubleMatrix *ym1= NewLineDoubleMatrixFromMatrix(ym, i);
+		hn= DoubleMatrixGetElement(dist, args->h, 3-1);
 		//colocou-se +1 nos jj que acessam w pq depois dessas operações adicionava-se uma linha com o número 1, agora já faço isso na momento da criação.
-		for(int jj =1-1; jj < u; jj++)
+		int jj;
+		for(jj =1-1; jj < u; jj++)
 		{
-			if(FIXED_BSQ == method)
+			if(FIXED_BSQ == args->method)
 			{
 	//			w[jj]= pow(1-pow(DoubleMatrixGetElement(dist, jj, 3) / h1, 2), 2);
 				DoubleMatrixSetElement(
 										w,
-										jj+1,
-										0,
-										pow(1-pow(DoubleMatrixGetElement(dist, jj, 3) / h1, 2), 2)//é h, no lugar de h1?
+										jj/*+1*/,
+										1-1,
+										pow(1-pow(DoubleMatrixGetElement(dist, jj, 3) / hn, 2), 2)//é h, no lugar de h1?
 									);
 			}
-			else if(ADAPTIVE_N == method)
+			else if(ADAPTIVE_N == args->method)
 			{
 				DoubleMatrixSetElement(
 										w,
 										jj+1,
 										0,
-										pow(1-pow(DoubleMatrixGetElement(dist, jj, 3) / hv[i], 2), 2)
+										pow(1-pow(DoubleMatrixGetElement(dist, jj, 3) / 1/*hv[i]*/, 2), 2)
 									);
 			}
-			else if(FIXED_G == method)
+			else if(FIXED_G == args->method)
 			{
 				DoubleMatrixSetElement(
 										w,
 										jj+1,
 										0,
-										exp(pow(-(DoubleMatrixGetElement(dist,jj,3)/ h1),2))
+										exp(pow(-(DoubleMatrixGetElement(dist,jj,3)/ args->h),2))
 									);
 			}
 		}
-		if(ADAPTIVE_BSQ == method)
+		if(ADAPTIVE_BSQ == args->method)
 		{//linha 168 GWR1
 			// é necessário criar novamente x1, y1, e ym1??
 			//aqui tem call sort (dist, {3}), perguntar o que é
@@ -955,10 +963,9 @@ void* GWR(void *args_)
 				DeleteDoubleMatrix(w);
 			}
 			w= NewDoubleMatrixAndInitializeElements(n, 2, 0.);
-			double hn= DoubleMatrixGetElement(h, 3);
 			for(int jj=1-1; jj < n-1; jj++)
 			{
-				if(DoubleMatrixGetElement(dist, jj, 4/*-1?*/) <= h1/*h?*/)
+				if(DoubleMatrixGetElement(dist, jj, 4/*-1?*/) <= args->h/*h?*/)
 				{
 					DoubleMatrixSetElement(w, jj, 1, pow(1-pow((DoubleMatrixGetElement(dist, jj, 3)/hn), 2), 2) );
 				}
@@ -978,8 +985,12 @@ void* GWR(void *args_)
 			}
 			DeleteDoubleMatrix(d);
 			//linha 184 do GWR cópia 1, linha 533 desse mesmo arquivo
-			
-			DoubleMatrixConcatenateLine(w, /*w[loc(w[, 1)>0], 1*/);
+			for(int i=0; i < w->lines; i++){
+				if(0 < DoubleMatrixGetElement(w, i, 1-1)){
+//					DoubleMatrixConcatenateLine(w, /*w[loc(w[, 1)>0], 2-1*/);
+					DoubleMatrixConcatenateLine(w, w, i);
+				}
+			}
 			DoubleMatrixConcatenateLine(x1, x, position);
 			DoubleMatrixConcatenateLine(y1, y, position);
 			DoubleMatrixConcatenateLine(ym1, ym, position);
@@ -1002,6 +1013,9 @@ void* GWR(void *args_)
 			{
 				DeleteDoubleMatrix(ym1);
 			}
+			if(NULL != ym1){
+				DeleteDoubleMatrix(ym1);
+			}
 			ym1= NewLineDoubleMatrixFromMatrix(ym, DoubleMatrixGetElement(dist, jj, 2-1));
 		}
 		else
@@ -1010,7 +1024,7 @@ void* GWR(void *args_)
 			DoubleMatrixConcatenateLine(y1, y, DoubleMatrixGetElement(dist, jj, 2-1));
 			DoubleMatrixConcatenateLine(ym1, ym, DoubleMatrixGetElement(dist, jj, 2-1));
 		}
-		if(ADAPTIVE_BSQ == method)
+		if(ADAPTIVE_BSQ == args->method)
 		{
 			//call sirt(dist, {3})
 			//dist= dist|| (1:n)
@@ -1032,13 +1046,13 @@ void* GWR(void *args_)
 			}
 			//linha 202 do GWR(copia 1)
 			w= NewDoubleMatrixAndInitializeElements(n, 2, 0.);
-			hh= DoubleMatrixGetElement(dist, h, 3-1);
+			double hn= DoubleMatrixGetElement(dist, args->h, 3-1);
 			for(jj=0; jj< n; jj++)
 			{
-				if(DoubleMatrixGetElement(dist, jj, 4-1) <= h)
+				if(DoubleMatrixGetElement(dist, jj, 4-1) <= args->h)
 				{
 					DoubleMatrixSetElement(w, jj, 1-1,
-											pow(1-pow(DoubleMatrixGetElement(jj, 3-1)/hn, 2), 2)
+											pow(1-pow(DoubleMatrixGetElement(dist, jj, 3-1)/hn, 2), 2)
 										);
 				}
 				else
@@ -1056,7 +1070,14 @@ void* GWR(void *args_)
 			{
 				if(0<DoubleMatrixGetElement(w, i, 1-1)){
 					position= DoubleMatrixGetElement(w, i, 2-1);
-					w= DoubleMatrixGetElement(w, i, 1-1);//w é uma matriz ou um double??
+					//atribuindo o valor a toda a matriz
+//					w= DoubleMatrixGetElement(w, i, 1-1);//w é uma matriz ou um double??
+					double temp= DoubleMatrixGetElement(w, i, 1-1);;
+					for(int i=0; i < w->lines; i++){
+						for(int j=0; j < w->columns; j++){
+							DoubleMatrixSetElement(w, i, j, temp);
+						}
+					}
 					break;
 				}
 			}
@@ -1091,7 +1112,7 @@ void* GWR(void *args_)
 		printf("cv1.txt:77\tx1`*(w#x1#wt1) ficou com as dimensões %dx%d\r\n", aux3->lines, aux3->columns);
 		printf("%s|%s:%d\t%s\n", __FILE__, __func__, __LINE__, (NULL == w)? "W é NULL": "W é válido.");
 	#endif
-		DoubleMatrix *b, C;
+		DoubleMatrix *b, *C;
 	//	fprintf(stderr, "%s|%s:%d\t aux2 is %dx%d\r\n", __FILE__, __func__, __LINE__, aux2->lines, aux2->columns);
 	//	fprintf(stderr, "%s|%s:%d\t aux3 is %dx%d\r\n", __FILE__, __func__, __LINE__, aux3->lines, aux3->columns);
 		if(0 == GWR_Determinant(aux3))
@@ -1119,7 +1140,7 @@ void* GWR(void *args_)
 	#endif
 		DeleteDoubleMatrix(aux);
 		aux= DoubleMatrixTranspose(w, false);
-		C= DoubleMatrixElementBinaryOperation(C, aux, true);
+		C= DoubleMatrixElementBinaryOperation(C, aux, true, Mult);
 		}
 	#ifdef DEBUG_MATRIX_DIMENSIONS
 		printf("%s|%s:%d\t%s\n", __FILE__, __func__, __LINE__, (NULL == w)? "W é NULL": "W é válido.");
@@ -1133,25 +1154,36 @@ void* GWR(void *args_)
 	//fim Control C control+V Golden
 		//linha 221 GWR cópia 1
 		aux= DoubleMatrixTranspose(C, false);
-		varb= DoubleMatrixMultiplication(C, aux);
+		DoubleMatrix *varb= DoubleMatrixMultiplication(C, aux);
 		DeleteDoubleMatrix(aux);
 		aux=NULL;
 		m1= (i-1)*x->columns+1;
 		m2 = m1+x->columns-1;
 		for(int count =m1-1; count < m2;count++){
 			DoubleMatrixSetElement(bi, count, 1-1, i);
-			DoubleMatrixSetElement(bi, count, 2-1, b);
-			DoubleMatrixSetElement(bi, count, 3-1, DoubleMatrixGetElement(data, i, xCOORD));
-			DoubleMatrixSetElement(bi, count, 4-1, DoubleMatrixGetElement(data, i, yCOORD));
+			DoubleMatrixSetElement(bi, count, 2-1, b->elements[0]);
+			DoubleMatrixSetElement(bi, count, 3-1, DoubleMatrixGetElement(args->data, i, args->x_dCoord));
+			DoubleMatrixSetElement(bi, count, 4-1, DoubleMatrixGetElement(args->data, i, args->y_dCoord));
 			DoubleMatrixSetElement(varbi, count, 1-1, DoubleMatrixGetElement(varb, count, count));
 		}
 		aux = NewLineDoubleMatrixFromMatrix(x, i);
-		yhat[i]= DoubleMatrixMultiplication(aux, b);
+		DoubleMatrix *teste= DoubleMatrixMultiplication(aux, b);
+		if(teste->columns == teste->lines && teste->columns == 1){
+			printf("%s|%s:%d\tok\n", __FILE__, __func__, __LINE__);
+		}
+		else
+		{
+			printf("%s|%s:%d\t[WARNING] esperado matriz 1x1\n", __FILE__, __func__, __LINE__);
+		}
+		DoubleMatrixSetElement(yhat, i, 1-1, teste->elements[0]);
+//		yhat[i]= teste->elements[0];//atribuindo a um double uma Matriz...
 		DeleteDoubleMatrix(aux);
 		aux= NULL;
+		DeleteDoubleMatrix(varb);//a variável varb está sendo calculada pra nada
 	}//linha 232 GWR cópia 1
 	DoubleMatrix *res= DoubleMatrixElementBinaryOperation(y, yhat, false, Sub);
 	DoubleMatrix *stdbi= DoubleMatrixElementUnaryOperation(varbi, false, sqrt);
+	DoubleMatrix *aux=NULL, *aux2=NULL, *aux3=NULL;
 	aux= NewColumnDoubleMatrixFromMatrix(bi, 2-1);
 	DoubleMatrix *tstat = DoubleMatrixElementBinaryOperation(aux, stdbi, false, Div);//multiplicação pela inversa ou divisão element-wise?
 	DeleteDoubleMatrix(aux);
@@ -1206,7 +1238,7 @@ void* GWR(void *args_)
 	DoubleMatrixPrint(res, f, "\t%lf", "\r\n");
 	fclose(f);
 	
-	FILE *f= fopen("__beta__.csv", "w");
+	f= fopen("__beta__.csv", "w");
 	if(NULL == f)
 	{
 		printf("%s|%s:%d\t[ERROR]\r\n", __FILE__, __func__, __LINE__);
@@ -1217,6 +1249,7 @@ void* GWR(void *args_)
 	fclose(f);
 
 	//linha 252 GWR cópia 1
+	return NULL;
 }
 
 #endif
