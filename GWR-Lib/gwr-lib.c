@@ -265,6 +265,7 @@ void *Golden(void *args_)//vai retornar a matriz de distâncias se for pedido, c
 	//calculando matriz de distâncias para apenas pegar a menor e a maior distância
 	double minDist/*, medDist*/, maxDist;
 	double **distances= DistanceBetweenAllPoints(args->data, args->x_dCoord, args->y_dCoord, &minDist, &maxDist, true);
+	*(args->outMaxDistanceBetweenPoints)= maxDist;
 //	medDist=(maxDist + minDist)/2;
 	//x é em loop, y não é em loop.
 	//o erro está na interface gráfica
@@ -440,9 +441,11 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 		}
 	}
 	int u= data->lines;//[DUVIDA] x1 e y1 começam como matrizes 1x1?
+#ifdef DEBUG_MATRIX_DIMENSIONS
 	fprintf(stdout, "%s|%s:%d\tu= %d\n", __FILE__, __func__, __LINE__, u);
 	fprintf(stdout, "%s|%s:%d\tdata está %dx%d\n", __FILE__, __func__, __LINE__, data->lines, data->columns);
 	fprintf(stdout, "%s|%s:%d\tdist está %dx%d\n", __FILE__, __func__, __LINE__, dist->lines, dist->columns);
+#endif
 	DoubleMatrix *w= NewDoubleMatrix(u, 1);
 #ifdef DEBUG_MATRIX_DIMENSIONS
 	printf("cv1.txt:44\tw criado, dimensões %dx%d\r\n", w->lines, w->columns);
@@ -455,6 +458,16 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 #ifdef DEBUG_MATRIX_DIMENSIONS
 	printf("cv1.txt:46\ty1 criado, dimensões %dx%d\r\n", y1->lines, y1->columns);
 #endif
+	if(FIXED_BSQ == method || ADAPTIVE_N == method)
+	{
+		DoubleMatrixSetElement(w, 0, 0,
+								pow(1-pow(DoubleMatrixGetElement(dist, 0, 3-1) / h1, 2), 2));
+	}
+	else
+	{
+		DoubleMatrixSetElement(w, 0, 0,
+								exp(pow(-(DoubleMatrixGetElement(dist,0,3-1)/ h1),2)));
+	}
 	for(int jj =2-1; jj < u; jj++)
 	{
 		if(FIXED_BSQ == method || ADAPTIVE_N == method)
@@ -464,7 +477,7 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 									w,
 									jj,
 									0,
-									pow(1-pow(DoubleMatrixGetElement(dist, jj, 3) / h1, 2), 2)
+									pow(1-pow(DoubleMatrixGetElement(dist, jj, 3-1) / h1, 2), 2)
 								);
 		}
 		else
@@ -474,7 +487,7 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 									w,
 									jj,
 									0,
-									exp(pow(-(DoubleMatrixGetElement(dist,jj,3)/ h1),2))
+									exp(pow(-(DoubleMatrixGetElement(dist,jj,3-1)/ h1),2))
 								);
 		}
 		DoubleMatrixConcatenateLine(x1, x, DoubleMatrixGetElement(dist, jj, 2-1));
@@ -630,7 +643,10 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 #endif
 	for(int count =0; count < yhat->columns; count++)
 	{
-		DoubleMatrixSetElement(yhat, i, count, DoubleMatrixGetElement(temp2, i, count));
+		printf("Dimensões de yhat: %dx%d\n", yhat->lines, yhat->columns);
+		printf("Dimensões de temp2: %dx%d\n", temp2->lines, temp2->columns);
+//		DoubleMatrixSetElement(yhat, i, count, DoubleMatrixGetElement(temp2, i, count));//temp2 está sendo uma matrix 1x1, vou tratar como double
+		DoubleMatrixSetElement(yhat, i, count, DoubleMatrixGetElement(temp2, 0, 0));
 	}
 	DeleteDoubleMatrix(b);
 	DeleteDoubleMatrix(temp);
@@ -779,7 +795,24 @@ void* GWR(void *args_)
 	DoubleMatrix *S= NewDoubleMatrixAndInitializeElements(m, 1, 0.);
 	DoubleMatrix *S2= NewDoubleMatrixAndInitializeElements(m, 1, 0.);
 	DoubleMatrix *biT= NewDoubleMatrixAndInitializeElements(m, x->columns+1, 0.);
-	DoubleMatrix *ym; //= y-y[:];??
+	double med;
+	{
+		int totalElements= y->columns*y->lines;
+		double sum=0;
+		for(int count =0; count < totalElements; count++){
+			sum+= y->elements[count];
+		}
+		med= sum/totalElements;
+	}
+	DoubleMatrix *ym= NewDoubleMatrix(y->lines, y->columns); //= y-y[:];??
+	ASSERT(ym != NULL);
+	for(int i =0; i< ym->lines; i++)
+	{
+		for(int j=0; j < ym->columns; j++)
+		{
+			DoubleMatrixSetElement(ym, i, j, DoubleMatrixGetElement(y, i, j)-med);
+		}
+	}
 //	DoubleMatrix *rikl= NewDoubleMatrixAndInitializeElements(n, /*comb(x->columns-1, 2)*/, 0.);
 	DoubleMatrix *rikl= NewDoubleMatrixAndInitializeElements(n, BinomialCoefficient(x->columns-1, 2), 0.);
 	DoubleMatrix *vif= NewDoubleMatrixAndInitializeElements(n, x->columns-1, 0.);
@@ -793,7 +826,7 @@ void* GWR(void *args_)
 	{
 		int m1= (i-1)*(x->columns)+1;
 		int m2= m1+(x->columns-1);
-		if(NULL == dist)
+		if(NULL != dist)
 		{
 			DeleteDoubleMatrix(dist);
 		}
@@ -886,9 +919,11 @@ void* GWR(void *args_)
 		double hn= DoubleMatrixGetElement(dist, args->h, 3-1);
 		//verificar se esse é mesmo o contexto ou se tem que fechar mais uma chave
 		int u= args->data->lines;//[DUVIDA] x1 e y1 começam como matrizes 1x1?
+#ifdef DEBUG_MATRIX_DIMENSIONS
 		fprintf(stdout, "%s|%s:%d\tu= %d\n", __FILE__, __func__, __LINE__, u);
 		fprintf(stdout, "%s|%s:%d\tdata está %dx%d\n", __FILE__, __func__, __LINE__, args->data->lines, args->data->columns);
 		fprintf(stdout, "%s|%s:%d\tdist está %dx%d\n", __FILE__, __func__, __LINE__, dist->lines, dist->columns);
+#endif
 		DoubleMatrix *w= NewDoubleMatrix(u+1, 1);
 		w->elements[0]= 1.0;
 #ifdef DEBUG_MATRIX_DIMENSIONS
@@ -1248,6 +1283,7 @@ void* GWR(void *args_)
 	DoubleMatrixPrint(bi, f, "\t%lf", "\r\n");
 	fclose(f);
 
+	DeleteDoubleMatrix(ym);
 	//linha 252 GWR cópia 1
 	return NULL;
 }

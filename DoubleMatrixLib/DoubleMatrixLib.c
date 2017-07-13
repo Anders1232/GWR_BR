@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <math.h>
 
+#define FORCE_SEG_FAULT
 //#define DEBUG_DOUBLE_MATRIX
 
 DoubleMatrix* NewDoubleMatrix(int linesNumber, int columnsNumber)
@@ -233,7 +234,12 @@ DoubleMatrix* DoubleMatrixElementBinaryOperation(DoubleMatrix* matrixA, DoubleMa
 	{
 		fprintf(stderr, "[ERROR]Operation DoubleMatrixElementBinaryOperation not possible.\r\n");
 		fprintf(stderr, "%s|%s:%d, first matrix is %dx%d and the second is %dx%d\r\n", __FILE__, __func__, __LINE__, matrixA->lines, matrixA->columns, matrixB->lines, matrixB->columns);
-		exit(1);
+#ifdef FORCE_SEG_FAULT
+	int *a= NULL;
+	*a=0;
+#else
+		exit(-1);
+#endif
 	}
 	if(resultInTheFirstMatrix)
 	{
@@ -268,7 +274,12 @@ void DoubleMatrixAddLine(DoubleMatrix *matrix)
 	if(NULL == result)
 	{
 		fprintf(stderr, "[ERROR] Reallocation error!");
+#ifdef FORCE_SEG_FAULT
+	int *a= NULL;
+	*a=0;
+#else
 		exit(-1);
+#endif
 	}
 	else
 	{
@@ -282,7 +293,12 @@ void DoubleMatrixAddColumn(DoubleMatrix *matrix)
 	if(NULL == result)
 	{
 		fprintf(stderr, "[ERROR] Reallocation error!");
+#ifdef FORCE_SEG_FAULT
+	int *a= NULL;
+	*a=0;
+#else
 		exit(-1);
+#endif
 	}
 	else
 	{
@@ -522,7 +538,12 @@ DoubleMatrix* DoubleMatrixBinOpLinesPerLine(DoubleMatrix *mainMatrix, DoubleMatr
 	{
 		fprintf(stderr, "[ERROR]Operation DoubleMatrixBinOpLinesPerLine not possible.\r\n");
 		fprintf(stderr, "%s|%s:%d, first matrix is %dx%d and the second is %dx%d\r\n", __FILE__, __func__, __LINE__, mainMatrix->lines, mainMatrix->columns, matrixWithLine->lines, matrixWithLine->columns);
-		exit(1);
+#ifdef FORCE_SEG_FAULT
+	int *a= NULL;
+	*a=0;
+#else
+		exit(-1);
+#endif
 	}
 	if(resultInTheFirstMatrix)
 	{
@@ -573,7 +594,12 @@ DoubleMatrix* DoubleMatrixBinOpColumnsPerColumn(DoubleMatrix *mainMatrix, Double
 	{
 		fprintf(stderr, "[ERROR]Operation DoubleMatrixBinOpColumnsPerColumn not possible.\r\n");
 		fprintf(stderr, "%s|%s:%d, first matrix is %dx%d and the second is %dx%d\r\n", __FILE__, __func__, __LINE__, mainMatrix->lines, mainMatrix->columns, matrixWithColumn->lines, matrixWithColumn->columns);
-		exit(1);
+#ifdef FORCE_SEG_FAULT
+	int *a= NULL;
+	*a=0;
+#else
+		exit(-1);
+#endif
 	}
 	if(resultInTheFirstMatrix)
 	{
