@@ -345,7 +345,7 @@ void GuiDriver::CalculateGolden(QTextEdit &textArea,
 	gwrArgs.distanceInKm= distanceInKm;
 	gwrArgs.maxDistanceBetweenPoints= maxDisBetPoints;
 	gwrArgs.h= h;
-	GWR(&gwrArgs);
+//	GWR(&gwrArgs);
 }
 
 
