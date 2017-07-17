@@ -525,7 +525,12 @@ void DoubleMatrixConcatenateLine(DoubleMatrix *mainMatrix, DoubleMatrix *matrixW
 	{
 		fprintf(stderr, "%s recieved matrices with different columns number, returning\n", __func__);
 		fprintf(stderr, "%s|%s:%d, first matrix is %dx%d and the second is %dx%d\r\n", __FILE__, __func__, __LINE__, mainMatrix->lines, mainMatrix->columns, matrixWithWantedLine->lines, matrixWithWantedLine->columns);
-		return;
+#ifdef FORCE_SEG_FAULT
+	int *a= NULL;
+	*a=0;
+#else
+		exit(-1);
+#endif
 	}
 	DoubleMatrixAddLine(mainMatrix);
 	memcpy(&(mainMatrix->elements[mainMatrix->columns*(mainMatrix->lines-1)]), &(matrixWithWantedLine->elements[matrixWithWantedLine->columns*wantedLine]), sizeof(double)*(mainMatrix->columns));

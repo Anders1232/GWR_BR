@@ -771,6 +771,7 @@ void* GWR(void *args_)
 #ifdef DEBUG_MATRIX_DIMENSIONS
 	printf("Golden.txt:36\tx criado, dimensões %dx%d\r\n", x->lines, x->columns);
 #endif
+	int m1, m2;
 	DoubleMatrix *y= NewColumnDoubleMatrixFromMatrix(args->data, args->xVarColumn_dependentVariable);
 //	DoubleMatrixConcatenateColumn(y, args->data, args->xVarColumn_dependentVariable);
 	WHERE;
@@ -810,55 +811,72 @@ void* GWR(void *args_)
 	
 	//Aqui agora é o negócio de pegar distância entre pontos que nem no primerio dor do CvAux1, usando points no lugar de dcoord,
 	//criar d e dist aqui
-	DoubleMatrix *dist;
-	dist= NULL;
-	int position;
-	for(int i= 1-1; i < m; i++)
+	DoubleMatrix *d= NewDoubleMatrix(1, 3);
+	DoubleMatrix *dist= NewDoubleMatrixAndInitializeElements(1, 3, 0.0);
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("cv1.txt:6\td e dist criados, dimensões %dx%d\r\n", d->lines, d->columns);
+#endif
+	double hn;
+	for(int j=0; j < args->data->lines; j++)
 	{
-		int m1= (i-1)*(x->columns)+1;
-		int m2= m1+(x->columns-1);
-		if(NULL != dist)
-		{
-			DeleteDoubleMatrix(dist);
-		}
-		DoubleMatrix *d= NewDoubleMatrixAndInitializeElements(1, 3, 0.);
-		for(int j=0; j < args->data->lines; j++)
-		{
-			double arco, d1;
-			if(args->distanceInKm)
-			{//o COORD é uma tabela com (variável independente, variáveis dependentes)
-				double dif= abs(DoubleMatrixGetElement(args->data, i, 1) - DoubleMatrixGetElement(args->data, j, 1) );
-				double raio= raio=acos(-1)/180;
-				double argument=
-						sin(DoubleMatrixGetElement(args->data, i, args->y_dCoord)*raio)
-						*sin(DoubleMatrixGetElement(args->data, j,args->y_dCoord)*raio)
-						+cos(DoubleMatrixGetElement(args->data, i,args->y_dCoord)*raio)
-						*cos(DoubleMatrixGetElement(args->data,j, args->y_dCoord)*raio)*cos(dif*raio);
-				if(1 <= argument)
-				{
-					arco=0;
-				}
-				else//dúvida: onde realmente termina esse else? Estou supondo que na linha seguinte
-				{
-					//law of cosines
-					arco =
-							acos(
-								sin(DoubleMatrixGetElement(args->data, i,args->y_dCoord)*raio)
-								*sin(DoubleMatrixGetElement(args->data, j,args->y_dCoord)*raio)
-								+cos(DoubleMatrixGetElement(args->data, i,args->y_dCoord)*raio)
-								*cos(DoubleMatrixGetElement(args->data, j,args->y_dCoord)*raio)
-								*cos(dif*raio)
-							);
-					d1= arco *APPROX_EARTH_RADIUS;
-					if(0.001 >= d1)
-					{
-						d1=0;
-					}
-				}
-			}
-			else
+		double arco, d1;
+		if(args->distanceInKm)
+		{//o COORD é uma tabela com (variável independente, variáveis dependentes)
+			double dif= abs(DoubleMatrixGetElement(args->data, i, 1) - DoubleMatrixGetElement(args->data, j, 1) );
+			double raio= raio=acos(-1)/180;
+			double argument=
+					sin(DoubleMatrixGetElement(args->data, i, args->y_dCoord)*raio)
+					*sin(DoubleMatrixGetElement(args->data, j,args->y_dCoord)*raio)
+					+cos(DoubleMatrixGetElement(args->data, i,args->y_dCoord)*raio)
+					*cos(DoubleMatrixGetElement(args->data,j, args->y_dCoord)*raio)*cos(dif*raio);
+			if(1 <= argument)
 			{
-				d1= sqrt(//isolar em uma função 01
+				arco=0;
+			}
+			else//dúvida: onde realmente termina esse else? Estou supondo que na linha seguinte
+			{
+				//law of cosines
+				arco =
+						acos(
+							sin(DoubleMatrixGetElement(args->data, i,args->y_dCoord)*raio)
+							*sin(DoubleMatrixGetElement(args->data, j,args->y_dCoord)*raio)
+							+cos(DoubleMatrixGetElement(args->data, i,args->y_dCoord)*raio)
+							*cos(DoubleMatrixGetElement(args->data, j,args->y_dCoord)*raio)
+							*cos(dif*raio)
+						);
+			}
+			d1= arco *APPROX_EARTH_RADIUS;
+			if(0.001 >= d1)
+			{
+				d1=0;
+			}
+		}
+		else
+		{
+			d1= sqrt(//isolar em uma função 01
+						pow(
+							DoubleMatrixGetElement(args->data, i,args->x_dCoord)
+							-DoubleMatrixGetElement(args->data, j,args->x_dCoord)
+							,2)
+						+pow(
+							DoubleMatrixGetElement(args->data,i,args->y_dCoord)
+							-DoubleMatrixGetElement(args->data,j,args->y_dCoord)
+							,2)
+					);
+		}
+		if(
+				((FIXED_G == args->method  && d1 !=0))//aqui é a única diferença entre o cv1 e o cv2
+				|| (FIXED_G == args->method && (d1<=maxDistanceBetweenPoints*1 && d1 !=0))
+				|| ((FIXED_BSQ == args->method || ADAPTIVE_N == args->method) && d1 <= args->h && d1 !=0 )
+				||(ADAPTIVE_BSQ == args->method && d1 !=0 )
+			)
+		{//foi feito um super if para tratar tantas condições
+			DoubleMatrixSetElement(d, 0, 0, i);
+			DoubleMatrixSetElement(d, 0, 1, j);
+			if(!args->distanceInKm)
+			{
+				DoubleMatrixSetElement(d, 0, 2,
+						sqrt(
 							pow(
 								DoubleMatrixGetElement(args->data, i,args->x_dCoord)
 								-DoubleMatrixGetElement(args->data, j,args->x_dCoord)
@@ -867,238 +885,146 @@ void* GWR(void *args_)
 								DoubleMatrixGetElement(args->data,i,args->y_dCoord)
 								-DoubleMatrixGetElement(args->data,j,args->y_dCoord)
 								,2)
-						);
+						)
+					);
 			}
-			if(
-					(FIXED_G == args->method && (d1<=args->maxDistanceBetweenPoints*1 && d1 !=0) )
-					|| (FIXED_BSQ == args->method && d1 <= args->h && d1 !=0 )
-					|| (ADAPTIVE_N == args->method /*&& d1 <= hv[1]*/ && d1 !=0 )
-					||(ADAPTIVE_BSQ == args->method && d1 !=0 )
-				)
-			{//foi feito um super if para tratar tantas condições
-				DoubleMatrixSetElement(d, 0, 1-1, i);
-				DoubleMatrixSetElement(d, 0, 2-1, j);
-				if(!args->distanceInKm)
-				{
-					DoubleMatrixSetElement(d, 0, 3-1,
-							sqrt(
-								pow(
-									DoubleMatrixGetElement(args->data, i,args->x_dCoord)
-									-DoubleMatrixGetElement(args->data, j,args->x_dCoord)
-									,2)
-								+pow(
-									DoubleMatrixGetElement(args->data,i,args->y_dCoord)
-									-DoubleMatrixGetElement(args->data,j,args->y_dCoord)
-									,2)
-							)
-						);
-				}
-				else
-				{
-					DoubleMatrixSetElement(d, 0, 3-1, arco*APPROX_EARTH_RADIUS);
-				}
-				if(NULL == dist)
-				{
-					dist= NewLineDoubleMatrixFromMatrix(d, 0);
-				}
-				else
-				{
-					DoubleMatrixConcatenateLine(dist, d, 0);
-				}
+			else
+			{
+				DoubleMatrixSetElement(d, 0, 2, arco*APPROX_EARTH_RADIUS);
 			}
+			DoubleMatrixConcatenateLine(dist, d, 0);
 		}
-		double hn= DoubleMatrixGetElement(dist, args->h, 3-1);
-		//verificar se esse é mesmo o contexto ou se tem que fechar mais uma chave
-		int u= args->data->lines;//[DUVIDA] x1 e y1 começam como matrizes 1x1?
+	}
+	int u= args->data->lines;//[DUVIDA] x1 e y1 começam como matrizes 1x1?
 #ifdef DEBUG_MATRIX_DIMENSIONS
-		fprintf(stdout, "%s|%s:%d\tu= %d\n", __FILE__, __func__, __LINE__, u);
-		fprintf(stdout, "%s|%s:%d\tdata está %dx%d\n", __FILE__, __func__, __LINE__, args->data->lines, args->data->columns);
-		fprintf(stdout, "%s|%s:%d\tdist está %dx%d\n", __FILE__, __func__, __LINE__, dist->lines, dist->columns);
+	fprintf(stdout, "%s|%s:%d\tu= %d\n", __FILE__, __func__, __LINE__, u);
+	fprintf(stdout, "%s|%s:%d\tdata está %dx%d\n", __FILE__, __func__, __LINE__, data->lines, data->columns);
+	fprintf(stdout, "%s|%s:%d\tdist está %dx%d\n", __FILE__, __func__, __LINE__, dist->lines, dist->columns);
 #endif
-		DoubleMatrix *w= NewDoubleMatrix(u+1, 1);
-		w->elements[0]= 1.0;
+	DoubleMatrix *w= NewDoubleMatrix(u, 1);
 #ifdef DEBUG_MATRIX_DIMENSIONS
-		printf("cv1.txt:44\tw criado, dimensões %dx%d\r\n", w->lines, w->columns);
+	printf("cv1.txt:44\tw criado, dimensões %dx%d\r\n", w->lines, w->columns);
 #endif
-		DoubleMatrix *x1= NewLineDoubleMatrixFromMatrix(x, i);//verificar qual a diferença dessas 2 matrizes
+	DoubleMatrix *x1= NewLineDoubleMatrixFromMatrix(x, i);//verificar qual a diferença dessas 2 matrizes
 #ifdef DEBUG_MATRIX_DIMENSIONS
-		printf("cv1.txt:45\tx1 criado, dimensões i=%d %dx%d\r\n", i, x1->lines, x1->columns);
+	printf("cv1.txt:45\tx1 criado, dimensões i=%d %dx%d\r\n", i, x1->lines, x1->columns);
 #endif
-		DoubleMatrix *y1= NewLineDoubleMatrixFromMatrix(y, i);
+	DoubleMatrix *y1= NewLineDoubleMatrixFromMatrix(y, i);
 #ifdef DEBUG_MATRIX_DIMENSIONS
-		printf("cv1.txt:46\ty1 criado, dimensões %dx%d\r\n", y1->lines, y1->columns);
+	printf("cv1.txt:46\ty1 criado, dimensões %dx%d\r\n", y1->lines, y1->columns);
 #endif
-		hn= DoubleMatrixGetElement(dist, args->h, 3-1);
-		//colocou-se +1 nos jj que acessam w pq depois dessas operações adicionava-se uma linha com o número 1, agora já faço isso na momento da criação.
-		int jj;
-		for(jj =1-1; jj < u; jj++)
+	if(FIXED_BSQ == args->method || ADAPTIVE_N == args->method)
+	{
+		DoubleMatrixSetElement(w, 0, 0,
+								pow(1-pow(DoubleMatrixGetElement(dist, 0, 3-1) / args->h, 2), 2));
+	}
+	else
+	{
+		DoubleMatrixSetElement(w, 0, 0,
+								exp(pow(-(DoubleMatrixGetElement(dist,0,3-1)/ args->h),2)));
+	}
+	for(int jj =2-1; jj < u; jj++)
+	{
+		if(FIXED_BSQ == args->method || ADAPTIVE_N == args->method)
 		{
-			if(FIXED_BSQ == args->method)
-			{
-	//			w[jj]= pow(1-pow(DoubleMatrixGetElement(dist, jj, 3) / h1, 2), 2);
-				DoubleMatrixSetElement(
-										w,
-										jj/*+1*/,
-										1-1,
-										pow(1-pow(DoubleMatrixGetElement(dist, jj, 3) / hn, 2), 2)//é h, no lugar de h1?
-									);
-			}
-			else if(ADAPTIVE_N == args->method)
-			{
-				DoubleMatrixSetElement(
-										w,
-										jj+1,
-										0,
-										pow(1-pow(DoubleMatrixGetElement(dist, jj, 3) / 1/*hv[i]*/, 2), 2)
-									);
-			}
-			else if(FIXED_G == args->method)
-			{
-				DoubleMatrixSetElement(
-										w,
-										jj+1,
-										0,
-										exp(pow(-(DoubleMatrixGetElement(dist,jj,3)/ args->h),2))
-									);
-			}
-		}
-		if(ADAPTIVE_BSQ == args->method)
-		{//linha 168 GWR1
-			// é necessário criar novamente x1, y1, e ym1??
-			//aqui tem call sort (dist, {3}), perguntar o que é
-	//		DoubleMatrixConcatenateColumn(dist, ?);//Ver que operação dos ":" faz, pois aqui está 1:nrow(dist)
-			//se eu entendi certo o objeivo é contatenar a transposta de dist a dist
-			for(int count=0; count < dist->lines; count++)
-			{
-				DoubleMatrix *temp= NewLineDoubleMatrixFromMatrix(dist, count);
-	#ifdef DEBUG_MATRIX_DIMENSIONS
-		printf("cv1.txt:62\tdist[i] criado, dimensões %dx%d\r\n", temp->lines, temp->columns);
-	#endif
-				DoubleMatrixTranspose(temp, true);
-	#ifdef DEBUG_MATRIX_DIMENSIONS
-		printf("cv1.txt:62\tdist[i]' criado, dimensões %dx%d\r\n", temp->lines, temp->columns);
-	#endif
-				DoubleMatrixConcatenateColumn(dist, temp, 0);
-	#ifdef DEBUG_MATRIX_DIMENSIONS
-		printf("cv1.txt:62\tdist= dist ||dist[i]' criado, dimensões %dx%d\r\n", temp->lines, temp->columns);
-	#endif
-				DeleteDoubleMatrix(temp);
-			}
-			if(NULL != w){
-				DeleteDoubleMatrix(w);
-			}
-			w= NewDoubleMatrixAndInitializeElements(n, 2, 0.);
-			for(int jj=1-1; jj < n-1; jj++)
-			{
-				if(DoubleMatrixGetElement(dist, jj, 4/*-1?*/) <= args->h/*h?*/)
-				{
-					DoubleMatrixSetElement(w, jj, 1, pow(1-pow((DoubleMatrixGetElement(dist, jj, 3)/hn), 2), 2) );
-				}
-				else
-				{
-					DoubleMatrixSetElement(w, jj, 1, 0);
-				}
-				DoubleMatrixSetElement(w, jj, 2, DoubleMatrixGetElement(dist, jj, 2));
-			}
-			//whot??position= w[loc(w[,1]>0),2];
-			for(int count=0; count < w->lines; count++)
-			{
-				if(DoubleMatrixGetElement(w, count, 1) > 0)
-				{
-					position= DoubleMatrixGetElement(w, count, 2);
-				}
-			}
-			DeleteDoubleMatrix(d);
-			//linha 184 do GWR cópia 1, linha 533 desse mesmo arquivo
-			for(int i=0; i < w->lines; i++){
-				if(0 < DoubleMatrixGetElement(w, i, 1-1)){
-//					DoubleMatrixConcatenateLine(w, /*w[loc(w[, 1)>0], 2-1*/);
-					DoubleMatrixConcatenateLine(w, w, i);
-				}
-			}
-			DoubleMatrixConcatenateLine(x1, x, position);
-			DoubleMatrixConcatenateLine(y1, y, position);
-		}//aqui tem um %end, percebo que o código original tem o jj redeclarado
-		//GWR copia 1 linah 184
-		//aqui tem o else de um if que não achei
-		if(1 ==jj)
-		{
-			if(NULL != x1)
-			{
-				DeleteDoubleMatrix(x1);
-			}
-			x1= NewLineDoubleMatrixFromMatrix(x, DoubleMatrixGetElement(dist, jj, 2-1));
-			if(NULL != y1)
-			{
-				DeleteDoubleMatrix(y1);
-			}
-			y1= NewLineDoubleMatrixFromMatrix(y, DoubleMatrixGetElement(dist, jj, 2-1));
+//			w[jj]= pow(1-pow(DoubleMatrixGetElement(dist, jj, 3) / h1, 2), 2);
+			DoubleMatrixSetElement(
+									w,
+									jj,
+									0,
+									pow(1-pow(DoubleMatrixGetElement(dist, jj, 3-1) / args->h, 2), 2)
+								);
 		}
 		else
 		{
-			DoubleMatrixConcatenateLine(x1, x, DoubleMatrixGetElement(dist, jj, 2-1));
-			DoubleMatrixConcatenateLine(y1, y, DoubleMatrixGetElement(dist, jj, 2-1));
+//			w[jj]= exp(pow(-(DoubleMatrixGetElement(dist,jj,3)/ h1),2));
+			DoubleMatrixSetElement(
+									w,
+									jj,
+									0,
+									exp(pow(-(DoubleMatrixGetElement(dist,jj,3-1)/ args->h),2))
+								);
 		}
-		if(ADAPTIVE_BSQ == args->method)
+		DoubleMatrixConcatenateLine(x1, x, DoubleMatrixGetElement(dist, jj, 2-1));
+		DoubleMatrixConcatenateLine(y1, y, DoubleMatrixGetElement(dist, jj, 2-1));
+/*		printf("%s|%s:%d\t[DEBUG] I was here!\r\n", __FILE__, __func__, __LINE__);
+		printf("jj = %d\n", jj);
+*/	}
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("cv1.txt:56\tx1, dimensões %dx%d\r\n", x1->lines, x1->columns);
+	printf("cv1.txt:56\ty1, dimensões %dx%d\r\n", y1->lines, y1->columns);
+#endif
+	if(ADAPTIVE_BSQ == args->method)
+	{
+//		DoubleMatrix *x1= NewLineDoubleMatrixFromMatrix(x, i);
+//		DoubleMatrix *y1= NewLineDoubleMatrixFromMatrix(y, i);
+		double position;
+		//algo é ordenado aqui
+//		DoubleMatrixConcatenateColumn(dist, ?);//Ver que operação dos ":" faz, pois aqui está 1:nrow(dist)
+		//se eu entendi certo o objeivo é contatenar a transposta de dist a dist
+		for(int count=0; count < dist->lines; count++)
 		{
-			//call sirt(dist, {3})
-			//dist= dist|| (1:n)
-			for(int count=0; count < dist->lines; count++)
-			{
-				DoubleMatrix *temp= NewLineDoubleMatrixFromMatrix(dist, count);
-	#ifdef DEBUG_MATRIX_DIMENSIONS
-		printf("cv1.txt:62\tdist[i] criado, dimensões %dx%d\r\n", temp->lines, temp->columns);
-	#endif
-				DoubleMatrixTranspose(temp, true);
-	#ifdef DEBUG_MATRIX_DIMENSIONS
-		printf("cv1.txt:62\tdist[i]' criado, dimensões %dx%d\r\n", temp->lines, temp->columns);
-	#endif
-				DoubleMatrixConcatenateColumn(dist, temp, 0);
-	#ifdef DEBUG_MATRIX_DIMENSIONS
-		printf("cv1.txt:62\tdist= dist ||dist[i]' criado, dimensões %dx%d\r\n", temp->lines, temp->columns);
-	#endif
-				DeleteDoubleMatrix(temp);
-			}
-			//linha 202 do GWR(copia 1)
-			w= NewDoubleMatrixAndInitializeElements(n, 2, 0.);
-			double hn= DoubleMatrixGetElement(dist, args->h, 3-1);
-			for(jj=0; jj< n; jj++)
-			{
-				if(DoubleMatrixGetElement(dist, jj, 4-1) <= args->h)
-				{
-					DoubleMatrixSetElement(w, jj, 1-1,
-											pow(1-pow(DoubleMatrixGetElement(dist, jj, 3-1)/hn, 2), 2)
-										);
-				}
-				else
-				{
-					DoubleMatrixSetElement(w, jj, 1-1, 0.);
-					DoubleMatrixSetElement(w, jj, 2-1,
-											DoubleMatrixGetElement(dist, jj, 2-1)
-										);
-				}
-			}
-			//linha 210 GWR cópia 1
-//			position = w[loc(w[, 1-1]>0), 2-1];
-//			w=         w[loc(w[, 1-1]>0), 1-1];
-			for(int i=0; i < w->lines; i++)
-			{
-				if(0<DoubleMatrixGetElement(w, i, 1-1)){
-					position= DoubleMatrixGetElement(w, i, 2-1);
-					//atribuindo o valor a toda a matriz
-//					w= DoubleMatrixGetElement(w, i, 1-1);//w é uma matriz ou um double??
-					double temp= DoubleMatrixGetElement(w, i, 1-1);;
-					for(int i=0; i < w->lines; i++){
-						for(int j=0; j < w->columns; j++){
-							DoubleMatrixSetElement(w, i, j, temp);
-						}
-					}
-					break;
-				}
-			}
-			DoubleMatrixConcatenateLine(x1, x, position);
-			DoubleMatrixConcatenateLine(y1, y, position);
+			DoubleMatrix *temp= NewLineDoubleMatrixFromMatrix(dist, count);
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("cv1.txt:62\tdist[i] criado, dimensões %dx%d\r\n", temp->lines, temp->columns);
+#endif
+			DoubleMatrixTranspose(temp, true);
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("cv1.txt:62\tdist[i]' criado, dimensões %dx%d\r\n", temp->lines, temp->columns);
+#endif
+			DoubleMatrixConcatenateColumn(dist, temp, 0);
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("cv1.txt:62\tdist= dist ||dist[i]' criado, dimensões %dx%d\r\n", temp->lines, temp->columns);
+#endif
+			DeleteDoubleMatrix(temp);
 		}
+#ifdef DEBUG_MATRIX_DIMENSIONS
+	printf("cv1.txt:63\tdist ficou com as dimensões %dx%d\r\n", dist->lines, dist->columns);
+#endif
+		DeleteDoubleMatrix(w);
+		w=NewDoubleMatrix(args->data->lines, 2);//verificar se precisa desalocar antes
+		double hn= DoubleMatrixGetElement(dist, args->h, 3);
+#ifdef DEBUG_MATRIX_DIMENSIONS
+		printf("%s|%s:%d\t%s\n", __FILE__, __func__, __LINE__, (NULL == w)? "W é NULL": "W é válido.");
+#endif
+		for(int jj=2-1; jj < args->data->lines; jj++)
+		{
+			if(DoubleMatrixGetElement(dist, jj, 4) <= args->h)
+			{
+				DoubleMatrixSetElement(w, jj, 1, pow(1-pow((DoubleMatrixGetElement(dist, jj, 3)/hn), 2), 2) );
+			}
+			else
+			{
+				DoubleMatrixSetElement(w, jj, 1, 0);
+			}
+			DoubleMatrixSetElement(w, jj, 2, DoubleMatrixGetElement(dist, jj, 2));
+		}
+		//whot??position= w[loc(w[,1]>0),2];
+		for(int count=0; count < w->lines; count++)
+		{
+			if(DoubleMatrixGetElement(w, count, 1) > 0)
+			{
+				position= DoubleMatrixGetElement(w, count, 2);
+			}
+		}
+		//whot?  w={0}//w[position,1];
+		//supondo que essa chaves atribua zero a todos os elementos de w, pergunta se é isso mesmo
+#ifdef MODO1
+		memset(w->elements, 0, w->lines*w->columns*sizeof(double));
+#else
+		DoubleMatrix *temp= NewDoubleMatrix(1, 2);
+		temp->elements[0]=0;
+		temp->elements[1]= DoubleMatrixGetElement(w, position, 1);
+		DoubleMatrixConcatenateLine(w, temp, 0);
+#endif
+		//		DoubleMatrixConcatenateLine(w, w, position, 1);
+		//whot? 	w={0}//w[position,1];//está concatenando um elemento numa linha
+
+		DoubleMatrixConcatenateLine(x1, x, position);
+		DoubleMatrixConcatenateLine(y1, y, position);
+//		DeleteDoubleMatrix(x1);
+//		DeleteDoubleMatrix(y1);
+	}
 		//linha 217 GWR cópia 1
 		//aqui tem um end não sei do q, vou supor que não é do i
 		//control+C control V do Golden
