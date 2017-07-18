@@ -759,6 +759,7 @@ void* GWR(void *args_)
 	GWRArguments* args= args_;//contém o h
 	DoubleMatrix *x= NewDoubleMatrixAndInitializeElements(args->data->lines, 1, 1.0);
 	int *xAux= (args->yVarColumn_independentLocalVariables);//+1????
+	int i =0;
 	while(-1 != *xAux)
 	{
 		printf("%s|%s:%d\t *xAux= %d\n", __FILE__, __func__, __LINE__, *xAux);
@@ -796,7 +797,7 @@ void* GWR(void *args_)
 	DoubleMatrix *S= NewDoubleMatrixAndInitializeElements(m, 1, 0.);
 	DoubleMatrix *S2= NewDoubleMatrixAndInitializeElements(m, 1, 0.);
 	DoubleMatrix *biT= NewDoubleMatrixAndInitializeElements(m, x->columns+1, 0.);
-	double med;
+/*	double med;
 	{
 		int totalElements= y->columns*y->lines;
 		double sum=0;
@@ -804,7 +805,7 @@ void* GWR(void *args_)
 			sum+= y->elements[count];
 		}
 		med= sum/totalElements;
-	}
+	}*/
 //	DoubleMatrix *rikl= NewDoubleMatrixAndInitializeElements(n, /*comb(x->columns-1, 2)*/, 0.);
 	DoubleMatrix *rikl= NewDoubleMatrixAndInitializeElements(n, BinomialCoefficient(x->columns-1, 2), 0.);
 	DoubleMatrix *vif= NewDoubleMatrixAndInitializeElements(n, x->columns-1, 0.);
@@ -866,7 +867,7 @@ void* GWR(void *args_)
 		}
 		if(
 				((FIXED_G == args->method  && d1 !=0))//aqui é a única diferença entre o cv1 e o cv2
-				|| (FIXED_G == args->method && (d1<=maxDistanceBetweenPoints*1 && d1 !=0))
+				|| (FIXED_G == args->method && (d1<=args->maxDistanceBetweenPoints*1 && d1 !=0))
 				|| ((FIXED_BSQ == args->method || ADAPTIVE_N == args->method) && d1 <= args->h && d1 !=0 )
 				||(ADAPTIVE_BSQ == args->method && d1 !=0 )
 			)
@@ -1128,10 +1129,10 @@ void* GWR(void *args_)
 		DeleteDoubleMatrix(aux);
 		aux= NULL;
 		DeleteDoubleMatrix(varb);//a variável varb está sendo calculada pra nada
-	}//linha 232 GWR cópia 1
+//	}//linha 232 GWR cópia 1
 	DoubleMatrix *res= DoubleMatrixElementBinaryOperation(y, yhat, false, Sub);
 	DoubleMatrix *stdbi= DoubleMatrixElementUnaryOperation(varbi, false, sqrt);
-	DoubleMatrix *aux=NULL, *aux2=NULL, *aux3=NULL;
+//	DoubleMatrix *aux=NULL, *aux2=NULL, *aux3=NULL;
 	aux= NewColumnDoubleMatrixFromMatrix(bi, 2-1);
 	DoubleMatrix *tstat = DoubleMatrixElementBinaryOperation(aux, stdbi, false, Div);//multiplicação pela inversa ou divisão element-wise?
 	DeleteDoubleMatrix(aux);
@@ -1139,7 +1140,7 @@ void* GWR(void *args_)
 	aux= DoubleMatrixTranspose(x, false);
 	aux2= DoubleMatrixMultiplication(aux, x);
 	aux3= DoubleMatrixInverse(aux2);//aux3= inv(x' *x)
-	DoubleMatrix *aux4= DoubleMatrixCopy(aux3);
+//	DoubleMatrix *aux4= DoubleMatrixCopy(aux3);
 	DeleteDoubleMatrix(aux2);
 	aux2= DoubleMatrixMultiplication(aux3, aux);//aux2= inv(x' *x)*x'
 	DoubleMatrix *bg= DoubleMatrixMultiplication(aux2, y);
