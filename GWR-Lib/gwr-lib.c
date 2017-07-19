@@ -522,11 +522,13 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 	printf("cv1.txt:62\tdist= dist ||dist[i]' criado, dimensões %dx%d\r\n", temp->lines, temp->columns);
 #endif
 			DeleteDoubleMatrix(temp);
+			temp= NULL;
 		}
 #ifdef DEBUG_MATRIX_DIMENSIONS
 	printf("cv1.txt:63\tdist ficou com as dimensões %dx%d\r\n", dist->lines, dist->columns);
 #endif
 		DeleteDoubleMatrix(w);
+		w= NULL;
 		w=NewDoubleMatrix(data->lines, 2);//verificar se precisa desalocar antes
 		double hn= DoubleMatrixGetElement(dist, h1, 3);
 #ifdef DEBUG_MATRIX_DIMENSIONS
@@ -615,11 +617,13 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 	printf("cv1.txt:79\tinv(x1`*(w#x1#wt1)) ficou com as dimensões %dx%d\r\n", b->lines, b->columns);
 #endif
 		DeleteDoubleMatrix(aux3);
+		aux3= NULL;
 		aux3= DoubleMatrixMultiplication(b, aux);//aux3=inv(x1`*(w#x1#wt1))*x1`
 #ifdef DEBUG_MATRIX_DIMENSIONS
 	printf("cv1.txt:79\tinv(x1`*(w#x1#wt1))*x1` ficou com as dimensões %dx%d\r\n", aux3->lines, aux3->columns);
 #endif
 		DeleteDoubleMatrix(b);
+		b= NULL;
 		b= DoubleMatrixMultiplication(aux3, aux2);
 #ifdef DEBUG_MATRIX_DIMENSIONS
 	printf("cv1.txt:79\tb ficou com as dimensões %dx%d\r\n", b->lines, b->columns);
@@ -629,8 +633,11 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 	printf("%s|%s:%d\t%s\n", __FILE__, __func__, __LINE__, (NULL == w)? "W é NULL": "W é válido.");
 #endif
 	DeleteDoubleMatrix(aux3);
+	aux3= NULL;
 	DeleteDoubleMatrix(aux2);
+	aux2= NULL;
 	DeleteDoubleMatrix(aux);
+	aux= NULL;
 //	if(GWR_Determinant()) //aqui faz uso do wt1, que a princípio era pra ser ignorado
 	//aqui tem 	yhat[i]=x[i,]*b; aparentemente está sobrescrevendo uma coluna da matriz por outra de outra matriz resultado de uma multiplicação
 	DoubleMatrix *temp= NewLineDoubleMatrixFromMatrix(x, i);
@@ -649,10 +656,15 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 		DoubleMatrixSetElement(yhat, i, count, DoubleMatrixGetElement(temp2, 0, 0));
 	}
 	DeleteDoubleMatrix(b);
+	b= NULL;;
 	DeleteDoubleMatrix(temp);
+	temp= NULL;
 	DeleteDoubleMatrix(temp2);
+	temp2= NULL;
 	DeleteDoubleMatrix(x1);
+	x1= NULL;
 	DeleteDoubleMatrix(y1);
+	y1= NULL;
 #ifdef DEBUG_MATRIX_DIMENSIONS
 	printf("%s|%s:%d\t%s\n", __FILE__, __func__, __LINE__, (NULL == w)? "W é NULL": "W é válido.");
 #endif
@@ -978,11 +990,13 @@ void* GWR(void *args_)
 	printf("cv1.txt:62\tdist= dist ||dist[i]' criado, dimensões %dx%d\r\n", temp->lines, temp->columns);
 #endif
 			DeleteDoubleMatrix(temp);
+			temp= NULL;
 		}
 #ifdef DEBUG_MATRIX_DIMENSIONS
 	printf("cv1.txt:63\tdist ficou com as dimensões %dx%d\r\n", dist->lines, dist->columns);
 #endif
 		DeleteDoubleMatrix(w);
+		w= NULL;
 		w=NewDoubleMatrix(args->data->lines, 2);//verificar se precisa desalocar antes
 		double hn= DoubleMatrixGetElement(dist, args->h, 3);
 #ifdef DEBUG_MATRIX_DIMENSIONS
@@ -1071,9 +1085,11 @@ void* GWR(void *args_)
 		printf("cv1.txt:79\tinv(x1`*(w#x1#wt1)) ficou com as dimensões %dx%d\r\n", b->lines, b->columns);
 	#endif
 			DeleteDoubleMatrix(aux3);
+			aux3= NULL;
 			aux3= DoubleMatrixMultiplication(b, aux);//aux3=inv(x1`*(w#x1#wt1))*x1`    #x'#w#y
 			if(NULL != aux4){
 				DeleteDoubleMatrix(aux4);
+				aux4= NULL;
 			}
 			aux4= DoubleMatrixTranspose(x, false);
 			DoubleMatrix *aux5= DoubleMatrixMultiplication(aux4, y);
@@ -1108,13 +1124,17 @@ void* GWR(void *args_)
 		aux=NULL;
 		m1= (i-1)*x->columns+1;
 		m2 = m1+x->columns-1;
-		for(int count =m1-1; count < m2;count++){
+//		for(int count =m1-1; count < m2;count++){
+		for(int count =m1-1; count < varbi->lines;count++){
 			DoubleMatrixSetElement(bi, count, 1-1, i);
 			DoubleMatrixSetElement(bi, count, 2-1, b->elements[0]);
 			DoubleMatrixSetElement(bi, count, 3-1, DoubleMatrixGetElement(args->data, i, args->x_dCoord));
 			DoubleMatrixSetElement(bi, count, 4-1, DoubleMatrixGetElement(args->data, i, args->y_dCoord));
 			DoubleMatrixSetElement(varbi, count, 1-1, DoubleMatrixGetElement(varb, count, count));
 		}
+//		for(int count =m1-1; count < varb->columns;count++){
+//			DoubleMatrixSetElement(varbi, count, 1-1, DoubleMatrixGetElement(varb, count, count));
+//		}
 		aux = NewLineDoubleMatrixFromMatrix(x, i);
 		DoubleMatrix *teste= DoubleMatrixMultiplication(aux, b);
 		if(teste->columns == teste->lines && teste->columns == 1){
@@ -1129,6 +1149,7 @@ void* GWR(void *args_)
 		DeleteDoubleMatrix(aux);
 		aux= NULL;
 		DeleteDoubleMatrix(varb);//a variável varb está sendo calculada pra nada
+		varb= NULL;
 //	}//linha 232 GWR cópia 1
 	DoubleMatrix *res= DoubleMatrixElementBinaryOperation(y, yhat, false, Sub);
 	DoubleMatrix *stdbi= DoubleMatrixElementUnaryOperation(varbi, false, sqrt);
@@ -1160,14 +1181,18 @@ void* GWR(void *args_)
 	s2g= DoubleMatrixMultiplication(aux3, aux);
 	DeleteDoubleMatrix(aux);
 	DeleteDoubleMatrix(aux2);
+	aux2= NULL;
 	DeleteDoubleMatrix(aux3);
+	aux3= NULL;
 	aux= DoubleMatrixMultiplication(aux4, s2g);
 	DoubleMatrix *varg= NewDoubleMatrix(1, aux4->columns);
 	for(int count=0; count < varg->columns; count++){
 		DoubleMatrixSetElement(varg, 1, count, DoubleMatrixGetElement(aux, count, count));
 	}
 	DeleteDoubleMatrix(aux);
+	aux= NULL;
 	DeleteDoubleMatrix(aux4);
+	aux4= NULL;
 	
 	//linha 244 GWR cópia 1
 	DoubleMatrix *stdg= DoubleMatrixElementUnaryOperation(varg, false, sqrt);

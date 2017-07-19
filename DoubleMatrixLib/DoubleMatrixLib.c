@@ -152,16 +152,29 @@ DoubleMatrix* DoubleMatrixScalarMultiplication(DoubleMatrix *matrix, double scal
 	return ret;
 }
 
+#define CHECK_BOUNDS
 
 double DoubleMatrixGetElement(DoubleMatrix *matrix, int line, int column)
 {
 	int position = (matrix->columns)*line+column;
+#ifdef CHECK_BOUNDS
+	if(position >= matrix->columns*matrix->lines){
+		fprintf(stderr, "[WARNING] Read on an invalid position, returning 1\n");
+		return 1.;
+	}
+#endif
 	return (matrix->elements)[position];
 }
 
 void DoubleMatrixSetElement(DoubleMatrix *matrix, int line, int column, double element)
 {
 	int position = (matrix->columns)*line+column;
+#ifdef CHECK_BOUNDS
+	if(position >= matrix->columns*matrix->lines){
+		fprintf(stderr, "[WARNING] Write on an invalid position, skipping operation\n");
+		return;
+	}
+#endif
 	(matrix->elements)[position]= element;
 }
 
