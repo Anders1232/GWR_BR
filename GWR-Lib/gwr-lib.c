@@ -650,8 +650,8 @@ static void CvAux1(DoubleMatrix *data, DoubleMatrix *x, DoubleMatrix *y, DoubleM
 #endif
 	for(int count =0; count < yhat->columns; count++)
 	{
-		printf("Dimensões de yhat: %dx%d\n", yhat->lines, yhat->columns);
-		printf("Dimensões de temp2: %dx%d\n", temp2->lines, temp2->columns);
+//		printf("Dimensões de yhat: %dx%d\n", yhat->lines, yhat->columns);
+//		printf("Dimensões de temp2: %dx%d\n", temp2->lines, temp2->columns);
 //		DoubleMatrixSetElement(yhat, i, count, DoubleMatrixGetElement(temp2, i, count));//temp2 está sendo uma matrix 1x1, vou tratar como double
 		DoubleMatrixSetElement(yhat, i, count, DoubleMatrixGetElement(temp2, 0, 0));
 	}
@@ -1196,7 +1196,8 @@ void* GWR(void *args_)
 	
 	//linha 244 GWR cópia 1
 	DoubleMatrix *stdg= DoubleMatrixElementUnaryOperation(varg, false, sqrt);
-	DoubleMatrix *tg = DoubleMatrixElementBinaryOperation(bg, stdg, false, Div);
+	DoubleMatrix *aux6= NewDoubleMatrixAndInitializeElements(bg->lines, bg->columns, stdg->elements[0]);
+	DoubleMatrix *tg = DoubleMatrixElementBinaryOperation(bg, aux6, false, Div);
 	//a linha 246 supõe a existência de uma matriz probt que não existe, pulando
 	FILE *f= fopen("__res__.csv", "w");
 	if(NULL == f)
