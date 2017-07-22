@@ -58,7 +58,7 @@ typedef struct goldenDataIfAdpN GoldenDataIfAdpN;
 
 struct GWRArguments_
 {
-//	FowardList *communication;
+	FowardList *communication;
 	DoubleMatrix *data;
 	int *yVarColumn_independentLocalVariables;//pergunta se é usar as variáveis locais ou globais
 //	int *yVarColumn_independentGlobalVariables;
@@ -72,6 +72,11 @@ struct GWRArguments_
 	double h;
 };
 typedef struct GWRArguments_ GWRArguments;
+/*
+struct GoldenBetaData_
+{
+	
+}*/
 
 
 DoubleMatrix* LatPlusLon(DoubleMatrix *matrix, int latColumn, int lonColumn);//implemented

@@ -1,0 +1,20 @@
+var searchData=
+[
+  ['calculate',['Calculate',['../classGuiDriver.html#a77e75d600b14b6a779a036916072b9eb',1,'GuiDriver']]],
+  ['calculatedistancebetweenpoints',['CalculateDistanceBetweenPoints',['../classGuiDriver.html#a7a56ccc823ef64ecebce6b4359e4704b',1,'GuiDriver']]],
+  ['calculategolden',['CalculateGolden',['../classGuiDriver.html#a515efe32ea6baab24f5f7a4a5488944f',1,'GuiDriver']]],
+  ['charsperlineinpreview',['charsPerLineInPreview',['../classMainWindow.html#aa2bc7924c12738dbafde16f2d6fc4bab',1,'MainWindow']]],
+  ['check_5fbounds',['CHECK_BOUNDS',['../DoubleMatrixLib_8c.html#a170752d39562f5d87a24111715e76219',1,'DoubleMatrixLib.c']]],
+  ['clearlists',['ClearLists',['../classMainWindow.html#a8e3f5f95428baf9deb0784e043cc01ac',1,'MainWindow']]],
+  ['column_5fname_5fbuffer_5fsize',['COLUMN_NAME_BUFFER_SIZE',['../LeitorArquivoSimples_8c.html#a8a6e4b4d4f687e8051048dea42ac04af',1,'LeitorArquivoSimples.c']]],
+  ['columns',['columns',['../structdoubleMatrix.html#a4b13323fd489ccfbd8f7d5926871ea74',1,'doubleMatrix']]],
+  ['columnsname',['columnsName',['../structnamedColumnDoubleTable.html#abb4a04c99b15dd190cc32839b3b52a3e',1,'namedColumnDoubleTable']]],
+  ['communication',['communication',['../structgoldenArguments.html#a162612f8e5af9934d184c7f05407c16b',1,'goldenArguments::communication()'],['../structGWRArguments__.html#aadf47d67a5618156d44f8aa6c23390e3',1,'GWRArguments_::communication()']]],
+  ['comparison',['Comparison',['../DoubleMatrixLib_8h.html#ab6ebb51e81dde3f4ab4a515b765130f9',1,'Comparison():&#160;DoubleMatrixLib.h'],['../DoubleMatrixLib_8h.html#ac360ae7ad52be4fd45d8df8111e47f46',1,'comparison():&#160;DoubleMatrixLib.h']]],
+  ['coordsmode',['coordsMode',['../classMainWindow.html#a30da8fe780683f01b9cab90e684c9ae8',1,'MainWindow::coordsMode()'],['../mainwindow_8hpp.html#a624a0500306c916b7ded475caa065914',1,'CoordsMode():&#160;mainwindow.hpp']]],
+  ['crossvalidation',['CrossValidation',['../gwr-lib_8c.html#a4f97cf6c148bd75e6ba8e102df753167',1,'gwr-lib.c']]],
+  ['cv',['CV',['../gwr-lib_8h.html#a86c625730504ab6b219b56dd84d97020abb6b9f3d2bfb9c139ed27db5ec63ee9e',1,'gwr-lib.h']]],
+  ['cv1',['cv1',['../structgoldenDataIfNotAdpN.html#a61c8f2649cade289af157dfd12316d2a',1,'goldenDataIfNotAdpN::cv1()'],['../structgoldenDataIfAdpN.html#a185c5beec30fa43be260b1e397503e3e',1,'goldenDataIfAdpN::cv1()']]],
+  ['cv2',['cv2',['../structgoldenDataIfNotAdpN.html#a9e2ce57998bf1e68f2563c0e8de1c1d8',1,'goldenDataIfNotAdpN::cv2()'],['../structgoldenDataIfAdpN.html#abadeed0fa9b018423b52fc52050e2b65',1,'goldenDataIfAdpN::cv2()']]],
+  ['cvaux1',['CvAux1',['../gwr-lib_8c.html#aa5e639f9e3687118ab2c4873fcf1ea4f',1,'gwr-lib.c']]]
+];

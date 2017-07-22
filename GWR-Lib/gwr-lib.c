@@ -1219,7 +1219,7 @@ void* GWR(void *args_)
 		printf("%s|%s:%d\t[ERROR]\r\n", __FILE__, __func__, __LINE__);
 		exit(1);
 	}
-	fprintf(f, "\r\nid\t\tB\t\tx\t\ty\r\n");
+	fprintf(f, "\r\nid\t\tB\t\tx\t\ty\t\tstdbi\t\ttstat\r\n");
 	DoubleMatrixPrint(bi, f, "\t%lf", "\r\n");
 	fclose(f);
 

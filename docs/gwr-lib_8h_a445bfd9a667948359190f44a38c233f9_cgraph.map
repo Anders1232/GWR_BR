@@ -1,0 +1,9 @@
+<map id="DistanceToOrigin" name="DistanceToOrigin">
+<area shape="rect" id="node2" href="$DoubleMatrixLib_8c.html#a9d991dfd903f09ff3409b130bd72ecfa" title="NewDoubleMatrix" alt="" coords="461,38,588,65"/>
+<area shape="rect" id="node3" href="$DoubleMatrixLib_8c.html#a51479df99a67a47fa03546c17e1dec9b" title="DoubleMatrixSetElement" alt="" coords="185,38,351,65"/>
+<area shape="rect" id="node4" href="$DoubleMatrixLib_8c.html#a6465252c0ac5e0429be122c661c09ce9" title="DoubleMatrixGetElement" alt="" coords="184,89,352,115"/>
+<area shape="rect" id="node5" href="$DoubleMatrixLib_8c.html#a9fc7fe924008af073573b40f820ab512" title="DoubleMatrixElementBinary\lOperation" alt="" coords="176,140,360,181"/>
+<area shape="rect" id="node7" href="$gwr-lib_8c.html#ad3a761a63be26d2a158e3ec0dc8fb884" title="Pythagoras" alt="" coords="224,206,312,233"/>
+<area shape="rect" id="node8" href="$DoubleMatrixLib_8c.html#a23cb34a6fe6ef3db6bb4cd6e08ad33ba" title="DeleteDoubleMatrix" alt="" coords="199,257,337,283"/>
+<area shape="rect" id="node6" href="$DoubleMatrixLib_8c.html#ad5d3a8b16c0929bebc9f3ea5afc79fe6" title="DoubleMatrixHaveSameDimensions\lAndSameElementSize" alt="" coords="408,140,641,181"/>
+</map>

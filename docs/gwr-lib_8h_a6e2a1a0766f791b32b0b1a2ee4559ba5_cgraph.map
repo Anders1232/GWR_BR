@@ -1,0 +1,9 @@
+<map id="LatPlusLon" name="LatPlusLon">
+<area shape="rect" id="node2" href="$DoubleMatrixLib_8c.html#a9d991dfd903f09ff3409b130bd72ecfa" title="NewDoubleMatrix" alt="" coords="425,41,552,67"/>
+<area shape="rect" id="node3" href="$DoubleMatrixLib_8c.html#a51479df99a67a47fa03546c17e1dec9b" title="DoubleMatrixSetElement" alt="" coords="149,41,315,67"/>
+<area shape="rect" id="node4" href="$DoubleMatrixLib_8c.html#a6465252c0ac5e0429be122c661c09ce9" title="DoubleMatrixGetElement" alt="" coords="148,91,316,118"/>
+<area shape="rect" id="node5" href="$DoubleMatrixLib_8c.html#a9fc7fe924008af073573b40f820ab512" title="DoubleMatrixElementBinary\lOperation" alt="" coords="140,143,324,184"/>
+<area shape="rect" id="node7" href="$gwr-lib_8c.html#adb59ccfc686296e5828ee29b4dddfa0a" title="Add" alt="" coords="209,209,255,235"/>
+<area shape="rect" id="node8" href="$DoubleMatrixLib_8c.html#a23cb34a6fe6ef3db6bb4cd6e08ad33ba" title="DeleteDoubleMatrix" alt="" coords="163,259,301,286"/>
+<area shape="rect" id="node6" href="$DoubleMatrixLib_8c.html#ad5d3a8b16c0929bebc9f3ea5afc79fe6" title="DoubleMatrixHaveSameDimensions\lAndSameElementSize" alt="" coords="372,143,605,184"/>
+</map>

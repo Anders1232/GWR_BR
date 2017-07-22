@@ -1,0 +1,10 @@
+<map id="GWR_Determinant" name="GWR_Determinant">
+<area shape="rect" id="node2" href="$DoubleMatrixLib_8c.html#aa85b1b98cf9fa38846b351273d1a786c" title="DoubleMatrixTranspose" alt="" coords="194,104,354,131"/>
+<area shape="rect" id="node6" href="$DoubleMatrixLib_8c.html#aba8f539fe3929cb6e218e2fc604ce951" title="DoubleMatrixMultiplication" alt="" coords="187,53,361,80"/>
+<area shape="rect" id="node8" href="$DoubleMatrixLib_8c.html#acd8645d48b8a55d4a00e9e8fb349adc8" title="DoubleMatrixDeterminant" alt="" coords="189,155,359,181"/>
+<area shape="rect" id="node9" href="$DoubleMatrixLib_8c.html#a23cb34a6fe6ef3db6bb4cd6e08ad33ba" title="DeleteDoubleMatrix" alt="" coords="205,205,343,232"/>
+<area shape="rect" id="node3" href="$DoubleMatrixLib_8c.html#a9d991dfd903f09ff3409b130bd72ecfa" title="NewDoubleMatrix" alt="" coords="669,28,796,55"/>
+<area shape="rect" id="node4" href="$DoubleMatrixLib_8c.html#a51479df99a67a47fa03546c17e1dec9b" title="DoubleMatrixSetElement" alt="" coords="432,79,599,105"/>
+<area shape="rect" id="node5" href="$DoubleMatrixLib_8c.html#a6465252c0ac5e0429be122c661c09ce9" title="DoubleMatrixGetElement" alt="" coords="431,129,599,156"/>
+<area shape="rect" id="node7" href="$DoubleMatrixLib_8c.html#afdb0737a6cb51c4507de18a41d1031a8" title="DoubleMatrixScalarMultiplication" alt="" coords="409,28,621,55"/>
+</map>

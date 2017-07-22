@@ -1,0 +1,5 @@
+<map id="NamedColumnDoubleTable_GetColumnIndex" name="NamedColumnDoubleTable_GetColumnIndex">
+<area shape="rect" id="node2" href="$classGuiDriver.html#a77e75d600b14b6a779a036916072b9eb" title="GuiDriver::Calculate" alt="" coords="476,13,616,39"/>
+<area shape="rect" id="node4" href="$classGuiDriver.html#a7a56ccc823ef64ecebce6b4359e4704b" title="GuiDriver::CalculateDistance\lBetweenPoints" alt="" coords="236,35,428,76"/>
+<area shape="rect" id="node3" href="$classMainWindow.html#ac5b9f841a148f3a1bab9f38f6c7b8790" title="MainWindow::on_executeStart\lComputingButton_clicked" alt="" coords="664,5,864,47"/>
+</map>

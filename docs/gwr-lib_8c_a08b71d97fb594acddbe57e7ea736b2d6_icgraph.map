@@ -1,0 +1,8 @@
+<map id="DistanceBetweenPoints" name="DistanceBetweenPoints">
+<area shape="rect" id="node2" href="$gwr-lib_8h.html#ac3ea5f8a5d755086a228f099e410377f" title="DistanceBetweenAllPoints" alt="" coords="216,35,393,61"/>
+<area shape="rect" id="node3" href="$gwr-lib_8h.html#a398ef0fa94f7e72ff47ecda14cbebb73" title="Golden" alt="" coords="441,8,504,35"/>
+<area shape="rect" id="node7" href="$classGuiDriver.html#a7a56ccc823ef64ecebce6b4359e4704b" title="GuiDriver::CalculateDistance\lBetweenPoints" alt="" coords="552,57,744,98"/>
+<area shape="rect" id="node4" href="$classGuiDriver.html#a515efe32ea6baab24f5f7a4a5488944f" title="GuiDriver::CalculateGolden" alt="" coords="557,5,739,32"/>
+<area shape="rect" id="node5" href="$classGuiDriver.html#a77e75d600b14b6a779a036916072b9eb" title="GuiDriver::Calculate" alt="" coords="792,35,932,61"/>
+<area shape="rect" id="node6" href="$classMainWindow.html#ac5b9f841a148f3a1bab9f38f6c7b8790" title="MainWindow::on_executeStart\lComputingButton_clicked" alt="" coords="980,27,1180,69"/>
+</map>

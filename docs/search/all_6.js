@@ -1,0 +1,25 @@
+var searchData=
+[
+  ['getpreview',['GetPreview',['../classGuiDriver.html#a48d4885e8a57829449a71f4e51e800eb',1,'GuiDriver']]],
+  ['getstringlist',['GetStringList',['../classMainWindow.html#a73a0801f3ababc192dea2685e3f567f5',1,'MainWindow']]],
+  ['golden',['GOLDEN',['../GuiDriver_8hpp.html#a5f3025b0590f7f7bd8faa5b2dd16f63caac8b026cf6bf5976c426f48cc2340220',1,'GOLDEN():&#160;GuiDriver.hpp'],['../gwr-lib_8c.html#a5bda4e2d8018fe65ebc2dc632a08899d',1,'Golden(void *args_):&#160;gwr-lib.c'],['../gwr-lib_8h.html#a398ef0fa94f7e72ff47ecda14cbebb73',1,'Golden(void *args):&#160;gwr-lib.c']]],
+  ['goldenarguments',['goldenArguments',['../structgoldenArguments.html',1,'goldenArguments'],['../gwr-lib_8h.html#ae8f3a795ce5330c9b59cdbd3cb453b64',1,'GoldenArguments():&#160;gwr-lib.h']]],
+  ['goldendataifadpn',['goldenDataIfAdpN',['../structgoldenDataIfAdpN.html',1,'goldenDataIfAdpN'],['../gwr-lib_8h.html#a2867b66f107f817bc9174358d98e33ec',1,'GoldenDataIfAdpN():&#160;gwr-lib.h']]],
+  ['goldendataifnotadpn',['goldenDataIfNotAdpN',['../structgoldenDataIfNotAdpN.html',1,'goldenDataIfNotAdpN'],['../gwr-lib_8h.html#a87b04d108a78ade99795f20e74cd730d',1,'GoldenDataIfNotAdpN():&#160;gwr-lib.h']]],
+  ['goldenradiobutton',['goldenRadioButton',['../classMainWindow.html#a97e066d655fdc8143c5db4d9b6b0d10f',1,'MainWindow']]],
+  ['greater',['GREATER',['../DoubleMatrixLib_8h.html#ac360ae7ad52be4fd45d8df8111e47f46a25b5ca2f56d99ba6ffcb5316adac34c1',1,'DoubleMatrixLib.h']]],
+  ['greater_5for_5fequal',['GREATER_OR_EQUAL',['../DoubleMatrixLib_8h.html#ac360ae7ad52be4fd45d8df8111e47f46acfac3943e885cee7538ecd7b718dd352',1,'DoubleMatrixLib.h']]],
+  ['gui_5finit',['Gui_Init',['../GuiInterface_8h.html#aeafff94899b0b5f8a23dbff26d3ed14b',1,'Gui_Init(int argc, char *argv[]):&#160;GuiDriver.cpp'],['../GuiDriver_8cpp.html#aeafff94899b0b5f8a23dbff26d3ed14b',1,'Gui_Init(int argc, char *argv[]):&#160;GuiDriver.cpp']]],
+  ['guidriver',['GuiDriver',['../classGuiDriver.html',1,'GuiDriver'],['../classGuiDriver.html#ac4b86e5440397d7da27882163022e8d4',1,'GuiDriver::GuiDriver()']]],
+  ['guidriver_2ecpp',['GuiDriver.cpp',['../GuiDriver_8cpp.html',1,'']]],
+  ['guidriver_2ehpp',['GuiDriver.hpp',['../GuiDriver_8hpp.html',1,'']]],
+  ['guiinterface_2eh',['GuiInterface.h',['../GuiInterface_8h.html',1,'']]],
+  ['gwr',['GWR',['../gwr-lib_8c.html#a094e9ca0d79e6a7a76ec4b8851f9a09a',1,'GWR(void *args_):&#160;gwr-lib.c'],['../gwr-lib_8h.html#a094e9ca0d79e6a7a76ec4b8851f9a09a',1,'GWR(void *args_):&#160;gwr-lib.c']]],
+  ['gwr_2dlib_2ec',['gwr-lib.c',['../gwr-lib_8c.html',1,'']]],
+  ['gwr_2dlib_2eh',['gwr-lib.h',['../gwr-lib_8h.html',1,'']]],
+  ['gwr_5fdeterminant',['GWR_Determinant',['../gwr-lib_8c.html#a9f8f0a15935b62f2bbc33efe3dcd6d70',1,'GWR_Determinant(DoubleMatrix *m):&#160;gwr-lib.c'],['../gwr-lib_8h.html#a9f8f0a15935b62f2bbc33efe3dcd6d70',1,'GWR_Determinant(DoubleMatrix *m):&#160;gwr-lib.c']]],
+  ['gwr_5fpronto',['GWR_PRONTO',['../gwr-lib_8c.html#a4fb5f79742ce1168229c9516f6cadacd',1,'gwr-lib.c']]],
+  ['gwrarguments',['GWRArguments',['../gwr-lib_8h.html#a7f78d7fd876e8f2fc7db0c503ac16fb5',1,'gwr-lib.h']]],
+  ['gwrarguments_5f',['GWRArguments_',['../structGWRArguments__.html',1,'']]],
+  ['gwr_20br',['GWR BR',['../md_README.html',1,'']]]
+];

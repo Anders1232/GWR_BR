@@ -1,0 +1,14 @@
+<map id="DoubleMatrixTranspose" name="DoubleMatrixTranspose">
+<area shape="rect" id="node2" href="$gwr-lib_8c.html#aa5e639f9e3687118ab2c4873fcf1ea4f" title="CvAux1" alt="" coords="453,50,523,77"/>
+<area shape="rect" id="node3" href="$gwr-lib_8c.html#a4f97cf6c148bd75e6ba8e102df753167" title="CrossValidation" alt="" coords="571,25,685,51"/>
+<area shape="rect" id="node11" href="$gwr-lib_8h.html#a9f8f0a15935b62f2bbc33efe3dcd6d70" title="GWR_Determinant" alt="" coords="243,101,376,127"/>
+<area shape="rect" id="node12" href="$gwr-lib_8h.html#a094e9ca0d79e6a7a76ec4b8851f9a09a" title="GWR" alt="" coords="461,114,515,141"/>
+<area shape="rect" id="node13" href="$classMainWindow.html#acc8ae691b3cdcaa4ce1ef257c82aca93" title="MainWindow::on_LoadButton\l_clicked" alt="" coords="213,203,405,244"/>
+<area shape="rect" id="node4" href="$gwr-lib_8h.html#ac3ea5f8a5d755086a228f099e410377f" title="DistanceBetweenAllPoints" alt="" coords="733,13,911,39"/>
+<area shape="rect" id="node10" href="$gwr-lib_8c.html#a8e733958d36908c035a153645ee9b760" title="func1" alt="" coords="795,63,849,90"/>
+<area shape="rect" id="node5" href="$gwr-lib_8h.html#a398ef0fa94f7e72ff47ecda14cbebb73" title="Golden" alt="" coords="959,63,1021,90"/>
+<area shape="rect" id="node9" href="$classGuiDriver.html#a7a56ccc823ef64ecebce6b4359e4704b" title="GuiDriver::CalculateDistance\lBetweenPoints" alt="" coords="1069,5,1261,47"/>
+<area shape="rect" id="node6" href="$classGuiDriver.html#a515efe32ea6baab24f5f7a4a5488944f" title="GuiDriver::CalculateGolden" alt="" coords="1075,71,1256,98"/>
+<area shape="rect" id="node7" href="$classGuiDriver.html#a77e75d600b14b6a779a036916072b9eb" title="GuiDriver::Calculate" alt="" coords="1309,42,1449,69"/>
+<area shape="rect" id="node8" href="$classMainWindow.html#ac5b9f841a148f3a1bab9f38f6c7b8790" title="MainWindow::on_executeStart\lComputingButton_clicked" alt="" coords="1497,35,1697,76"/>
+</map>
