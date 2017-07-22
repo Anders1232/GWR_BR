@@ -1,5 +1,0 @@
-<map id="MainWindow::UpdatePreview" name="MainWindow::UpdatePreview">
-<area shape="rect" id="node2" href="$classMainWindow.html#a8ac146eeccb2908ae434c2f8380aa607" title="MainWindow::on_SelectFile\lButton_clicked" alt="" coords="259,5,443,47"/>
-<area shape="rect" id="node3" href="$classMainWindow.html#a29e14e680bfd5aa8754a7b4f61dc9b7b" title="MainWindow::on_previewLines\l_valueChanged" alt="" coords="250,71,453,112"/>
-<area shape="rect" id="node4" href="$classMainWindow.html#a06feb46fc9d4063c5c74625164e53ba3" title="MainWindow::on_previewChars\lPerLine_valueChanged" alt="" coords="248,136,455,177"/>
-</map>

@@ -1,7 +1,0 @@
-<map id="NewNamedColumnDoubleTable" name="NewNamedColumnDoubleTable">
-<area shape="rect" id="node2" href="$LeitorArquivoSimples_8c.html#adb386d0e63c2901645721d1e3664e19e" title="ReadSimpleFile" alt="" coords="310,5,425,32"/>
-<area shape="rect" id="node3" href="$NamedColumnDoubleTable_8h.html#ae626ea3ff8214de1bb2bce1d0a5b6e99" title="NewNamedColumnDoubleTable\lFromFile" alt="" coords="263,57,472,98"/>
-<area shape="rect" id="node4" href="$main_8cpp.html#a503c92705980f1b8df03d53e463c78cc" title="LoadFile" alt="" coords="520,64,591,91"/>
-<area shape="rect" id="node5" href="$classGuiDriver.html#aeb1d0b02c443b1918694cb4ee8f541aa" title="GuiDriver::LoadFileButton\lCliked" alt="" coords="639,57,811,98"/>
-<area shape="rect" id="node6" href="$classMainWindow.html#acc8ae691b3cdcaa4ce1ef257c82aca93" title="MainWindow::on_LoadButton\l_clicked" alt="" coords="859,57,1051,98"/>
-</map>

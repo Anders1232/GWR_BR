@@ -1,4 +1,0 @@
-<map id="LoadFile" name="LoadFile">
-<area shape="rect" id="node2" href="$classGuiDriver.html#aeb1d0b02c443b1918694cb4ee8f541aa" title="GuiDriver::LoadFileButton\lCliked" alt="" coords="124,5,296,47"/>
-<area shape="rect" id="node3" href="$classMainWindow.html#acc8ae691b3cdcaa4ce1ef257c82aca93" title="MainWindow::on_LoadButton\l_clicked" alt="" coords="344,5,536,47"/>
-</map>

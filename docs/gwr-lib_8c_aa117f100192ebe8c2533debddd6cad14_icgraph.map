@@ -1,6 +1,0 @@
-<map id="BinomialCoefficient" name="BinomialCoefficient">
-<area shape="rect" id="node2" href="$gwr-lib_8h.html#a094e9ca0d79e6a7a76ec4b8851f9a09a" title="GWR" alt="" coords="188,13,243,39"/>
-<area shape="rect" id="node3" href="$classGuiDriver.html#a515efe32ea6baab24f5f7a4a5488944f" title="GuiDriver::CalculateGolden" alt="" coords="291,13,472,39"/>
-<area shape="rect" id="node4" href="$classGuiDriver.html#a77e75d600b14b6a779a036916072b9eb" title="GuiDriver::Calculate" alt="" coords="520,13,660,39"/>
-<area shape="rect" id="node5" href="$classMainWindow.html#ac5b9f841a148f3a1bab9f38f6c7b8790" title="MainWindow::on_executeStart\lComputingButton_clicked" alt="" coords="708,5,908,47"/>
-</map>

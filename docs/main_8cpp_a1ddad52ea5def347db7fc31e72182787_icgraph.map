@@ -1,7 +1,0 @@
-<map id="LoadPreview" name="LoadPreview">
-<area shape="rect" id="node2" href="$classGuiDriver.html#a48d4885e8a57829449a71f4e51e800eb" title="GuiDriver::GetPreview" alt="" coords="151,78,304,105"/>
-<area shape="rect" id="node3" href="$classMainWindow.html#a2e033e1763dad41db5d07b8cd53459ca" title="MainWindow::UpdatePreview" alt="" coords="352,78,547,105"/>
-<area shape="rect" id="node4" href="$classMainWindow.html#a8ac146eeccb2908ae434c2f8380aa607" title="MainWindow::on_SelectFile\lButton_clicked" alt="" coords="606,5,790,47"/>
-<area shape="rect" id="node5" href="$classMainWindow.html#a29e14e680bfd5aa8754a7b4f61dc9b7b" title="MainWindow::on_previewLines\l_valueChanged" alt="" coords="597,71,799,112"/>
-<area shape="rect" id="node6" href="$classMainWindow.html#a06feb46fc9d4063c5c74625164e53ba3" title="MainWindow::on_previewChars\lPerLine_valueChanged" alt="" coords="595,136,801,177"/>
-</map>

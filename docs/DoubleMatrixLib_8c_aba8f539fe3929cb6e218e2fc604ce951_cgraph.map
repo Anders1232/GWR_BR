@@ -1,6 +1,0 @@
-<map id="DoubleMatrixMultiplication" name="DoubleMatrixMultiplication">
-<area shape="rect" id="node2" href="$DoubleMatrixLib_8c.html#afdb0737a6cb51c4507de18a41d1031a8" title="DoubleMatrixScalarMultiplication" alt="" coords="228,5,440,32"/>
-<area shape="rect" id="node3" href="$DoubleMatrixLib_8c.html#a9d991dfd903f09ff3409b130bd72ecfa" title="NewDoubleMatrix" alt="" coords="488,31,615,57"/>
-<area shape="rect" id="node4" href="$DoubleMatrixLib_8c.html#a6465252c0ac5e0429be122c661c09ce9" title="DoubleMatrixGetElement" alt="" coords="250,107,418,133"/>
-<area shape="rect" id="node5" href="$DoubleMatrixLib_8c.html#a51479df99a67a47fa03546c17e1dec9b" title="DoubleMatrixSetElement" alt="" coords="251,157,417,184"/>
-</map>
