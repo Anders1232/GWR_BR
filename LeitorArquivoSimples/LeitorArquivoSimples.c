@@ -23,7 +23,7 @@ NamedColumnDoubleTable* ReadSimpleFile(FILE *file, char separator)
 	}
 	while(1 == fscanf(file, "%c", &aux))
 	{
-		if(FEOF(file))
+		if(feof(file))
 		{
 #ifdef DEBUG
 printf("Essa if realmente e util! %s:\t\t%d"NEW_LINE , __FILE__, __LINE__);

@@ -31,3 +31,4 @@ int NamedColumnDoubleTable_GetColumnIndex(NamedColumnDoubleTable *table, char co
 
 NamedColumnDoubleTable *NewNamedColumnDoubleTableFromFile(char const *fileName, char separator);
 #endif
+

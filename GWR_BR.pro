@@ -9,10 +9,10 @@ QT       += core gui
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 INCLUDEPATH += $$PWD/DoubleMatrixLib \
-            $$PWD/Core \
+            $$PWD/Init \
             $$PWD/NamedColumnDoubleTable\
-	    $$PWD/GWR-Lib\
-	    $$PWD/FowardList
+            $$PWD/GWR-Lib\
+            $$PWD/FowardList
 
 TARGET = GWR_BR
 TEMPLATE = app
@@ -34,18 +34,20 @@ SOURCES +=\
     NamedColumnDoubleTable/NamedColumnDoubleTable.c \
     Qt/QtMain.cpp \
     Qt/GuiDriver.cpp \
-    Core/main.cpp \
+    Init/main.cpp \
     GWR-Lib/gwr-lib.c \
-    FowardList/FowardList.c
+    FowardList/FowardList.c \
+    LeitorArquivoSimples/LeitorArquivoSimples.c
 
 HEADERS  += \
     DoubleMatrixLib/DoubleMatrixLib.h \
     NamedColumnDoubleTable/NamedColumnDoubleTable.h \
     Qt/GuiDriver.hpp \
-    Core/GuiInterface.h \
+    Init/GuiInterface.h \
     Qt/mainwindow.hpp \
     GWR-Lib/gwr-lib.h \
-    FowardList/FowardList.h
+    FowardList/FowardList.h \
+    Init/GuiInterface.h
 
 FORMS    += Qt/mainwindow.ui
 
