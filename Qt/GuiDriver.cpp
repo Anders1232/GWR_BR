@@ -139,9 +139,9 @@ QString GuiDriver::Calculate(
 		independentGlobalVariables= (int*)malloc(sizeof(int) * (globalVariables.size()+1) );
 		independentGlobalVariables[globalVariables.size()]= -1;
 		independentGlobalVariables[globalVariables.size()]= -1;
-		fprintf(temp ,"%s|%s:%d\t[DEBUG] I was here!\r\n", __FILE__, __func__, __LINE__);
+//		fprintf(temp ,"%s|%s:%d\t[DEBUG] I was here!\r\n", __FILE__, __func__, __LINE__);
 		CalculateGolden(textArea, temp, temp2, kernelType, this->table->matrix, distanceInKm, dependentVariable, indepedentLocalVariables, independentGlobalVariables, latitudeColumn, longitudecolumn);
-		fprintf(temp ,"%s|%s:%d\t[DEBUG] I was here!\r\n", __FILE__, __func__, __LINE__);
+//		fprintf(temp ,"%s|%s:%d\t[DEBUG] I was here!\r\n", __FILE__, __func__, __LINE__);
 
 		free(independentGlobalVariables);
 		free(indepedentLocalVariables);
@@ -157,11 +157,11 @@ QString GuiDriver::Calculate(
 		DoubleMatrix *result= LatPlusLon(table->matrix, column1, column2);
 		fprintf(temp, "GWR BR" NEW_LINE);
 		fprintf(temp, "File: %s\t\t\tDelimiter: %c(%d)" NEW_LINE, fileName.c_str(), separator, separator);
-		fprintf(temp, "Operation: Latitude + Longitude" NEW_LINE);
+//		fprintf(temp, "Operation: Latitude + Longitude" NEW_LINE);
 		fprintf(temp, "Latitude column: %s" NEW_LINE, latitude.c_str());
 		fprintf(temp, "Longitude column: %s" NEW_LINE, longitude.c_str());
 		fprintf(temp, "Result:" NEW_LINE NEW_LINE);
-		DoubleMatrixPrint(result, temp, "\t%lf" NEW_LINE, NEW_LINE);
+//		DoubleMatrixPrint(result, temp, "\t%lf" NEW_LINE, NEW_LINE);
 		QString ret= "";
 		rewind(temp);
 		char aux;
@@ -228,8 +228,8 @@ QString GuiDriver::CalculateDistanceBetweenPoints
 	fprintf(temp, "Operation: BetweenPoints (Longitude, Latitude)" NEW_LINE);
 	fprintf(temp, "Latitude column: %s" NEW_LINE, latitude.c_str());
 	fprintf(temp, "Longitude column: %s" NEW_LINE, longitude.c_str());
-	fprintf(temp, "Lower distance: %lf" NEW_LINE, min);
-	fprintf(temp, "Biggest distance: %lf" NEW_LINE, max);
+	fprintf(temp, "The shortest distance: %lf" NEW_LINE, min);
+	fprintf(temp, "The largest distance: %lf" NEW_LINE, max);
 	fprintf(temp, "Result:" NEW_LINE NEW_LINE);
 	PrintfDistancesFile(result, table->matrix->lines, temp);
 	QString ret= "";

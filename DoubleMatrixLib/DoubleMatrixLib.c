@@ -476,6 +476,10 @@ DoubleMatrix* DoubleMatrixMultiplication(DoubleMatrix *a, DoubleMatrix *b)
 		}
 		fprintf(stderr, "%s:%s:%d\t\tMatrices not compatible for multiplication.\n", __func__, __FILE__, __LINE__);
 		fprintf(stderr, "%s|%s:%d, first matrix is %dx%d and the second is %dx%d\r\n", __FILE__, __func__, __LINE__, a->lines, a->columns, b->lines, b->columns);
+#ifdef FORCE_SEG_FAULT
+		int *a=NULL;
+		*a=0;
+#endif
 		return NULL;
 	}
 #ifdef DEBUG_MATRIX_MULT
