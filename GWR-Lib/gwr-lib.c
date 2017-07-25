@@ -1055,7 +1055,7 @@ void* GWR(void *args_)
 		printf("cv1.txt:77\tw#x1 ficou com as dimensões %dx%d\r\n", aux->lines, aux->columns);
 	#endif
 //		DoubleMatrix *x1t= DoubleMatrixTranspose(x1, false);
-		DoubleMatrix *x1t= DoubleMatrixCopy(x1);
+		DoubleMatrix *x1t= DoubleMatrixTranspose(x1, false);
 		DoubleMatrix *y1t= DoubleMatrixTranspose(y1, false);
 		DoubleMatrix *x1t_w= DoubleMatrixBinOpColumnsPerColumn(x1, w, 0, false, Mult);
 		DoubleMatrix *x1t_w_x1=DoubleMatrixBinOpColumnsPerColumn(x1t_w, x1, 0, false, Mult);
@@ -1092,6 +1092,14 @@ void* GWR(void *args_)
 //			DoubleMatrix *b= DoubleMatrixMultiplication(DoubleMatrixInverse(x1t_w_x1), x1t_w_y1);
 			DoubleMatrix *_x1t_w_x1_t= DoubleMatrixTranspose(x1t_w_x1, false);
 			DoubleMatrix *b= DoubleMatrixMultiplication(_x1t_w_x1_t, x1t_w_y1);
+			//C=inv(x1`*(w#x1))*x1`#(w)`;
+//			DoubleMatrix *w_x1= DoubleMatrixBinOpLinesPerLine(w, x1, 0, false, Mult);
+			DoubleMatrix *wt/*t de transposto*/= DoubleMatrixTranspose(w, false);
+//			DoubleMatrix *x1t__w_x1_= DoubleMatrixMultiplication(x1t, w_x1);
+			DoubleMatrix *inv_x1t__w_x1__= DoubleMatrixInverse(x1t_w_x1);
+			DoubleMatrix *w_y1= DoubleMatrixBinOpColumnsPerColumn(y1, w, 0, false, Mult);
+			C= DoubleMatrixMultiplication(inv_x1t__w_x1__, x1t);
+			DoubleMatrixBinOpLinesPerLine(C, wt, 0, true, Mult);
 	#ifdef DEBUG_MATRIX_DIMENSIONS
 		printf("cv1.txt:79\tinv(x1`*(w#x1#wt1)) ficou com as dimensões %dx%d\r\n", b->lines, b->columns);
 	#endif
