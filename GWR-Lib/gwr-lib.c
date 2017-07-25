@@ -1091,7 +1091,7 @@ void* GWR(void *args_)
 			//inv(x1`*(w#y1))*x1`*(w#y1);
 //			DoubleMatrix *b= DoubleMatrixMultiplication(DoubleMatrixInverse(x1t_w_x1), x1t_w_y1);
 			DoubleMatrix *_x1t_w_x1_t= DoubleMatrixTranspose(x1t_w_x1, false);
-			DoubleMatrix *b= DoubleMatrixMultiplication(_x1t_w_x1_t, x1t_w_y1);
+			b= DoubleMatrixMultiplication(_x1t_w_x1_t, x1t_w_y1);
 			//C=inv(x1`*(w#x1))*x1`#(w)`;
 //			DoubleMatrix *w_x1= DoubleMatrixBinOpLinesPerLine(w, x1, 0, false, Mult);
 			DoubleMatrix *wt/*t de transposto*/= DoubleMatrixTranspose(w, false);
@@ -1145,9 +1145,10 @@ void* GWR(void *args_)
 //		for(int count =m1-1; count < varb->columns;count++){
 //			DoubleMatrixSetElement(varbi, count, 1-1, DoubleMatrixGetElement(varb, count, count));
 //		}
-		DoubleMatrix *aux, *aux2, *aux3, *aux4;
-		aux = NewLineDoubleMatrixFromMatrix(x, i);
-		DoubleMatrix *teste= DoubleMatrixMultiplication(aux, b);
+//		DoubleMatrix *aux, *aux2, *aux3, *aux4;
+//		aux = NewLineDoubleMatrixFromMatrix(x, i);
+		DoubleMatrix *xi= NewLineDoubleMatrixFromMatrix(x, i);
+		DoubleMatrix *teste= DoubleMatrixMultiplication(xi, b);
 		if(teste->columns == teste->lines && teste->columns == 1){
 			printf("%s|%s:%d\tok\n", __FILE__, __func__, __LINE__);
 		}
@@ -1157,53 +1158,60 @@ void* GWR(void *args_)
 		}
 		DoubleMatrixSetElement(yhat, i, 1-1, teste->elements[0]);
 //		yhat[i]= teste->elements[0];//atribuindo a um double uma Matriz...
-		DeleteDoubleMatrix(aux);
-		aux= NULL;
+//		DeleteDoubleMatrix(aux);
+//		aux= NULL;
 		DeleteDoubleMatrix(varb);//a variável varb está sendo calculada pra nada
 		varb= NULL;
 //	}//linha 232 GWR cópia 1
 	DoubleMatrix *res= DoubleMatrixElementBinaryOperation(y, yhat, false, Sub);
 	DoubleMatrix *stdbi= DoubleMatrixElementUnaryOperation(varbi, false, sqrt);
 //	DoubleMatrix *aux=NULL, *aux2=NULL, *aux3=NULL;
-	aux= NewColumnDoubleMatrixFromMatrix(bi, 2-1);
-	DoubleMatrix *tstat = DoubleMatrixElementBinaryOperation(aux, stdbi, false, Div);//multiplicação pela inversa ou divisão element-wise?
-	DeleteDoubleMatrix(aux);
+//	aux= NewColumnDoubleMatrixFromMatrix(bi, 2-1);
+	DoubleMatrix *bi_c1= NewColumnDoubleMatrixFromMatrix(bi, 2-1);
+	DoubleMatrix *tstat = DoubleMatrixElementBinaryOperation(bi_c1, stdbi, false, Div);//multiplicação pela inversa ou divisão element-wise?
+//	DeleteDoubleMatrix(aux);
 	/***Global Estimates*linha 239 GWR copia 1*/
-	aux= DoubleMatrixTranspose(x, false);
-	aux2= DoubleMatrixMultiplication(aux, x);
-	aux3= DoubleMatrixInverse(aux2);//aux3= inv(x' *x)
+//	aux= DoubleMatrixTranspose(x, false);
+	DoubleMatrix *xt= DoubleMatrixTranspose(x, false);
+	DoubleMatrix *xt_x= DoubleMatrixMultiplication(xt, x);
+//	aux2= DoubleMatrixMultiplication(aux, x);
+	DoubleMatrix *inv_xt_x_= DoubleMatrixInverse(xt_x);
+//	aux3= DoubleMatrixInverse(aux2);//aux3= inv(x' *x)
 //	DoubleMatrix *aux4= DoubleMatrixCopy(aux3);
-	DeleteDoubleMatrix(aux2);
-	aux2= DoubleMatrixMultiplication(aux3, aux);//aux2= inv(x' *x)*x'
-	DoubleMatrix *bg= DoubleMatrixMultiplication(aux2, y);
-	DeleteDoubleMatrix(aux2);
+//	DeleteDoubleMatrix(aux2);
+//	aux2= DoubleMatrixMultiplication(aux3, aux);//aux2= inv(x' *x)*x'
+	DoubleMatrix *_inv_xt_x__xt= DoubleMatrixMultiplication(inv_xt_x_, xt);
+	DoubleMatrix *bg= DoubleMatrixMultiplication(_inv_xt_x__xt, y);
+//	DeleteDoubleMatrix(aux2);
 	//linha 241 GWR copia 1
-	aux2= DoubleMatrixMultiplication(x, bg);
-	aux= DoubleMatrixElementBinaryOperation(y, aux2, false, Sub);//(y-x*bg)
-	DoubleMatrix *s2g= DoubleMatrixTranspose(aux, false);//(y-x*bg)'
-	for(int p=0; p < aux2->lines; p++)
+//	aux2= DoubleMatrixMultiplication(x, bg);
+	DoubleMatrix *x_bg= DoubleMatrixMultiplication(x, bg);
+	DoubleMatrix *y_m__x_bg_= DoubleMatrixElementBinaryOperation(y, x_bg, false, Sub);//(y-x*bg)
+//	aux= DoubleMatrixElementBinaryOperation(y, aux2, false, Sub);//(y-x*bg)
+	DoubleMatrix *_y_m__x_bg__t= DoubleMatrixTranspose(y_m__x_bg_, false);//(y-x*bg)'
+	for(int p=0; p < x_bg->lines; p++)
 	{
-		for(int q=0; q < aux2->columns; q++)
+		for(int q=0; q < x_bg->columns; q++)
 		{
-			DoubleMatrixSetElement(aux, p, q, DoubleMatrixGetElement(aux, p, q)/(n-bg->lines) );
+			DoubleMatrixSetElement(y_m__x_bg_, p, q, DoubleMatrixGetElement(y_m__x_bg_, p, q)/(n-bg->lines) );
 		}
 	}
-	aux3= s2g;
-	s2g= DoubleMatrixMultiplication(aux3, aux);
-	DeleteDoubleMatrix(aux);
-	DeleteDoubleMatrix(aux2);
-	aux2= NULL;
-	DeleteDoubleMatrix(aux3);
-	aux3= NULL;
-	aux= DoubleMatrixMultiplication(aux4, s2g);
-	DoubleMatrix *varg= NewDoubleMatrix(1, aux4->columns);
+//	aux3= s2g;
+	DoubleMatrix *s2g= DoubleMatrixMultiplication(inv_xt_x_, _y_m__x_bg__t);
+//	DeleteDoubleMatrix(aux);
+///	DeleteDoubleMatrix(aux2);
+//	aux2= NULL;
+//	DeleteDoubleMatrix(aux3);
+//	aux3= NULL;
+	DoubleMatrix *_inv_xt_x__s2g_= DoubleMatrixMultiplication(inv_xt_x_, s2g);
+	DoubleMatrix *varg= NewDoubleMatrix(1, _inv_xt_x__s2g_->columns);
 	for(int count=0; count < varg->columns; count++){
-		DoubleMatrixSetElement(varg, 1, count, DoubleMatrixGetElement(aux, count, count));
+		DoubleMatrixSetElement(varg, 1, count, DoubleMatrixGetElement(y_m__x_bg_, count, count));
 	}
-	DeleteDoubleMatrix(aux);
-	aux= NULL;
-	DeleteDoubleMatrix(aux4);
-	aux4= NULL;
+//	DeleteDoubleMatrix(aux);
+//	aux= NULL;
+//	DeleteDoubleMatrix(aux4);
+//	aux4= NULL;
 	
 	//linha 244 GWR cópia 1
 	DoubleMatrix *stdg= DoubleMatrixElementUnaryOperation(varg, false, sqrt);
