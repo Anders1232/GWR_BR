@@ -33,7 +33,7 @@
        <enum>QTabWidget::Triangular</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>6</number>
       </property>
       <widget class="QWidget" name="Welcome">
        <attribute name="title">
@@ -524,7 +524,7 @@
            <item>
             <widget class="QLabel" name="label_3">
              <property name="text">
-              <string>TextLabel</string>
+              <string>Columns</string>
              </property>
             </widget>
            </item>
@@ -1325,7 +1325,7 @@ Version 1.0
 
 Developed by:
 	Alan Ricardo da Silva (alansilva@unb.br)
-	Francisco Anderson Bezerra Rodrigues(anders1232@mail.com)</string>
+	Francisco Anderson Bezerra Rodrigues(anders1232@aluno.unb.br)</string>
           </property>
           <property name="textInteractionFlags">
            <set>Qt::NoTextInteraction</set>
