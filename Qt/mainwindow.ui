@@ -33,7 +33,7 @@
        <enum>QTabWidget::Triangular</enum>
       </property>
       <property name="currentIndex">
-       <number>5</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="Welcome">
        <attribute name="title">
@@ -53,7 +53,7 @@
         </property>
         <property name="icon">
          <iconset resource="../resources.qrc">
-          <normaloff>:/img/fimSemestre.jpg</normaloff>:/img/fimSemestre.jpg</iconset>
+          <normaloff>:/img/GWR2.png</normaloff>:/img/GWR2.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -1344,7 +1344,7 @@ Developed by:
      <x>0</x>
      <y>0</y>
      <width>666</width>
-     <height>25</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
