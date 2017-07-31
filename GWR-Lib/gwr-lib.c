@@ -1174,6 +1174,7 @@ void* GWR(void *args_)
 //	aux= DoubleMatrixTranspose(x, false);
 	DoubleMatrix *xt= DoubleMatrixTranspose(x, false);
 	DoubleMatrix *xt_x= DoubleMatrixMultiplication(xt, x);
+//	DoubleMatrix *xt_x= DoubleMatrixMultiplication(x, xt);
 //	aux2= DoubleMatrixMultiplication(aux, x);
 	DoubleMatrix *inv_xt_x_= DoubleMatrixInverse(xt_x);
 //	aux3= DoubleMatrixInverse(aux2);//aux3= inv(x' *x)
@@ -1197,26 +1198,34 @@ void* GWR(void *args_)
 		}
 	}
 //	aux3= s2g;
-	DoubleMatrix *s2g= DoubleMatrixMultiplication(inv_xt_x_, _y_m__x_bg__t);
+	
+	DoubleMatrix *s2g= DoubleMatrixCopy(_y_m__x_bg__t);
+	for(int i=0;i < s2g->lines; i++){
+		for(int j =0; j < s2g->columns; j++){
+			DoubleMatrixSetElement(s2g, j, i, DoubleMatrixGetElement(s2g, i, j)/n- bg->lines);
+		}
+	}
 //	DeleteDoubleMatrix(aux);
 ///	DeleteDoubleMatrix(aux2);
 //	aux2= NULL;
 //	DeleteDoubleMatrix(aux3);
 //	aux3= NULL;
-	DoubleMatrix *_inv_xt_x__s2g_= DoubleMatrixMultiplication(inv_xt_x_, s2g);
-	DoubleMatrix *varg= NewDoubleMatrix(1, _inv_xt_x__s2g_->columns);
-	for(int count=0; count < varg->columns; count++){
-		DoubleMatrixSetElement(varg, 1, count, DoubleMatrixGetElement(y_m__x_bg_, count, count));
-	}
+
+//	DoubleMatrix *_inv_xt_x__s2g_= DoubleMatrixMultiplication(inv_xt_x_, s2g);
+//	DoubleMatrix *varg= NewDoubleMatrix(1, _inv_xt_x__s2g_->columns);
+//	for(int count=0; count < varg->columns; count++){
+//		DoubleMatrixSetElement(varg, 1, count, DoubleMatrixGetElement(y_m__x_bg_, count, count));
+//	}
+
 //	DeleteDoubleMatrix(aux);
 //	aux= NULL;
 //	DeleteDoubleMatrix(aux4);
 //	aux4= NULL;
 	
 	//linha 244 GWR cópia 1
-	DoubleMatrix *stdg= DoubleMatrixElementUnaryOperation(varg, false, sqrt);
-	DoubleMatrix *aux6= NewDoubleMatrixAndInitializeElements(bg->lines, bg->columns, stdg->elements[0]);
-	DoubleMatrix *tg = DoubleMatrixElementBinaryOperation(bg, aux6, false, Div);
+//	DoubleMatrix *stdg= DoubleMatrixElementUnaryOperation(varg, false, sqrt);
+//	DoubleMatrix *aux6= NewDoubleMatrixAndInitializeElements(bg->lines, bg->columns, stdg->elements[0]);
+//	DoubleMatrix *tg = DoubleMatrixElementBinaryOperation(bg, aux6, false, Div);
 	//a linha 246 supõe a existência de uma matriz probt que não existe, pulando
 	FILE *f= fopen("__res__.csv", "w");
 	if(NULL == f)
